@@ -19,6 +19,8 @@
         <script src="{{ mix('js/app.js') }}" defer></script>
         <script src="https://kit.fontawesome.com/a692f93986.js" crossorigin="anonymous"></script>
 
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <style>
             .bg-side-nav {
                  background-color: #ECF0F1;
@@ -59,10 +61,48 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border bg-blue-200">
+                                        Configuracion
+                                </li> 
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('topicos')?'bg-gray-100':'br-gray-800'}}">
+                                    <a href="{{ route('topicos') }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-book float-left mx-2"></i>
+                                        Topicos
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li> 
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupos')?'bg-gray-100':'br-gray-800'}}">
+                                    <a href="{{ route('grupos') }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-users-cog float-left mx-2"></i>
+                                        Grupos
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li> 
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('dashboard')?'bg-gray-100':'br-gray-800'}}">
+                                    <a href="{{ route('dashboard') }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-user float-left mx-2"></i>
+                                        Usuarios
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li>
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border bg-blue-200">
+                                    Tickets
+                                </li> 
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('tickets')?'bg-gray-100':'br-gray-800'}}">
+                                    <a href="{{ route('tickets') }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-file-invoice float-left mx-2"></i>
+                                        Tablero
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li> 
                             </ul>                
                         </div>
                     </div>
-                    <div class="w-full py-5 sm:px-6 lg:px-8">
+                    <div class="w-full">
                             {{ $slot }}
                     </div>
                 </div>
@@ -84,5 +124,16 @@
                 }
             }    
         </script>
+        <script>
+            Livewire.on('alert_ok',function(message)
+            {
+                Swal.fire(
+                    'OK!',
+                    message,
+                    'success'
+                )
+
+            });
+        </script>    
     </body>
 </html>

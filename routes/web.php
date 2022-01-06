@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\Topico\ShowTopicos;
+use App\Http\Livewire\Grupo\ShowGrupos;
+use App\Http\Controllers\TicketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +21,9 @@ Route::get('/', function () {return view('dashboard');})->middleware('auth');
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::get('/topicos',ShowTopicos::class)->name('topicos')->middleware('auth');
+Route::get('/grupos',ShowGrupos::class)->name('grupos')->middleware('auth');
+Route::get('/tickets',function(){return(view('tickets'));})->name('tickets')->middleware('auth');
+
+Route::post('/save_ticket',[TicketController::class,'save'])->middleware('auth')->name('save_ticket');
