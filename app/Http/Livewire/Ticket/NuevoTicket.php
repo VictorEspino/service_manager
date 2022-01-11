@@ -39,6 +39,8 @@ class NuevoTicket extends Component
     public $invitados_disponibles;
     public $invitados_ticket;
 
+    public $file_include=false;
+
     public function render()
     {
         return view('livewire.ticket.nuevo-ticket');

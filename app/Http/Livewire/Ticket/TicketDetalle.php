@@ -14,6 +14,12 @@ class TicketDetalle extends Component
     public $topico_nombre;
     public $solicitante;
 
+    public $file_include=false;
+
+    public $avance;
+    public $cerrar_al_responder;
+    public $esperando_respuesta;
+
     public function render()
     {
         $ticket=Ticket::with('topico','solicitante')->find($this->ticket_id);

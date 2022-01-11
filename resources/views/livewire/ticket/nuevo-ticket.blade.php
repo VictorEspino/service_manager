@@ -178,6 +178,25 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Adjuntar</td>
+                            <td><x-jet-secondary-button wire:click.prevent="$set('file_include',true)"><i class="fas fa-plus"></i></x-jet-secondary-button></td>
+                        </tr>
+                        @if($file_include)
+                        <tr>
+                            <td></td>
+                            <td>
+                                <div class="flex flex-row pt-3">
+                                    <div class="w-24 flex justify-center text-base font-bold text-gray-600">                        
+                                    </div>
+                                    <div class="flex-1 flex flex-row items-center">
+                                        <x-jet-danger-button wire:click.prevent="$set('file_include',false)" class="py-1"><i class="fas fa-times-circle text-base"></i></x-jet-danger-button>
+                                        <input type="file" class="p-2 flex-1 text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="adjunto" class="text-sm"/>                
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @endif
                     </table>
                 </div>
                 <div class="flex-1 flex flex-col p-4">

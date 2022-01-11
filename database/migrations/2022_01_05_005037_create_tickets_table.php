@@ -23,6 +23,8 @@ class CreateTicketsTable extends Migration
             $table->integer('estatus')->default(1);
             $table->foreignId('asignado_a');
             $table->integer('actividad_actual')->default(0);
+            $table->boolean('adjunto')->default(0);
+            $table->string('archivo_adjunto')->nullable();
             $table->timestamps();
         });
     }

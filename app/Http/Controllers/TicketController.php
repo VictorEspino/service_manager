@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Ticket;
+use App\Models\TicketAvance;
 use App\Models\ActividadTicket;
 use App\Models\ActividadTicketCampos;
 use App\Models\ActividadTopico;
@@ -27,6 +28,22 @@ class TicketController extends Controller
                         'asignado_a'=>$asignacion,
                         'actividad_actual'=>0
                         ]);
+
+        if(isset($request->adjunto))
+        {
+            $upload_path = public_path('archivos');
+            $file_name = $request->adjunto->getClientOriginalName();
+            $generated_new_name = $ticket->id.'.'. $request->adjunto->getClientOriginalExtension();
+            $request->adjunto->move($upload_path, $generated_new_name);
+            $adjunto=$generated_new_name;
+            
+            Ticket::where('id',$ticket->id)->update([
+                'adjunto'=>1,
+                'archivo_adjunto'=>$adjunto
+            ]);
+
+            return($adjunto);
+        }
         $actividades_topico=ActividadTopico::where('topico_id',$request->topico)
                                             ->get();
         $actividad_principal=0;
@@ -120,5 +137,30 @@ class TicketController extends Controller
         return (view('tickets',[
                 'asignados_a_mi'=>$asignados_a_mi,
             ]));
+    }
+    public function save_avance(Request $request)
+    {
+        //return $request->all();
+
+        $id_avance=TicketAvance::create([
+            'ticket_id'=>$request->id,
+            'user_id'=>Auth::user()->id,
+            'nombre_usuario'=>Auth::user()->name,
+            'avance'=>$request->avance,
+            'tipo_avance'=>1,
+            ]);
+        if(isset($request->adjunto))
+        {
+            $upload_path = public_path('archivos');
+            $file_name = $request->adjunto->getClientOriginalName();
+            $generated_new_name = $request->id.'.'. $request->adjunto->getClientOriginalExtension();
+            $request->adjunto->move($upload_path, $generated_new_name);
+            $adjunto=$generated_new_name;
+            TicketAvance::where('id',$id_avance->id)
+                        ->update([
+                            'adjunto'=>1,
+                            'archivo_adjunto'=>$adjunto,
+                        ]);
+        }
     }
 }

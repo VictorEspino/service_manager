@@ -18,8 +18,10 @@ class CreateTicketAvancesTable extends Migration
             $table->foreignId('ticket_id');
             $table->foreignId('user_id');
             $table->string('nombre_usuario');
-            $table->string('avance');
+            $table->text('avance');
             $table->integer('tipo_avance');
+            $table->boolean('adjunto')->default(0);
+            $table->string('archivo_adjunto')->nullable();
             $table->timestamps();
         });
     }

@@ -29,3 +29,4 @@ Route::get('/tickets',[TicketController::class,'show'])->name('tickets')->middle
 
 Route::post('/save_ticket',[TicketController::class,'save'])->middleware('auth')->name('save_ticket');
 Route::get('/ticket/{id}',TicketDetalle::class)->name('ticket')->middleware('auth');
+Route::post('/save_avance',[TicketController::class,'save_avance'])->middleware('auth')->name('save_avance');
