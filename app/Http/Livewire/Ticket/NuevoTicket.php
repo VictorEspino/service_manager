@@ -73,6 +73,7 @@ class NuevoTicket extends Component
         foreach($campos_actividad as $campos)
         {
             $this->campos_requeridos[]=[
+                                    'referencia'=>$campos->id,
                                     'etiqueta'=>$campos->etiqueta,
                                     'tipo_control'=>$campos->tipo_control,
                                     'requerido'=>$campos->requerido,

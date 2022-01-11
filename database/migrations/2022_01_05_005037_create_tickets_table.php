@@ -18,11 +18,11 @@ class CreateTicketsTable extends Migration
             $table->foreignId('creador_id');
             $table->foreignId('de_id');
             $table->foreignId('topico_id');
-            $table->string('descripcion');
             $table->string('asunto');
-            $table->integer('priodidad');
-            $table->integer('estatus');
+            $table->integer('prioridad');
+            $table->integer('estatus')->default(1);
             $table->foreignId('asignado_a');
+            $table->integer('actividad_actual')->default(0);
             $table->timestamps();
         });
     }

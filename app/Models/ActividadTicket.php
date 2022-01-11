@@ -5,17 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Ticket extends Model
+class ActividadTicket extends Model
 {
     use HasFactory;
-
+    
     protected $fillable=[
-        'creador_id',
-        'de_id',
-        'topico_id',
-        'asunto',
+        'ticket_id',
+        'secuencia',
         'descripcion',
-        'prioridad',
-        'asignado_a',
+        'sla',
+        'grupo_id',
+        'tipo_asignacion'
     ];
 }

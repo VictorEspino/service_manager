@@ -36,10 +36,10 @@
 
                                 @foreach ($usuarios_disponibles as $opcion)
                                      <tr>
-                                        <td class="border px-2">{{$opcion->empleado}}</td>
+                                        <td class="border px-2">{{$opcion->user}}</td>
                                         <td class="border px-2">{{$opcion->name}}</td>
-                                        <td class="border"><center><i wire:click="agregar_miembro_principal({{$opcion->id}},'{{$opcion->empleado}}','{{$opcion->name}}','1')" class="text-green-500 text-lg fas fa-user-plus" style="cursor:pointer"></i></td>
-                                        <td class="border"><center><i wire:click="agregar_miembro_principal({{$opcion->id}},'{{$opcion->empleado}}','{{$opcion->name}}','2')" class="text-yellow-500 text-lg fas fa-user-plus" style="cursor:pointer"></i></td>
+                                        <td class="border"><center><i wire:click="agregar_miembro_principal({{$opcion->id}},'{{$opcion->user}}','{{$opcion->name}}','1')" class="text-green-500 text-lg fas fa-user-plus" style="cursor:pointer"></i></td>
+                                        <td class="border"><center><i wire:click="agregar_miembro_principal({{$opcion->id}},'{{$opcion->user}}','{{$opcion->name}}','2')" class="text-yellow-500 text-lg fas fa-user-plus" style="cursor:pointer"></i></td>
                                     </tr>
                                 @endforeach
                                 </table>

@@ -44,7 +44,7 @@
 
                                         @foreach ($usuarios_disponibles as $opcion)
                                             <tr>
-                                                <td class="border px-2">{{$opcion->empleado}}</td>
+                                                <td class="border px-2">{{$opcion->user}}</td>
                                                 <td class="border px-2">{{$opcion->name}}</td>
                                                 <td class="border px-3"><center><i wire:click="cambiar_usuario({{$opcion->id}},'{{$opcion->name}}','{{$opcion->email}}')" class="text-green-500 text-lg far fa-hand-pointer" style="cursor:pointer"></i></td>
                                             </tr>
@@ -76,8 +76,7 @@
                                     </div>
                                     @endif
                                     <div class="w-full flex items-center">
-                                        <x-jet-label class="text-gray-400 font-bold" value="Buscar" /> 
-                                        <x-jet-input class="text-sm flex flex-1 ml-2 mr-2" type="text" wire:model="buscar_invitado"/>
+                                        <x-jet-input class="text-sm flex flex-1" type="text" wire:model="buscar_invitado" placeholder='Buscar'/>
                                     </div>
                                     @if ($agregar_invitado)
                                     <div class="w-full flex justify-center pt-2">
@@ -90,7 +89,7 @@
 
                                         @foreach ($invitados_disponibles as $opcion)
                                             <tr>
-                                                <td class="border px-2">{{$opcion->empleado}}</td>
+                                                <td class="border px-2">{{$opcion->user}}</td>
                                                 <td class="border px-2">{{$opcion->name}}</td>
                                                 <td class="border px-3"><center><i wire:click="agregar_invitado_ticket({{$opcion->id}},'{{$opcion->name}}','{{$opcion->email}}')" class="text-green-500 text-lg far fa-hand-pointer" style="cursor:pointer"></i></td>
                                             </tr>
@@ -148,6 +147,7 @@
                                                 <div class="flex-1 px-2">
                                                     <input type="hidden" name="campos[{{$index}}][tipo]" value="{{$campo['tipo_control']}}">
                                                     <input type="hidden" name="campos[{{$index}}][etiqueta]" value="{{$campo['etiqueta']}}">
+                                                    <input type="hidden" name="campos[{{$index}}][referencia]" value="{{$campo['referencia']}}">
                                                     @if($campo['tipo_control']=="Texto")
                                                         <x-jet-input name="campos[{{$index}}][valor]" class="w-full text-sm flex flex-1" type="text"/>
                                                     @endif
@@ -186,15 +186,15 @@
                     </div>     
                     <div class="w-full">
                         <select name="prioridad" class="text-xs w-full ml-2 mr-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
-                            <option value="Normal">Normal</option>
-                            <option value="Alta">Alta</option>
+                            <option value="1">Normal</option>
+                            <option value="2">Alta</option>
                         </select>
                     </div>
                     <div class="pt-4">
                         <x-jet-label class="text-gray-400 font-bold" value="Seras atendido por:" />
                     </div>     
                     <div class="w-full">
-                        <select name="prioridad" class="text-xs w-full ml-2 mr-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                        <select name="atencion" class="text-xs w-full ml-2 mr-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
                             <option value="Normal">Normal</option>
                             <option value="Alta">Alta</option>
                         </select>
