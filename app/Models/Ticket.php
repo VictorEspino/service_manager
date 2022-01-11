@@ -18,4 +18,13 @@ class Ticket extends Model
         'prioridad',
         'asignado_a',
     ];
+
+    public function solicitante()
+    {
+        return $this->belongsTo(User::class,'de_id');
+    }
+    public function topico()
+    {
+        return $this->belongsTo(Topico::class,'topico_id');
+    }
 }

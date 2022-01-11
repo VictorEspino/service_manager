@@ -10,6 +10,7 @@ use App\Models\ActividadTicket;
 use App\Models\ActividadTicketCampos;
 use App\Models\ActividadTopico;
 use App\Models\ActividadCampos;
+use App\Models\InvitadoTicket;
 
 class TicketController extends Controller
 {
@@ -63,7 +64,13 @@ class TicketController extends Controller
 
         if(isset($request->invitados))
         {
-            echo "Trae invitados<br>";
+            foreach($request->invitados as $invitado)
+            {
+                InvitadoTicket::create([
+                    'ticket_id'=>$ticket->id,
+                    'user_id'=>$invitado['id'],
+                ]);
+            }
         }
         if(isset($request->campos))
         {
@@ -104,5 +111,14 @@ class TicketController extends Controller
     private function obtenerAsignacion()
     {
         return 1;
+    }
+    public function show(Request $request)
+    {
+        $asignados_a_mi=Ticket::with('solicitante')
+                            ->where('asignado_a',Auth::user()->id)
+                            ->get();
+        return (view('tickets',[
+                'asignados_a_mi'=>$asignados_a_mi,
+            ]));
     }
 }
