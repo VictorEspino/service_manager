@@ -113,6 +113,16 @@
                     <x-jet-secondary-button wire:click.prevent="open_modal_confirm_status">{{$valor_boton_cambio_estatus}}</x-jet-secondary-button>
                 </div>
             </div>
+            @if($estatus=='2')
+            <div class="w-full flex flex-col justify-center text-xs text-gray-500">
+                <div class="px-2 flex justify-center">
+                    {{$cierre_at}}
+                </div>
+                <div class="px-2">
+                    Por {{strtoupper($nombre_cerrador)}}
+                </div>
+            </div>
+            @endif
             <div class="w-full flex flex-row justify-center pt-6">
                 <div class="py-1 px-3 font-bold text-gray-500 text-sm">
                     Asesor <span class="text-xs text-blue-500" style="cursor: pointer;" wire:click="open_reasignar_modal">reasignar</span>

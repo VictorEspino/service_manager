@@ -50,6 +50,10 @@ class TicketDetalle extends Component
     public $miembro_seleccionado;
     public $mensaje_reasignacion;
 
+    public $user_cerrador;
+    public $nombre_cerrador;
+    public $cierre_at;
+
     public function render()
     {
         $ticket=Ticket::with('topico','solicitante','asesor')->find($this->ticket_id);
@@ -59,6 +63,9 @@ class TicketDetalle extends Component
         $this->solicitante=$ticket->solicitante->name;
         $this->solicitante_id=$ticket->solicitante->id;
         $this->asesor=$ticket->asesor->name;
+        $this->user_cerrador=$ticket->user_cerrador;
+        $this->nombre_cerrador=$ticket->nombre_cerrador;
+        $this->cierre_at=$ticket->cierre_at;
 
         $this->estatus=$ticket->estatus;
 
@@ -165,22 +172,22 @@ class TicketDetalle extends Component
         $this->procesando=1;
         $this->open_confirm_status=false;
 
-        $user_cerrador=NULL;
-        $nombre_cerrador=NULL;
-        $cierre_at=NULL;
+        $this->user_cerrador=NULL;
+        $this->nombre_cerrador=NULL;
+        $this->cierre_at=NULL;
 
         if($this->nuevo_posible_valor_estatus==2)
         {
-            $user_cerrador=Auth::user()->id;
-            $nombre_cerrador=Auth::user()->name;
-            $cierre_at=now()->toDateTimeString();        
+            $this->user_cerrador=Auth::user()->id;
+            $this->nombre_cerrador=Auth::user()->name;
+            $this->cierre_at=now()->toDateTimeString();        
         }
 
         Ticket::where('id',$this->ticket_id)
             ->update(['estatus'=>$this->nuevo_posible_valor_estatus,
-                      'user_cerrador'=>$user_cerrador,
-                      'nombre_cerrador'=>$nombre_cerrador,
-                      'cierre_at'=>$cierre_at
+                      'user_cerrador'=>$this->user_cerrador,
+                      'nombre_cerrador'=>$this->nombre_cerrador,
+                      'cierre_at'=>$this->cierre_at
                     ]);  
         
         $estatus_actual="";
