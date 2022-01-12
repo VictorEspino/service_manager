@@ -38,7 +38,7 @@
                             </div>
                         </div>
                         <div class="w-24 text-sm text-blue-500 ml-2 pt-1">
-                            {{ticket($ticket->id)}}
+                            <a href="{{route('ticket',['id'=>$ticket->id])}}">{{ticket($ticket->id)}}</a>
                         </div>
                         <div class="w-1/2 ml-3 flex flex-col">
                             <div class="w-full text-blue-500 text-base font-normal">

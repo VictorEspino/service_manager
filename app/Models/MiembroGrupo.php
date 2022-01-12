@@ -10,4 +10,9 @@ class MiembroGrupo extends Model
     use HasFactory;
 
     protected $fillable=['grupo_id','user_id','manager'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

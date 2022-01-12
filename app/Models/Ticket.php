@@ -27,4 +27,8 @@ class Ticket extends Model
     {
         return $this->belongsTo(Topico::class,'topico_id');
     }
+    public function asesor()
+    {
+        return $this->belongsTo(User::class,'asignado_a');
+    }
 }

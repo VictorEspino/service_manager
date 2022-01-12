@@ -20,11 +20,15 @@ class CreateTicketsTable extends Migration
             $table->foreignId('topico_id');
             $table->string('asunto');
             $table->integer('prioridad');
+            $table->integer('privacidad')->default(1); //privado
             $table->integer('estatus')->default(1);
             $table->foreignId('asignado_a');
             $table->integer('actividad_actual')->default(0);
             $table->boolean('adjunto')->default(0);
             $table->string('archivo_adjunto')->nullable();
+            $table->foreignId('user_cerrador')->nullable();
+            $table->string('nombre_cerrador')->nullable();
+            $table->timestamp('cierre_at')->nullable();
             $table->timestamps();
         });
     }

@@ -41,8 +41,6 @@ class TicketController extends Controller
                 'adjunto'=>1,
                 'archivo_adjunto'=>$adjunto
             ]);
-
-            return($adjunto);
         }
         $actividades_topico=ActividadTopico::where('topico_id',$request->topico)
                                             ->get();
@@ -142,12 +140,14 @@ class TicketController extends Controller
     {
         //return $request->all();
 
+        $tipo_avance=$request->solicitante==Auth::user()->id?1:2;
+
         $id_avance=TicketAvance::create([
             'ticket_id'=>$request->id,
             'user_id'=>Auth::user()->id,
             'nombre_usuario'=>Auth::user()->name,
             'avance'=>$request->avance,
-            'tipo_avance'=>1,
+            'tipo_avance'=>$tipo_avance,
             ]);
         if(isset($request->adjunto))
         {
@@ -162,5 +162,40 @@ class TicketController extends Controller
                             'archivo_adjunto'=>$adjunto,
                         ]);
         }
+        if(isset($request->cerrar_al_responder))
+        {
+            $estatus_actual="";
+            if($request->estatus=='1')
+            {
+                $estatus_actual="ABIERTO";
+            }
+            if($request->estatus=='2')
+            {
+                $estatus_actual="CERRADO"; 
+            }
+            if($request->estatus=='3')
+            {
+                $estatus_actual="TERMINADO";
+            }
+
+            TicketAvance::create([
+                'ticket_id'=>$request->id,
+                'user_id'=>Auth::user()->id,
+                'nombre_usuario'=>Auth::user()->name,
+                'avance'=>'Cambió el estatus '.$estatus_actual.' -> CERRADO',
+                'tipo_avance'=>2,
+                ]);
+
+            Ticket::where('id',$request->id)->update([
+                                                        'estatus'=>2,
+                                                        'user_cerrador'=>Auth::user()->id,
+                                                        'nombre_cerrador'=>Auth::user()->name,
+                                                        'cierre_at'=>now()->toDateTimeString()
+                                                    ]);
+
+            return redirect()->route('tickets');
+        }
+
+        return(back());
     }
 }
