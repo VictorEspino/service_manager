@@ -3,17 +3,19 @@
 
     <x-jet-dialog-modal wire:model="open" maxWidth="5xl">
         <x-slot name="title">
-            Crear nuevo topico
+            Crear nuevo topico {{$campo_actualizado}}
         </x-slot>
         <x-slot name="content">
             <div class="flex flex-col w-full">
                 <div class="w-full mb-2">
                     <x-jet-label value="Nombre" />
                     <x-jet-input class="w-full text-sm" type="text" name="nombre" wire:model.defer="nombre"/>
+                    @error('nombre') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
                 </div>
                 <div class="w-full mb-2">
                     <x-jet-label value="Descripcion" />
                     <textarea rows=8 class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="descripcion"  wire:model.defer="descripcion"></textarea>
+                    @error('descripcion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
                 </div>
                 <div class="w-full mb-2 flex flex-row space-x-3">
                     <div class="w-1/2">
@@ -23,7 +25,8 @@
                             @foreach ($grupos as $grupo_opcion)
                                 <option value="{{$grupo_opcion->id}}">{{$grupo_opcion->nombre}}</option>    
                             @endforeach
-                            </select>   
+                        </select>  
+                        @error('grupo') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
                     </div>
                     <div class="w-1/2">
                         <x-jet-label value="Tipo de asignación" />
@@ -33,12 +36,14 @@
                         @foreach ($tipo_asignaciones as $tipo)
                             <option value="{{$tipo->id}}">{{$tipo->descripcion}}</option>    
                         @endforeach
-                        </select>                            
+                        </select> 
+                        @error('tipo_asignacion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror                            
                     </div>
                 </div>
                 <div class="w-full mb-2">
                     <x-jet-label value="Tiempo de resolucion en minutos" />
                     <x-jet-input class="w-full text-sm" type="text" name="sla" wire:model.defer="sla"/>
+                    @error('sla') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
                 </div>
                 <div class="w-full bg-gray-700 p-2 rounded flex justify-between">
                     <span class="text-base text-gray-100">Campos plantilla</span>
@@ -51,8 +56,10 @@
                     @foreach ($campos_principal as $index => $campos)
                         <div class="w-full p-1 flex flex-row">
                             <div class="w-1/4 px-3">
+                                
                                 <x-jet-label value="Etiqueta" />
                                 <x-jet-input type="text" class="w-full text-xs p-1" wire:model="campos_principal.{{$index}}.etiqueta" />
+                                @error('campos_principal.'.$index.'.etiqueta') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
                             </div>
                             <div class="w-1/4 px-3">
                                 <x-jet-label value="Control" />
@@ -73,12 +80,13 @@
                             <div class="w-1/4 px-3">
                                 <x-jet-label value="Lista Valores" />
                                 <select wire:model="campos_principal.{{$index}}.lista" class="w-full text-xs p-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
-                                    <option value="0"></option>
+                                    <option></option>
                                     <option value="1">Sucursales</option>
                                     <option value="2">Equipos</option>
                                     <option value="3">Empleados</option>
                                     <option value="4">Estatus</option>
                                 </select>
+                                @error('campos_principal.'.$index.'.lista') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
                             </div>
                             <div class="w-1/6 flex items-center justify-center">
                                 <i class="fas fa-minus-circle text-red-400 text-2xl" style="cursor:pointer" wire:click='borrar_campo_principal({{$index}})'></i>
@@ -125,22 +133,213 @@
                                     <tr>
                                         <td class="border bg-blue-500 text-white px-2">User</td>
                                         <td class="border bg-blue-500 text-white px-2">Nombre</td>
-                                        <td class="border bg-blue-500 text-white px-2">Agregar</td>
+                                        <td class="border bg-blue-500 text-white px-2"></td>
                                     </tr>
 
                                 @foreach ($invitados_principal as $index => $invitado)
                                      <tr>
                                         <td class="border px-2">{{$invitado['empleado']}}</td>
                                         <td class="border px-2">{{$invitado['name']}}</td>
-                                        <td class="border"><center><i wire:click="eliminar_invitado_principal({{$index}})" class="text-red-400 text-lg fas fa-user-minus" style="cursor:pointer"></i></td>
+                                        <td class="border px-3"><center><i wire:click="eliminar_invitado_principal({{$index}})" class="text-red-400 text-lg fas fa-user-minus" style="cursor:pointer"></i></td>
                                     </tr>
                                 @endforeach
                                 </table>
                             @endif
                         </div>
                     </div>
-                    
-                </div>    
+                </div>  
+                <div class="w-full bg-gray-700 p-2 rounded flex justify-between">
+                    <span class="text-base text-gray-100">Actividades posteriores</span>
+                    <i class="text-2xl text-green-500 fas fa-plus" style="cursor: pointer" wire:click="agregar_actividad_adicional" cursor></i>
+                </div>
+                <div class="w-full mb-2 flex flex-col">
+                    @foreach ($actividades_adicionales as $index => $actividad)
+                        <div class="w-full p-1 flex flex-row bg-blue-300 rounded p-3">
+                            <div class="w-1/12 px-3 pb-2">                 
+                                <x-jet-label value="Secuencia" />               
+                                <x-jet-input type="text" class="w-full" wire:model="actividades_adicionales.{{$index}}.secuencia" readonly/>
+                            </div>
+                            <div class="w-10/12 px-3">
+                                <x-jet-label value="Nombre" />
+                                <x-jet-input type="text" class="w-full" wire:model="actividades_adicionales.{{$index}}.nombre" />
+                                @error('actividades_adicionales.'.$index.'.nombre') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                            </div>
+                            <div class="w-1/12 flex items-center justify-center">
+                                <i class="fas fa-minus-circle text-red-400 text-2xl" style="cursor:pointer" wire:click='eliminar_actividad_adicional({{$index}})'></i>
+                            </div>
+                        </div>
+                        <div class="w-full p-1 flex flex-row">
+                            <div class="w-1/12 px-3">                                  
+                            </div>
+                            <div class="w-10/12 px-3">
+                                <x-jet-label value="Descripcion" />
+                                <textarea rows=8 class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" type="text"  wire:model.defer="actividades_adicionales.{{$index}}.descripcion"></textarea>
+                                @error('actividades_adicionales.'.$index.'.descripcion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                            </div>
+                            <div class="w-1/12 flex items-center justify-center">
+                            </div>
+                        </div>
+                        <div class="w-full p-1 flex flex-row">
+                            <div class="w-1/12 px-3">                                  
+                            </div>
+                            <div class="w-10/12 flex flex-row">
+                                <div class="w-1/3 px-3">
+                                    <x-jet-label value="Grupo" />
+                                    <select wire:model.defer="actividades_adicionales.{{$index}}.grupo" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                        <option></option>
+                                        @foreach ($grupos as $grupo_opcion)
+                                        <option value="{{$grupo_opcion->id}}">{{$grupo_opcion->nombre}}</option>    
+                                        @endforeach
+                                    </select>   
+                                    @error('actividades_adicionales.'.$index.'.grupo') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                                </div>
+                                <div class="w-1/3 px-3">
+                                    <x-jet-label value="Tipo de asignación" />                
+                                    <select wire:model.defer="actividades_adicionales.{{$index}}.tipo_asignacion" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                        <option></option>
+                                    @foreach ($tipo_asignaciones as $tipo)
+                                        <option value="{{$tipo->id}}">{{$tipo->descripcion}}</option>    
+                                    @endforeach
+                                    </select>  
+                                    @error('actividades_adicionales.'.$index.'.tipo_asignacion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                                </div>
+                                <div class="w-1/3 px-3">
+                                    <x-jet-label value="Tiempo de resolucion en minutos" />
+                                    <x-jet-input class="w-full text-sm" type="text"  wire:model.defer="actividades_adicionales.{{$index}}.sla"/>
+                                    @error('actividades_adicionales.'.$index.'.sla') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                                </div>
+                            </div>
+                            <div class="w-1/12 flex items-center justify-center">
+                            </div>
+                        </div>
+                        <div class="w-full p-1 flex flex-row">
+                            <div class="w-1/12 px-3">                                  
+                            </div>
+                            <div class="w-10/12 bg-gray-400 p-2 rounded flex justify-between">
+                                <span class="text-base text-gray-100">Campos plantilla</span>
+                                <i class="text-2xl text-red-500 fas fa-plus" style="cursor: pointer" wire:click="nuevo_campo_actividad_adicional({{$index}})" cursor></i>
+                            </div>
+                            <div class="w-1/12 flex items-center justify-center">
+                            </div>
+                        </div>
+                        <div class="w-full p-1 flex flex-row">
+                            <div class="w-1/12 px-3">                                  
+                            </div>
+                            <div class="w-10/12 flex flex-col">
+                                @foreach ($actividades_adicionales[$index]['campos'] as $index_campos => $aa_campos)
+                                <div class="w-full p-1 flex flex-row">
+                                    <div class="w-1/4 px-3">
+                                        <x-jet-label value="Etiqueta" />
+                                        <x-jet-input type="text" class="w-full text-xs p-1" wire:model="actividades_adicionales.{{$index}}.campos.{{$index_campos}}.etiqueta" />
+                                        @error('actividades_adicionales.'.$index.'.campos.'.$index_campos.'.etiqueta') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                                    </div>
+                                    <div class="w-1/4 px-3">
+                                        <x-jet-label value="Control" />
+                                        <select wire:model="actividades_adicionales.{{$index}}.campos.{{$index_campos}}.tipo_control" class="w-full text-xs p-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                            <option value="Texto">Texto</option>
+                                            <option value="CheckBox">CheckBox</option>
+                                            <option value="Lista">Lista</option>
+                                            <option value="Archivo">Archivo</option>
+                                        </select>
+                                    </div>
+                                    <div class="w-1/4 px-3">
+                                        <x-jet-label value="Requerido" />
+                                        <select wire:model="actividades_adicionales.{{$index}}.campos.{{$index_campos}}.requerido" class="w-full text-xs p-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                            <option value="1">SI</option>
+                                            <option value="0">NO</option>
+                                        </select>
+                                    </div>
+                                    <div class="w-1/4 px-3">
+                                        <x-jet-label value="Lista Valores" />
+                                        <select wire:model="actividades_adicionales.{{$index}}.campos.{{$index_campos}}.lista" class="w-full text-xs p-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                            <option></option>
+                                            <option value="1">Sucursales</option>
+                                            <option value="2">Equipos</option>
+                                            <option value="3">Empleados</option>
+                                            <option value="4">Estatus</option>
+                                        </select>
+                                        @error('actividades_adicionales.'.$index.'.campos.'.$index_campos.'.lista') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                                    </div>
+                                    <div class="w-1/6 flex items-center justify-center">
+                                        <i class="fas fa-minus-circle text-red-400 text-2xl" style="cursor:pointer" wire:click='borrar_campo_actividad_adicional({{$index}},{{$index_campos}})'></i>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            <div class="w-1/12 flex items-center justify-center">
+                            </div>
+                        </div>
+                        <div class="w-full p-1 flex flex-row">
+                            <div class="w-1/12 px-3">                                  
+                            </div>
+                            <div class="w-10/12 bg-gray-400 p-2 rounded flex justify-between">
+                                <span class="text-base text-gray-100">Usuarios invitados a la actividad {{$campo_actualizado}}</span>
+                            </div>
+                            <div class="w-1/12 flex items-center justify-center">
+                            </div>
+                        </div>
+                        <div class="w-full p-1 flex flex-row">
+                            <div class="w-1/12 px-3">                                  
+                            </div>
+                            <div class="w-10/12 flex flex-row">
+                                <div class="w-1/2 flex flex-col">
+                                    <div class="w-full p-2">
+                                        <x-jet-label value="Buscar (minimo 4 caracteres para iniciar busqueda )" />
+                                        <x-jet-input type="text" class="flex-1 text-sm" wire:model="actividades_adicionales.{{$index}}.invitados_buscar" />
+                                    </div>
+                                    <div class="w-full p-2">
+                                        @if (is_array($actividades_adicionales[$index]['invitados_disponibles']) || is_object($actividades_adicionales[$index]['invitados_disponibles']))
+                                            <table>
+                                                <tr>
+                                                    <td class="border bg-blue-500 text-white px-2">User</td>
+                                                    <td class="border bg-blue-500 text-white px-2">Nombre</td>
+                                                    <td class="border bg-blue-500 text-white px-2">Agregar</td>
+                                                </tr>
+
+                            
+                                            @foreach ($actividades_adicionales[$index]['invitados_disponibles'] as $opcion_actividad)
+                                                <tr>
+                                                    <td class="border px-2">{{$opcion_actividad->user}}</td>
+                                                    <td class="border px-2">{{$opcion_actividad->name}}</td>
+                                                    <td class="border"><center><i wire:click="agregar_invitado_actividad_adicional({{$index}},{{$opcion_actividad->id}},'{{$opcion_actividad->user}}','{{$opcion_actividad->name}}')" class="text-green-500 text-lg fas fa-user-plus" style="cursor:pointer"></i></td>
+                                                </tr>
+                                            @endforeach
+                                            </table>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="w-1/2 flex flex-col">
+                                    <div class="w-full rounded p-2 bg-gray-200 text-center">
+                                        Usuarios Invitados
+                                    </div>
+                                    <div class="w-full p-2 flex justify-center">
+                                        @if (is_array($actividades_adicionales[$index]['invitados']) || is_object($actividades_adicionales[$index]['invitados']))
+                                            <table>
+                                                <tr>
+                                                    <td class="border bg-blue-500 text-white px-2">User</td>
+                                                    <td class="border bg-blue-500 text-white px-2">Nombre</td>
+                                                    <td class="border bg-blue-500 text-white px-2"></td>
+                                                </tr>
+            
+                                            @foreach ($actividades_adicionales[$index]['invitados'] as $index_invitado => $invitado)
+                                                 <tr>
+                                                    <td class="border px-2">{{$invitado['empleado']}}</td>
+                                                    <td class="border px-2">{{$invitado['name']}}</td>
+                                                    <td class="border px-3"><center><i wire:click="eliminar_invitado_actividad_adicional({{$index}},{{$index_invitado}})" class="text-red-400 text-lg fas fa-user-minus" style="cursor:pointer"></i></td>
+                                                </tr>
+                                            @endforeach
+                                            </table>
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="w-1/12 flex items-center justify-center">
+                            </div>
+                        </div>
+                        
+                    @endforeach
+                </div>
                 
             </div>
         </x-slot>

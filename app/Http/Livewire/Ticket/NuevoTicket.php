@@ -158,4 +158,8 @@ class NuevoTicket extends Component
         $this->campos_requeridos=[];
         $this->open=false;
     }
+    public function guardar()
+    {
+        $this->emit('guardar_ticket');
+    }
 }

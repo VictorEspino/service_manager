@@ -17,15 +17,15 @@
                         <input type="hidden" name="solicitante" value="{{$solicitante_id}}">
                         <input type="hidden" name="estatus" value="{{$estatus}}">
                         <div class="flex flex-row">
-                            <div class="w-24 flex justify-center text-base font-bold text-gray-600">
+                            <div class="w-20 flex justify-center text-base font-bold text-gray-600">
                                 Avance
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pr-4">
                                 <textarea rows=3 class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="avance"  wire:avance.defer="descripcion_topico"></textarea>
                             </div>
                         </div>
                         <div class="flex flex-row py-3">
-                            <div class="w-24">
+                            <div class="w-20">
                             &nbsp; 
                             </div>
                             <div class="flex-1 text-sm text-gray-600">
@@ -34,7 +34,7 @@
                         </div>
                         @if($file_include)
                         <div class="flex flex-row pt-3">
-                            <div class="w-24 flex justify-center text-base font-bold text-gray-600">                        
+                            <div class="w-20 flex justify-center text-base font-bold text-gray-600">                        
                             </div>
                             <div class="flex-1 flex flex-row items-center">
                                 <x-jet-danger-button wire:click.prevent="$set('file_include',false)" class="py-1"><i class="fas fa-times-circle text-base"></i></x-jet-danger-button>
@@ -43,7 +43,7 @@
                         </div>
                         @endif
                         <div class="flex flex-row pt-3">
-                            <div class="w-24">
+                            <div class="w-20">
                             &nbsp; 
                             </div>
                             <div class="flex-1 text-sm text-gray-600">
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                         <div class="flex flex-row">
-                            <div class="w-24">
+                            <div class="w-20">
                             &nbsp; 
                             </div>
                             <div class="flex-1 text-sm text-gray-600">
@@ -59,10 +59,10 @@
                             </div>
                         </div>
                         <div class="flex flex-row">
-                            <div class="w-24">
+                            <div class="w-20">
                             &nbsp; 
                             </div>
-                            <div class="flex-1 text-sm text-gray-600 flex justify-end">
+                            <div class="flex-1 pr-4 text-sm text-gray-600 flex justify-end">
                                 <x-jet-button ><i class="fas fa-comment"></i>&nbsp;&nbsp;&nbsp;Publicar</x-jet-button>
                             </div>
                         </div>

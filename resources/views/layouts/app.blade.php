@@ -134,6 +134,12 @@
                 )
 
             });
-        </script>    
+        </script>
+        <script>
+            Livewire.on('guardar_ticket',function()
+            {
+                document.getElementById('form_save_ticket').submit();
+            });
+        </script>  
     </body>
 </html>

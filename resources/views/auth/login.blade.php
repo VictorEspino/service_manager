@@ -19,7 +19,7 @@
              @csrf
 
         <div class="mt-4">
-            <x-jet-label value="{{ __('Empleado') }}" />
+            <x-jet-label value="{{ __('Usuario') }}" />
            
             <x-jet-input class="block mt-1 w-full" type="text"  name="user" :value="old('user')" required autofocus />
         </div>

@@ -49,11 +49,11 @@
                             </div>
 
                         </div>
-                        <div class="w-1/6 flex justify-center">
+                        <div class="w-1/6 flex justify-center text-xs font-bold">
                             {{$ticket->solicitante->name}}
                         </div>
-                        <div class="flex-1">
-                            Última respuesta
+                        <div class="flex-1 text-xs">
+                            {{$ticket->created_at}}
                         </div>
                     </div>
                     @endforeach

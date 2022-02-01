@@ -15,7 +15,7 @@ class CreateInvitadosTable extends Migration
     {
         Schema::create('invitados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('topico_id');
+            $table->foreignId('actividad_id');
             $table->foreignId('user_id');
             $table->timestamps();
         });

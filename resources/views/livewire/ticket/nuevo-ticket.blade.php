@@ -1,4 +1,4 @@
-<form action="{{route('save_ticket')}}" method="POST" enctype="multipart/form-data">
+<form action="{{route('save_ticket')}}" method="POST" enctype="multipart/form-data" id="form_save_ticket">
 @csrf
 <div>
     <x-jet-danger-button wire:click.prevent="$set('open',true)" class="bg-green-500 hover:bg-green-700 border-green-600"><b> + </b>CREAR NUEVO TICKET</x-jet-danger-button>
@@ -224,7 +224,7 @@
         </x-slot>
         <x-slot name="footer">
             <x-jet-secondary-button wire:click.prevent="cancelar">CANCELAR</x-jet-secondary-button>
-            <x-jet-danger-button type="submit">GUARDAR TICKET</x-jet-secondary-button>
+            <x-jet-danger-button wire:click.prevent="guardar">GUARDAR TICKET</x-jet-secondary-button>
         </x-slot>
     
     </x-jet-dialog-modal>

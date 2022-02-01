@@ -16,6 +16,6 @@
         Reportes
     </div>
     <div class="flex-1 justify-end border-l-4 border-r-4 border-gray-300 flex items-center px-5 text-gray-600">
-        @livewire('ticket.nuevo-ticket');
+        @livewire('ticket.nuevo-ticket')
     </div>
 </div>
