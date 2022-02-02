@@ -54,6 +54,9 @@ class TicketDetalle extends Component
     public $nombre_cerrador;
     public $cierre_at;
 
+    public $time_to;
+    public $actividad_actual;
+
     public function render()
     {
         $ticket=Ticket::with('topico','solicitante','asesor')->find($this->ticket_id);
@@ -91,6 +94,10 @@ class TicketDetalle extends Component
         $this->grupos_disponibles=Grupo::orderBy('nombre')->get();
 
         $ticket=Ticket::find($this->ticket_id);
+
+        $this->time_to=$ticket->time_to; //Dato para saber si esta en espera o en atencion
+        $this->actividad_actual=$ticket->actividad_actual;
+
         $this->grupo_seleccionado=ActividadTicket::where('ticket_id',$this->ticket_id)
                                         ->where('secuencia',$ticket->actividad_actual)
                                         ->get()
@@ -167,6 +174,32 @@ class TicketDetalle extends Component
 
         return($avances);
     }
+    private function update_tiempos($ticket)
+    {
+        $ultima_actualizacion = new \Carbon\Carbon($ticket->updated_at);
+        $actual_actualizacion = new \Carbon\Carbon(now()->toDateTimeString());
+        $minutesDiff=$ultima_actualizacion->diffInMinutes($actual_actualizacion);
+        $campo_tiempos=$ticket->time_to=='-1'?'t_solicitante':'t_a'.$ticket->time_to;
+        $minutos_anteriores=0;
+        if($ticket->time_to=='-1') $minutos_anteriores=$ticket->t_solicitante;
+        if($ticket->time_to=='0') $minutos_anteriores=$ticket->t_a0;
+        if($ticket->time_to=='1') $minutos_anteriores=$ticket->t_a1;
+        if($ticket->time_to=='2') $minutos_anteriores=$ticket->t_a2;
+        if($ticket->time_to=='3') $minutos_anteriores=$ticket->t_a3;
+        if($ticket->time_to=='4') $minutos_anteriores=$ticket->t_a4;
+        if($ticket->time_to=='5') $minutos_anteriores=$ticket->t_a5;
+        if($ticket->time_to=='6') $minutos_anteriores=$ticket->t_a6;
+        if($ticket->time_to=='7') $minutos_anteriores=$ticket->t_a7;
+        if($ticket->time_to=='8') $minutos_anteriores=$ticket->t_a8;
+        if($ticket->time_to=='9') $minutos_anteriores=$ticket->t_a9;
+        $nuevo_tiempo=$minutos_anteriores+$minutesDiff;
+
+        Ticket::where('id',$ticket->id)->update([
+                                            $campo_tiempos=>$nuevo_tiempo,
+                                    ]);
+
+
+    }
     public function cambio_estatus()
     {
         $this->procesando=1;
@@ -180,9 +213,9 @@ class TicketDetalle extends Component
         {
             $this->user_cerrador=Auth::user()->id;
             $this->nombre_cerrador=Auth::user()->name;
-            $this->cierre_at=now()->toDateTimeString();        
-        }
-
+            $this->cierre_at=now()->toDateTimeString();       
+            $this->update_tiempos(Ticket::find($this->ticket_id)); 
+        }        
         Ticket::where('id',$this->ticket_id)
             ->update(['estatus'=>$this->nuevo_posible_valor_estatus,
                       'user_cerrador'=>$this->user_cerrador,
@@ -211,6 +244,7 @@ class TicketDetalle extends Component
             'avance'=>'Cambió el estatus '.$estatus_actual.' -> '.$this->nuevo_posible_estatus,
             'tipo_avance'=>2,
             ]);
+        
         return;
     }
     public function open_modal_confirm_status()
@@ -232,6 +266,17 @@ class TicketDetalle extends Component
     }
     public function reasignar()
     {
+        
+        $reglas = [
+            'mensaje_reasignacion' => 'required',
+            'miembro_seleccionado' => 'required',
+          ];
+        $this->validate($reglas,
+                [
+                    'required' => 'Campo requerido.',
+                    'numeric'=>'Debe ser un numero'
+                ],
+            );
         $this->procesando=1;
         $usuario=User::find($this->miembro_seleccionado);
         TicketAvance::create([
@@ -241,7 +286,34 @@ class TicketDetalle extends Component
             'avance'=>"Reasignacion de ticket a ".strtoupper($usuario->name)."\r\nMensaje reasignacion: ".$this->mensaje_reasignacion,
             'tipo_avance'=>3,
             ]);
-        Ticket::where('id',$this->ticket_id)->update(['asignado_a'=>$this->miembro_seleccionado]);
+        $this->update_tiempos(Ticket::find($this->ticket_id)); 
+        Ticket::where('id',$this->ticket_id)->update(
+                                    [
+                                    'asignado_a'=>$this->miembro_seleccionado,
+                                    'a_a'.$this->actividad_actual=>$this->miembro_seleccionado
+                                    ]
+                                );
         $this->open_reasignar=false;
+        $this->mensaje_reasignacion='';
+    }
+    public function updatedEsperandoRespuesta()
+    {
+        if($this->esperando_respuesta=='1')
+        {
+            if($this->cerrar_al_responder=='1')
+            {
+             $this->cerrar_al_responder=null;
+            }
+        }
+    }
+    public function updatedCerrarAlResponder()
+    {
+        if($this->cerrar_al_responder=='1')
+        {
+            if($this->esperando_respuesta=='1')
+            {
+             $this->esperando_respuesta=null;
+            }
+        }
     }
 }

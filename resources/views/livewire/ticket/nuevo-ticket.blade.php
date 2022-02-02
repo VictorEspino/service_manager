@@ -1,4 +1,4 @@
-<form action="{{route('save_ticket')}}" method="POST" enctype="multipart/form-data" id="form_save_ticket">
+<form action="{{route('save_ticket')}}" method="POST" enctype="multipart/form-data" id="form_livewire_to_controller">
 @csrf
 <div>
     <x-jet-danger-button wire:click.prevent="$set('open',true)" class="bg-green-500 hover:bg-green-700 border-green-600"><b> + </b>CREAR NUEVO TICKET</x-jet-danger-button>
@@ -17,10 +17,12 @@
                                 <x-jet-label class="text-gray-400 font-bold" value="De" />
                             </td>
                             <td class="flex-1 flex py-2 px-2 text-sm text-gray-500 font-semibold items-center">
-                                {{$de_etiqueta}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                {{$de_etiqueta}}
+                                <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <span class="text-sm text-blue-500 hover:underline" wire:click="$set('cambiar_usuario',true)">cambiar</span>
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <span class="text-sm text-blue-500 hover:underline" wire:click="reset_usuario">reset</span>
+                                -->
                                 <input type="hidden" name="de_id" wire:model="de_id">
                             </td>
                         </tr>
@@ -118,7 +120,8 @@
                                         <option value="{{$topico_opcion->topico->id}}">{{$topico_opcion->topico->nombre}}</option>
                                         @endforeach
                                     @endif
-                                </select>
+                                </select><br />
+                                @error('topico')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
                             </td>
                         </tr>
                         <tr class="p-2 border">
@@ -126,7 +129,8 @@
                                 <x-jet-label class="text-gray-400 font-bold" value="Asunto" />
                             </td>
                             <td class="flex-1 flex py-2">
-                                <x-jet-input class="text-sm flex flex-1 ml-2 mr-2" type="text" name="asunto" wire:model.defer="asunto"/>
+                                <x-jet-input class="text-sm flex flex-1 ml-2 mr-2" type="text" name="asunto" wire:model.defer="asunto"/><br/>
+                                @error('asunto')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
                             </td>
                         </tr>
                         <tr class="p-2 border">
@@ -137,6 +141,7 @@
                                 <div class="w-full flex flex-col">
                                     <div class="w-full px-2">
                                         <textarea rows=10 class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="descripcion"  wire:model.defer="descripcion_topico"></textarea>
+                                        @error('descripcion_topico')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
                                     </div>
                                     @if (is_array($campos_requeridos) || is_object($campos_requeridos))
                                         @foreach ($campos_requeridos as $index=>$campo)
@@ -148,17 +153,18 @@
                                                     <input type="hidden" name="campos[{{$index}}][tipo]" value="{{$campo['tipo_control']}}">
                                                     <input type="hidden" name="campos[{{$index}}][etiqueta]" value="{{$campo['etiqueta']}}">
                                                     <input type="hidden" name="campos[{{$index}}][referencia]" value="{{$campo['referencia']}}">
+                                                    <input type="hidden" name="campos[{{$index}}][requerido]" value="{{$campo['requerido']}}">
                                                     @if($campo['tipo_control']=="Texto")
-                                                        <x-jet-input name="campos[{{$index}}][valor]" class="w-full text-sm flex flex-1" type="text"/>
+                                                        <x-jet-input name="campos[{{$index}}][valor]" class="w-full text-sm flex flex-1" type="text" wire:model="campos_requeridos.{{$index}}.valor"/>
                                                     @endif
                                                     @if($campo['tipo_control']=="CheckBox")
-                                                        <x-jet-checkbox name="campos[{{$index}}][valor]" class="ml-2 text-sm"/>
+                                                        <x-jet-checkbox name="campos[{{$index}}][valor]" class="ml-2 text-sm" wire:model="campos_requeridos.{{$index}}.valor"/>
                                                     @endif
                                                     @if($campo['tipo_control']=="File")
-                                                        <input type="file" class="p-2 w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="campos[{{$index}}][valor]" class="text-sm"/>
+                                                        <input type="file" class="p-2 w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="campos[{{$index}}][valor]" class="text-sm" wire:model="campos_requeridos.{{$index}}.valor"/>
                                                     @endif
                                                     @if($campo['tipo_control']=="Lista")
-                                                    <select name="campos[{{$index}}][valor]" class="text-xs flex-1 ml-2 mr-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                                    <select name="campos[{{$index}}][valor]" class="text-xs flex-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" wire:model="campos_requeridos.{{$index}}.valor">
                                                         <option value=""></option>
                                                         @php
                                                          $valores=App\Models\ListaValores::all();
@@ -168,8 +174,9 @@
                                                         @php
                                                          } 
                                                         @endphp
-                                                    </select>
+                                                    </select><br />
                                                     @endif
+                                                    @error('campos_requeridos.'.$index.'.valor')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
                                                 </div>
                                             </div>
                                             

@@ -26,7 +26,7 @@ class NuevoTicket extends Component
     public $descripcion;
     public $topico;
     public $descripcion_topico;
-    public $campos_requeridos;
+    public $campos_requeridos=[];
     public $prioridad;
     public $atencion_por;
 
@@ -157,9 +157,37 @@ class NuevoTicket extends Component
         $this->usuarios_disponibles="";
         $this->campos_requeridos=[];
         $this->open=false;
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
+    public function validacion()
+    {
+        $reglas = [
+            'topico' => 'required',
+            'asunto' => 'required',
+            'descripcion_topico'=>'required',
+          ];
+        foreach ($this->campos_requeridos as $index => $campo) 
+          {
+            if($campo['requerido']=='1')
+            {
+                $reglas = array_merge($reglas, [
+                    'campos_requeridos.'.$index.'.valor' => 'required',
+                  ]);
+            }
+          }
+        
+        //dd($reglas);
+        $this->validate($reglas,
+            [
+                'required' => 'Campo requerido.',
+                'numeric'=>'Debe ser un numero'
+            ],
+          );
     }
     public function guardar()
     {
-        $this->emit('guardar_ticket');
+        $this->validacion();
+        $this->emit('livewire_to_controller');
     }
 }

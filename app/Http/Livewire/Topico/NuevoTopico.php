@@ -224,7 +224,7 @@ class NuevoTopico extends Component
     }
     public function agregar_actividad_adicional()
     {
-        if($this->numero_actividades_adicionales<=9)
+        if($this->numero_actividades_adicionales<=8)
         {
             $this->numero_actividades_adicionales=$this->numero_actividades_adicionales+1;
             $this->actividades_adicionales[]=[
@@ -312,5 +312,21 @@ class NuevoTopico extends Component
     {
         unset($this->actividades_adicionales[$indice]['invitados'][$id]);
         $this->actividades_adicionales[$indice]['invitados']=array_values($this->actividades_adicionales[$indice]['invitados']);
+    }
+    public function cancelar()
+    {
+        $this->open=false;
+        $this->campos_principal=[];    
+        $this->invitados_principal=[];
+        $this->actividades_adicionales=[];
+        $this->numero_actividades_adicionales=0;
+        $this->invitados_buscar=null;
+        $this->sla='';
+        $this->grupo=null;
+        $this->tipo_asignacion=null;
+        $this->nombre='';
+        $this->descripcion='';
+        $this->resetErrorBag();
+        $this->resetValidation();
     }
 }

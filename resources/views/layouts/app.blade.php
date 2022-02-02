@@ -136,9 +136,9 @@
             });
         </script>
         <script>
-            Livewire.on('guardar_ticket',function()
+            Livewire.on('livewire_to_controller',function()
             {
-                document.getElementById('form_save_ticket').submit();
+                document.getElementById('form_livewire_to_controller').submit();
             });
         </script>  
     </body>

@@ -344,7 +344,7 @@
             </div>
         </x-slot>
         <x-slot name="footer">
-            <x-jet-secondary-button wire:click="$set('open',false)">CANCELAR</x-jet-secondary-button>
+            <x-jet-secondary-button wire:click="cancelar">CANCELAR</x-jet-secondary-button>
             <x-jet-danger-button wire:click="guardar">GUARDAR TOPICO</x-jet-secondary-button>
         </x-slot>
     </x-jet-dialog-modal>

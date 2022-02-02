@@ -16,7 +16,10 @@ class Ticket extends Model
         'asunto',
         'descripcion',
         'prioridad',
-        'asignado_a',
+        'asignado_a', 
+        'a_a0',
+        'n_actividades',
+        'n_minutos',
     ];
 
     public function solicitante()

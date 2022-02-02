@@ -11,6 +11,7 @@
             </div>
             <div class="w-full overflow-y-scroll pr-4">
                 <div class="w-full rounded border bg-gray-200 px-2 py-3 flex flex-col py-6">
+                    @if(($time_to=='-1' && Auth::user()->id==$solicitante_id) || $time_to!='-1')
                     <form action="{{route('save_avance')}}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id" value="{{$ticket_id}}">
@@ -47,7 +48,7 @@
                             &nbsp; 
                             </div>
                             <div class="flex-1 text-sm text-gray-600">
-                                <x-jet-checkbox wire:model.defer="cerrar_al_responder" name="cerrar_al_responder"/>Cerrar ticket al responder
+                                <x-jet-checkbox wire:model="cerrar_al_responder" name="cerrar_al_responder"/>Cerrar ticket al responder
                             </div>
                         </div>
                         <div class="flex flex-row">
@@ -55,9 +56,9 @@
                             &nbsp; 
                             </div>
                             <div class="flex-1 text-sm text-gray-600">
-                                <x-jet-checkbox wire:model.defer="esperando_respuesta" name="esperando_respuesta"/>Marcar como "Esperando respuesta" despues de responder
+                                <x-jet-checkbox wire:model="esperando_respuesta" name="esperando_respuesta"/>Marcar como "Esperando respuesta del solicitante" despues de responder
                             </div>
-                        </div>
+                        </div> 
                         <div class="flex flex-row">
                             <div class="w-20">
                             &nbsp; 
@@ -67,6 +68,10 @@
                             </div>
                         </div>
                     </form>
+                        
+                    @else
+                        ESTA EN ESPERA DEL SOLICITANTE
+                    @endif
                 </div>
                 <div class="w-full">
                     <div class="w-full flex justify-end flex-row pt-4">
@@ -123,6 +128,9 @@
                 </div>
             </div>
             @endif
+            <div>
+                SIGUIENTE ACTIVIDAD
+            </div>
             <div class="w-full flex flex-row justify-center pt-6">
                 <div class="py-1 px-3 font-bold text-gray-500 text-sm">
                     Asesor <span class="text-xs text-blue-500" style="cursor: pointer;" wire:click="open_reasignar_modal">reasignar</span>
@@ -230,7 +238,9 @@
                             @foreach($miembros_disponibles as $miembro)
                             <option value={{$miembro->user_id}}>{{$miembro->user->name}}</option>
                             @endforeach
-                        </select>
+                        </select><br />
+                        @error('miembro_seleccionado') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                        
                     </div>
                 </div>
                 <div class="py-2 w-full flex flex-row">
@@ -238,7 +248,9 @@
                         <x-jet-label value="Mensaje"/>
                     </div>
                     <div class="flex-1">
-                        <x-jet-input type="text" wire:model="mensaje_reasignacion" class="w-full"/>
+                        <x-jet-input type="text" wire:model="mensaje_reasignacion" class="w-full"/> <br/>
+                        @error('mensaje_reasignacion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
+
                     </div>
                 </div>
             
