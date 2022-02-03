@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Ticket;
 use App\Models\TicketAvance;
+use App\Models\TicketAvancesCampo;
 use App\Models\ActividadTicket;
 use App\Models\ActividadTicketCampos;
 use App\Models\ActividadTopico;
@@ -15,6 +16,107 @@ use App\Models\InvitadoTicket;
 
 class TicketController extends Controller
 {
+    public function ticket(Request $request)
+    {
+        return(view('ticket',['id'=>$request->id]));
+    }
+    public function avanzar_etapa(Request $request)
+    {
+        //return $request->all();
+        $ticket=Ticket::find($request->id);
+        $actividad_avance=$ticket->actividad_actual+1;
+
+        $asignado_previo=0;
+        if($actividad_avance=='1'){$asignado_previo=$ticket->a_a1;}
+        if($actividad_avance=='2'){$asignado_previo=$ticket->a_a2;}
+        if($actividad_avance=='3'){$asignado_previo=$ticket->a_a3;}
+        if($actividad_avance=='4'){$asignado_previo=$ticket->a_a4;}
+        if($actividad_avance=='5'){$asignado_previo=$ticket->a_a5;}
+        if($actividad_avance=='6'){$asignado_previo=$ticket->a_a6;}
+        if($actividad_avance=='7'){$asignado_previo=$ticket->a_a7;}
+        if($actividad_avance=='8'){$asignado_previo=$ticket->a_a8;}
+        if($actividad_avance=='9'){$asignado_previo=$ticket->a_a9;}
+        if(intval($asignado_previo)==0)
+        {
+            //Correr asignacion dinamica
+            $asignado_previo=1;
+        }
+        
+        $this->update_tiempos($ticket); 
+        Ticket::where('id',$request->id)
+                ->update([
+                    'actividad_actual'=>$actividad_avance,
+                    'asignado_a'=>$asignado_previo,
+                    'time_to'=>$actividad_avance
+                ]);
+        
+
+        //ACTUALIZAR LOS CAMPOS DE LA ACTIVIDAD DEL TICKET
+
+        ActividadTicket::where('ticket_id',$request->id)
+                        ->where('secuencia',$actividad_avance)
+                        ->update(['descripcion'=>$request->descripcion]);
+
+        $actividad_siguiente=ActividadTicket::where('ticket_id',$request->id)
+                        ->where('secuencia',$actividad_avance)
+                        ->get()
+                        ->first()
+                        ->id;
+        $texto_avance="Avance a etapa :".strtoupper($request->nombre)."\r\n".$request->descripcion;
+
+        $nuevo_avance=TicketAvance::create([
+                            'ticket_id'=>$request->id,
+                            'user_id'=>Auth::user()->id,
+                            'nombre_usuario'=>Auth::user()->name,
+                            'avance'=>$texto_avance,
+                            'tipo_avance'=>4,
+                            ]);
+
+        if(isset($request->campos))
+        {
+            foreach($request->campos as $index => $campos)
+            {
+                $valor="";
+                if($campos['tipo']=='Texto' || $campos['tipo']=='Lista')
+                {
+                    $valor=$campos['valor'];
+                }
+                if($campos['tipo']=='CheckBox')
+                {
+                    try
+                    {
+                        $valor=$campos['valor'];
+                        $valor=1;
+                    }
+                    catch(\Exception $e)
+                    {
+                        $valor=0;
+                    }
+                }
+                if($campos['tipo']=='File')
+                {
+                    $upload_path = public_path('archivos');
+                    $file_name = $campos['valor']->getClientOriginalName();
+                    $generated_new_name = $ticket->id.'_'.$actividad_principal.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
+                    $campos['valor']->move($upload_path, $generated_new_name);
+                    $valor=$generated_new_name;
+                }
+                ActividadTicketCampos::where('actividad_ticket_id',$actividad_siguiente)
+                                    ->where('referencia',$campos['referencia'])
+                                    ->update(['valor'=>$valor]);
+
+                TicketAvancesCampo::create([
+                                        'ticket_avance_id'=>$nuevo_avance->id,
+                                        'etiqueta'=>$campos['etiqueta'],
+                                        'tipo'=>$campos['tipo'],
+                                        'valor'=>$valor,
+                                        ]);
+                
+            }
+        }
+
+        return(back());
+    }
     public function save(Request $request)
     {
         //return $request->all();
@@ -45,7 +147,7 @@ class TicketController extends Controller
         {
             $upload_path = public_path('archivos');
             $file_name = $request->adjunto->getClientOriginalName();
-            $generated_new_name = $ticket->id.'.'. $request->adjunto->getClientOriginalExtension();
+            $generated_new_name = $ticket->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);
             $adjunto=$generated_new_name;
             
@@ -62,6 +164,7 @@ class TicketController extends Controller
             $actividad_ticket=ActividadTicket::create([
                                     'ticket_id'=>$ticket->id,
                                     'secuencia'=>$actividad_estructura->secuencia,
+                                    'nombre'=>$actividad_estructura->secuencia=='0'?$request->asunto:$actividad_estructura->nombre,
                                     'descripcion'=>$actividad_estructura->secuencia=='0'?$request->descripcion:$actividad_estructura->descripcion,
                                     'sla'=>$actividad_estructura->sla,
                                     'grupo_id'=>$actividad_estructura->grupo_id,
@@ -123,7 +226,7 @@ class TicketController extends Controller
                 {
                     $upload_path = public_path('archivos');
                     $file_name = $campos['valor']->getClientOriginalName();
-                    $generated_new_name = $ticket->id.'_'.$actividad_principal.'_'.$campos['referencia'].'.'. $campos['valor']->getClientOriginalExtension();
+                    $generated_new_name = $ticket->id.'_'.$actividad_principal.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
                     $campos['valor']->move($upload_path, $generated_new_name);
                     $valor=$generated_new_name;
                 }
@@ -132,7 +235,7 @@ class TicketController extends Controller
                                     ->update(['valor'=>$valor]);
             }
         }
-        return $request->all();
+        return(view('ticket',['id'=>$ticket->id]));
     }
     private function obtenerAsignacion()
     {
@@ -155,7 +258,7 @@ class TicketController extends Controller
     {
         $ultima_actualizacion = new \Carbon\Carbon($ticket->updated_at);
         $actual_actualizacion = new \Carbon\Carbon(now()->toDateTimeString());
-        $minutesDiff=$ultima_actualizacion->diffInMinutes($actual_actualizacion);
+        $minutesDiff=$ultima_actualizacion->diffInSeconds($actual_actualizacion);
         $campo_tiempos=$ticket->time_to=='-1'?'t_solicitante':'t_a'.$ticket->time_to;
         $minutos_anteriores=0;
         if($ticket->time_to=='-1') $minutos_anteriores=$ticket->t_solicitante;
@@ -196,7 +299,7 @@ class TicketController extends Controller
         {
             $upload_path = public_path('archivos');
             $file_name = $request->adjunto->getClientOriginalName();
-            $generated_new_name = $request->id.'.'. $request->adjunto->getClientOriginalExtension();
+            $generated_new_name = $request->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);
             $adjunto=$generated_new_name;
             TicketAvance::where('id',$id_avance->id)

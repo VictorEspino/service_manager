@@ -8,6 +8,7 @@ use App\Models\Ticket;
 use App\Models\ActividadTicket;
 use App\Models\ActividadTicketCampos;
 use App\Models\TicketAvance;
+use App\Models\TicketAvancesCampo;
 
 use App\Models\Grupo;
 use App\Models\User;
@@ -21,6 +22,8 @@ class TicketDetalle extends Component
 
     public $open_confirm_status=false;
     public $open_reasignar=false;
+    public $open_avanzar=false;
+    public $open_previa=false;
     public $procesando=0;
 
     public $nuevo_posible_estatus;
@@ -37,7 +40,7 @@ class TicketDetalle extends Component
 
     public $file_include=false;
 
-    public $avance;
+    public $texto_avance;
     public $cerrar_al_responder;
     public $esperando_respuesta;
 
@@ -56,6 +59,8 @@ class TicketDetalle extends Component
 
     public $time_to;
     public $actividad_actual;
+    public $actividades_total;
+    public $actividades_atencion=[];
 
     public function render()
     {
@@ -86,6 +91,18 @@ class TicketDetalle extends Component
         }
 
         $this->avances_ticket=$this->getAvances();
+        
+        $this->time_to=$ticket->time_to; //Dato para saber si esta en espera o en atencion
+        $this->actividad_actual=$ticket->actividad_actual;
+        $this->actividades_total=$ticket->n_actividades;
+
+        if($this->actividades_total>1)
+        {
+            $this->actividades_atencion=ActividadTicket::select('secuencia','nombre')
+                                                ->where('ticket_id',$this->ticket_id)
+                                                ->orderBy('secuencia','asc')
+                                                ->get();
+        }
         return view('livewire.ticket.ticket-detalle');
     }
     public function mount($id)
@@ -94,9 +111,6 @@ class TicketDetalle extends Component
         $this->grupos_disponibles=Grupo::orderBy('nombre')->get();
 
         $ticket=Ticket::find($this->ticket_id);
-
-        $this->time_to=$ticket->time_to; //Dato para saber si esta en espera o en atencion
-        $this->actividad_actual=$ticket->actividad_actual;
 
         $this->grupo_seleccionado=ActividadTicket::where('ticket_id',$this->ticket_id)
                                         ->where('secuencia',$ticket->actividad_actual)
@@ -107,8 +121,55 @@ class TicketDetalle extends Component
 
         $this->miembros_disponibles=MiembroGrupo::with('user')->where('grupo_id',$this->grupo_seleccionado)
                                     ->get();
-    }
+    } 
+    
+    public function retroceder_etapa()
+    {
+        $this->procesando=1;
+        $ticket=Ticket::find($this->ticket_id);
+        $actividad_avance=$this->actividad_actual-1;
 
+        $actividad_ticket=ActividadTicket::where('ticket_id',$this->ticket_id)
+        ->where('secuencia',$actividad_avance)
+        ->get()
+        ->first();
+        
+        $asignado_previo=0;
+        if($actividad_avance=='0'){$asignado_previo=$ticket->a_a0;}
+        if($actividad_avance=='1'){$asignado_previo=$ticket->a_a1;}
+        if($actividad_avance=='2'){$asignado_previo=$ticket->a_a2;}
+        if($actividad_avance=='3'){$asignado_previo=$ticket->a_a3;}
+        if($actividad_avance=='4'){$asignado_previo=$ticket->a_a4;}
+        if($actividad_avance=='5'){$asignado_previo=$ticket->a_a5;}
+        if($actividad_avance=='6'){$asignado_previo=$ticket->a_a6;}
+        if($actividad_avance=='7'){$asignado_previo=$ticket->a_a7;}
+        if($actividad_avance=='8'){$asignado_previo=$ticket->a_a8;}
+        
+        if(intval($asignado_previo)==0)
+        {
+            //Correr asignacion dinamica
+            $asignado_previo=1;
+        }
+        TicketAvance::create([
+            'ticket_id'=>$this->ticket_id,
+            'user_id'=>Auth::user()->id,
+            'nombre_usuario'=>Auth::user()->name,
+            'avance'=>'Ticket llevado a etapa previa : '.$actividad_ticket->nombre.($actividad_avance==0?' (INICIAL)':''),
+            'tipo_avance'=>4,
+            ]);
+
+        $this->update_tiempos($ticket); 
+        Ticket::where('id',$this->ticket_id)
+                ->update([
+                    'actividad_actual'=>$actividad_avance,
+                    'asignado_a'=>$asignado_previo,
+                    'time_to'=>$actividad_avance
+                ]);
+
+        $this->open_previa=false;
+        $this->emit('etapa');
+        //return redirect(request()->header('Referer'));
+    }
     private function getAvances()
     {
         $avances=[];
@@ -157,16 +218,41 @@ class TicketDetalle extends Component
             'archivo_adjunto'=>''
         ];
 
-        $avances_atencion=TicketAvance::where('ticket_id',$this->ticket_id)
+        $avances_atencion=TicketAvance::with('campos')
+                                    ->where('ticket_id',$this->ticket_id)
                                     ->get();
-
+        //dd($avances_atencion);
         foreach($avances_atencion as $avance)
         {
+        
+            $desc_inicial=$avance->avance.($avance->adjunto=='1'?"<br>Archivo adjunto: <a href='/archivos/".$avance->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>":"");
+            
+            if($avance->tipo_avance=='4')
+            {
+                $x=0;
+                foreach($avance->campos as $campos)
+                {
+                    if($x==0)
+                    {
+                        $desc_inicial=$desc_inicial."<br /><br /><b>Campos Incluidos</b>";
+                    }
+                    if($campos->tipo=="Texto" || $campos->tipo=="Lista")
+                    {
+                        $desc_inicial=$desc_inicial."<br />".$campos->etiqueta.": ".$campos->valor;
+                    }
+                    if($campos->tipo=="File")
+                    {
+                        $desc_inicial=$desc_inicial."<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                    }
+                    $x=$x+1;
+                }
+            }
+
             $avances[]=[
                 'created_at'=>$avance->created_at,
                 'tipo_avance'=>$avance->tipo_avance,
                 'nombre'=>$avance->nombre_usuario,
-                'avance'=>$avance->avance.($avance->adjunto=='1'?"<br>Archivo adjunto: <a href='/archivos/".$avance->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>":""),
+                'avance'=>$desc_inicial,
                 'adjunto'=>$avance->adjunto,
                 'archivo_adjunto'=>$avance->archivo_adjunto
             ];
@@ -178,7 +264,7 @@ class TicketDetalle extends Component
     {
         $ultima_actualizacion = new \Carbon\Carbon($ticket->updated_at);
         $actual_actualizacion = new \Carbon\Carbon(now()->toDateTimeString());
-        $minutesDiff=$ultima_actualizacion->diffInMinutes($actual_actualizacion);
+        $minutesDiff=$ultima_actualizacion->diffInSeconds($actual_actualizacion);
         $campo_tiempos=$ticket->time_to=='-1'?'t_solicitante':'t_a'.$ticket->time_to;
         $minutos_anteriores=0;
         if($ticket->time_to=='-1') $minutos_anteriores=$ticket->t_solicitante;
@@ -258,6 +344,12 @@ class TicketDetalle extends Component
         $this->open_reasignar=true;
         $this->procesando=0;
     }
+    public function open_confirm_previa()
+    {
+        $this->open_previa=true;
+        $this->procesando=0;
+
+    }
 
     public function updatedGrupoSeleccionado()
     {
@@ -315,5 +407,18 @@ class TicketDetalle extends Component
              $this->esperando_respuesta=null;
             }
         }
+    }
+    public function guardar_avance()
+    {
+        $reglas = [
+            'texto_avance' => 'required',
+          ];
+        $this->validate($reglas,
+                [
+                    'required' => 'Campo requerido.',
+                    'numeric'=>'Debe ser un numero'
+                ],
+            );
+        $this->emit('livewire_to_controller','save_avance');
     }
 }

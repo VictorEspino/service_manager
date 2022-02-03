@@ -18,5 +18,8 @@ class TicketAvance extends Model
         'adjunto',
         'archivo_adjunto',
     ];
-    
+    public function campos()
+    {
+        return $this->hasMany(TicketAvancesCampo::class,'ticket_avance_id');
+    }  
 }

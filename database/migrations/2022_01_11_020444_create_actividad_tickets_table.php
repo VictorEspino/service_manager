@@ -17,6 +17,7 @@ class CreateActividadTicketsTable extends Migration
             $table->id();
             $table->foreignId('ticket_id');
             $table->integer('secuencia')->default(0);
+            $table->string('nombre');
             $table->text('descripcion');
             $table->integer('sla')->default(60);
             $table->foreignId('grupo_id');

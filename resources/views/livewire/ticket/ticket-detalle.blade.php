@@ -12,7 +12,7 @@
             <div class="w-full overflow-y-scroll pr-4">
                 <div class="w-full rounded border bg-gray-200 px-2 py-3 flex flex-col py-6">
                     @if(($time_to=='-1' && Auth::user()->id==$solicitante_id) || $time_to!='-1')
-                    <form action="{{route('save_avance')}}" method="POST" enctype="multipart/form-data">
+                    <form action="{{route('save_avance')}}" method="POST" enctype="multipart/form-data" id="save_avance">
                         @csrf
                         <input type="hidden" name="id" value="{{$ticket_id}}">
                         <input type="hidden" name="solicitante" value="{{$solicitante_id}}">
@@ -22,7 +22,8 @@
                                 Avance
                             </div>
                             <div class="flex-1 pr-4">
-                                <textarea rows=3 class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="avance"  wire:avance.defer="descripcion_topico"></textarea>
+                                <textarea rows=3 class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="avance"  wire:model.defer="texto_avance"></textarea>
+                                @error('texto_avance') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
                             </div>
                         </div>
                         <div class="flex flex-row py-3">
@@ -64,23 +65,27 @@
                             &nbsp; 
                             </div>
                             <div class="flex-1 pr-4 text-sm text-gray-600 flex justify-end">
-                                <x-jet-button ><i class="fas fa-comment"></i>&nbsp;&nbsp;&nbsp;Publicar</x-jet-button>
+                                <x-jet-button wire:click.prevent="guardar_avance"><i class="fas fa-comment"></i>&nbsp;&nbsp;&nbsp;Publicar</x-jet-button>
                             </div>
                         </div>
                     </form>
                         
                     @else
-                        ESTA EN ESPERA DEL SOLICITANTE
+                        <span class="w-full flex justify-center text-red-500 font-bold">ESTE TICKET ESTA EN ESPERA DE UNA RESPUESTA DEL SOLICITANTE</span>
                     @endif
                 </div>
                 <div class="w-full">
                     <div class="w-full flex justify-end flex-row pt-4">
                         <div class="px-2 bg-amber-200 rounded-md"></div>
-                        <div class="text-sm flex items-center">&nbsp;Nota interna</div>
+                        <div class="text-sm flex items-center">&nbsp;Nota atencion</div>
                         <div class="px-2 bg-lime-200 rounded-md ml-3"></div>
                         <div class="text-sm flex items-center">&nbsp;Creador del ticket</div>
                         <div class="px-2 bg-sky-200 rounded-md ml-3"></div>
                         <div class="text-sm flex items-center">&nbsp;Staff asignado</div>
+                        @if($actividades_total>1)
+                        <div class="px-2 bg-rose-100 rounded-md ml-3"></div>
+                        <div class="text-sm flex items-center">&nbsp;Movimiento Actividad</div>
+                        @endif
                     </div>
                 </div>
                 <div class="w-full pt-4 flex flex-col">
@@ -89,16 +94,16 @@
                     @endphp
                     @for ($i = $indice_final; $i > 0; $i--)                    
 
-                    <div class="w-full flex pt-4 text-sm {{$avances_ticket[$i-1]['tipo_avance']=='1'?'':'justify-end'}}">
+                    <div class="w-full flex pt-4 text-sm {{($avances_ticket[$i-1]['tipo_avance']=='1' || $avances_ticket[$i-1]['tipo_avance']=='4')?'':'justify-end'}}">
                         <div class="w-10/12">
                             <span class="mx-3 font-bold">{{$avances_ticket[$i-1]['nombre']}}</span>
                             <span class="mx-4 text-xs">{{$avances_ticket[$i-1]['created_at']}}</span>
                         </div>
 
                     </div>
-                    <div class="w-full flex {{$avances_ticket[$i-1]['tipo_avance']=='1'?'':'justify-end'}}">
+                    <div class="w-full flex {{($avances_ticket[$i-1]['tipo_avance']=='1' || $avances_ticket[$i-1]['tipo_avance']=='4')?'':'justify-end'}}">
                         <div class="w-10/12 flex-row">
-                            <div class="px-2 {{$avances_ticket[$i-1]['tipo_avance']=='1'?'bg-lime-100':($avances_ticket[$i-1]['tipo_avance']=='2'?'bg-amber-100':'bg-sky-100')}} rounded-md py-3 px-5 text-xs font-semibold">
+                            <div class="px-2 {{$avances_ticket[$i-1]['tipo_avance']=='1'?'bg-lime-100':($avances_ticket[$i-1]['tipo_avance']=='2'?'bg-amber-100':($avances_ticket[$i-1]['tipo_avance']=='3'?'bg-sky-100':'bg-rose-100'))}} rounded-md py-3 px-5 text-xs font-semibold">
                                 {!!nl2br($avances_ticket[$i-1]['avance'])!!}
                             </div>
                         </div>
@@ -128,9 +133,30 @@
                 </div>
             </div>
             @endif
-            <div>
-                SIGUIENTE ACTIVIDAD
+            @if($actividades_total>1)
+            <div class="w-full text-sm text-gray-500 pt-4 flex flex-col">
+                <div class="w-full font-bold pb-2">Actividades de Atencion</div>                
+                @foreach($actividades_atencion as $actividad)
+                <div class="w-full text-xs flex flex-row border-b border-gray-400">
+                    <div class="w-4">
+                        @if($actividad->secuencia==$actividad_actual)
+                        <i class="fas fa-arrow-right text-red-500"></i>
+                        @endif
+                    </div>
+                    <div class="flex-1">{{$actividad->nombre}}</div>
+                </div>
+                @endforeach
+                <div class="w-full text-xs flex flex-row pt-3">
+                    <div class="w-1/2">
+                        <button {{$actividad_actual=='0'?'disabled':''}} class='inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 active:text-gray-800 active:bg-gray-50 disabled:opacity-25 transition' wire:click.prevent="open_confirm_previa">Previa</button>
+                    </div>
+                    <div class="w-1/2">                        
+                        @livewire('ticket.siguiente-etapa', ['ticket_id' => $ticket_id])
+                    </div>
+
+                </div>
             </div>
+            @endif
             <div class="w-full flex flex-row justify-center pt-6">
                 <div class="py-1 px-3 font-bold text-gray-500 text-sm">
                     Asesor <span class="text-xs text-blue-500" style="cursor: pointer;" wire:click="open_reasignar_modal">reasignar</span>
@@ -211,7 +237,7 @@
     </x-jet-dialog-modal>
     <x-jet-dialog-modal wire:model="open_reasignar" maxWidth="lg">
         <x-slot name="title">
-            Reasignar ticket {{$miembro_seleccionado}}
+            Reasignar ticket
         </x-slot>
         <x-slot name="content">
             <div class="w-full flex flex-col">
@@ -259,6 +285,29 @@
         <x-slot name="footer">
             <x-jet-secondary-button wire:click.prevent="$set('open_reasignar',false)">Cancelar</x-jet-secondary-button>
             <button {{$procesando==1?'disabled':''}} class='inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition' wire:click.prevent="reasignar">Reasignar</button>
+        </x-slot>
+    </x-jet-dialog-modal>
+    <x-jet-dialog-modal wire:model="open_previa" maxWidth="md">
+        <x-slot name="title">
+            Enviar a etapa previa
+        </x-slot>
+        <x-slot name="content">
+            <div class="w-full flex flex-row">
+                <div class="w-24 text-7xl text-amber-500 flex justify-center py-8"><i class="far fa-question-circle"></i></div>
+                <div class="flex-1 text-sm text-gray-600 px-5 flex flex-col items-center">  
+                    <div class="pt-4">
+                    Esta accion llevara el ticket a la etapa previa de atencion</b><br><br>
+                    </div>
+                    <div>
+                    ¿Desea continuar?
+                    </div>
+                </div>
+            </div> 
+            
+        </x-slot>
+        <x-slot name="footer">
+            <x-jet-secondary-button wire:click.prevent="$set('open_previa',false)">Cancelar</x-jet-secondary-button>
+            <button {{$procesando==1?'disabled':''}} class='inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition' wire:click.prevent="retroceder_etapa">Confirmar</button>
         </x-slot>
     </x-jet-dialog-modal>
 </div>

@@ -12,6 +12,7 @@ class ActividadTicket extends Model
     protected $fillable=[
         'ticket_id',
         'secuencia',
+        'nombre',
         'descripcion',
         'sla',
         'grupo_id',

@@ -1,4 +1,4 @@
-<form action="{{route('save_ticket')}}" method="POST" enctype="multipart/form-data" id="form_livewire_to_controller">
+<form action="{{route('save_ticket')}}" method="POST" enctype="multipart/form-data" id="nuevo_ticket">
 @csrf
 <div>
     <x-jet-danger-button wire:click.prevent="$set('open',true)" class="bg-green-500 hover:bg-green-700 border-green-600"><b> + </b>CREAR NUEVO TICKET</x-jet-danger-button>

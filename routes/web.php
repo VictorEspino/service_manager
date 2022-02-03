@@ -28,5 +28,7 @@ Route::get('/grupos',ShowGrupos::class)->name('grupos')->middleware('auth');
 Route::get('/tickets',[TicketController::class,'show'])->name('tickets')->middleware('auth');
 
 Route::post('/save_ticket',[TicketController::class,'save'])->middleware('auth')->name('save_ticket');
-Route::get('/ticket/{id}',TicketDetalle::class)->name('ticket')->middleware('auth');
+//Route::get('/ticket/{id}',TicketDetalle::class)->name('ticket')->middleware('auth');
+Route::get('/ticket/{id}',[TicketController::class,'ticket'])->name('ticket')->middleware('auth');
 Route::post('/save_avance',[TicketController::class,'save_avance'])->middleware('auth')->name('save_avance');
+Route::post('/avanzar_etapa',[TicketController::class,'avanzar_etapa'])->middleware('auth')->name('avanzar_etapa');

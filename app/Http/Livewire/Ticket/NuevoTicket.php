@@ -188,6 +188,6 @@ class NuevoTicket extends Component
     public function guardar()
     {
         $this->validacion();
-        $this->emit('livewire_to_controller');
+        $this->emit('livewire_to_controller','nuevo_ticket');
     }
 }

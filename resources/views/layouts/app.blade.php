@@ -136,9 +136,9 @@
             });
         </script>
         <script>
-            Livewire.on('livewire_to_controller',function()
+            Livewire.on('livewire_to_controller',function(forma)
             {
-                document.getElementById('form_livewire_to_controller').submit();
+                document.getElementById(forma).submit();
             });
         </script>  
     </body>
