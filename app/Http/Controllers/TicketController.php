@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Ticket;
 use App\Models\TicketAvance;
@@ -36,32 +37,33 @@ class TicketController extends Controller
         if($actividad_avance=='7'){$asignado_previo=$ticket->a_a7;}
         if($actividad_avance=='8'){$asignado_previo=$ticket->a_a8;}
         if($actividad_avance=='9'){$asignado_previo=$ticket->a_a9;}
+        
+        //ACTUALIZAR LOS CAMPOS DE LA ACTIVIDAD DEL TICKET
+
+        $actividad_next=ActividadTicket::where('ticket_id',$request->id)
+                        ->where('secuencia',$actividad_avance)
+                        ->get()
+                        ->first();
+
+        $actividad_siguiente=$actividad_next->id;
+        $asignacion=$asignado_previo;
         if(intval($asignado_previo)==0)
         {
-            //Correr asignacion dinamica
-            $asignado_previo=1;
+            $asignacion=$this->obtenerAsignacion($actividad_next->tipo_asignacion,$actividad_next->grupo_id,$actividad_next->user_id_automatico);
         }
-        
         $this->update_tiempos($ticket); 
         Ticket::where('id',$request->id)
                 ->update([
                     'actividad_actual'=>$actividad_avance,
-                    'asignado_a'=>$asignado_previo,
-                    'time_to'=>$actividad_avance
+                    'asignado_a'=>$asignacion,
+                    'time_to'=>$actividad_avance,
+                    'a_a'.$actividad_avance=>$asignacion
                 ]);
-        
-
-        //ACTUALIZAR LOS CAMPOS DE LA ACTIVIDAD DEL TICKET
 
         ActividadTicket::where('ticket_id',$request->id)
                         ->where('secuencia',$actividad_avance)
-                        ->update(['descripcion'=>$request->descripcion]);
-
-        $actividad_siguiente=ActividadTicket::where('ticket_id',$request->id)
-                        ->where('secuencia',$actividad_avance)
-                        ->get()
-                        ->first()
-                        ->id;
+                        ->update(['descripcion'=>$request->descripcion]);            
+        
         $texto_avance="Avance a etapa :".strtoupper($request->nombre)."\r\n".$request->descripcion;
 
         $nuevo_avance=TicketAvance::create([
@@ -120,16 +122,26 @@ class TicketController extends Controller
     public function save(Request $request)
     {
         //return $request->all();
-        $asignacion=$this->obtenerAsignacion();
         $actividades_topico=ActividadTopico::where('topico_id',$request->topico)
                                             ->get();
         $n_actividades=0;
         $n_minutos=0;
+        $tipo_asignacion_requerido=0;
+        $grupo_a_asignar=0;
+        $asignacion_automatica=0;
+        $asignacion=0;
         foreach($actividades_topico as $actividad_estructura)
         {
             $n_actividades=$n_actividades+1;
             $n_minutos=$n_minutos+intval($actividad_estructura->sla);
+            if($actividad_estructura->secuencia=='0')
+            {
+                $tipo_asignacion_requerido=$actividad_estructura->tipo_asignacion;
+                $grupo_a_asignar=$actividad_estructura->grupo_id;
+                $asignacion_automatica=$actividad_estructura->user_id_automatico;
+            }
         }
+        $asignacion=$this->obtenerAsignacion($tipo_asignacion_requerido,$grupo_a_asignar,$asignacion_automatica);
         $ticket=Ticket::create([
                         'creador_id'=>Auth::user()->id,
                         'de_id'=>$request->de_id,
@@ -169,6 +181,7 @@ class TicketController extends Controller
                                     'sla'=>$actividad_estructura->sla,
                                     'grupo_id'=>$actividad_estructura->grupo_id,
                                     'tipo_asignacion'=>$actividad_estructura->tipo_asignacion,
+                                    'user_id_automatico'=>$actividad_estructura->user_id_automatico,
                                 ]);
 
             if($actividad_estructura->secuencia=='0')
@@ -235,11 +248,59 @@ class TicketController extends Controller
                                     ->update(['valor'=>$valor]);
             }
         }
-        return(view('ticket',['id'=>$ticket->id]));
+        //return(view('ticket',['id'=>$ticket->id]));
+        return redirect()->route('ticket',['id'=>$ticket->id]);
     }
-    private function obtenerAsignacion()
+    private function obtenerAsignacion($tipo,$grupo_id,$automatico)
     {
-        return 1;
+        if($tipo=='1') return(0); //MANUAL
+        if($tipo=='2') return($automatico); //AUTOMATICA
+        if($tipo=='3') //ALEATORIO
+        {            
+            $sql_miembros="
+            select user_id,manager,COALESCE(atendiendo, 0) as atendiendo from(
+            (SELECT * FROM `miembro_grupos` as a where a.grupo_id=".$grupo_id.") as a
+            left join 
+            (select asignado_a,count(*) as atendiendo from tickets where estatus=1 group by asignado_a ) as b 
+            ON a.user_id=b.asignado_a)
+            where manager=0
+            order by atendiendo asc
+            ";
+            $miembros=DB::select(DB::raw($sql_miembros));
+            $miembros=collect($miembros);
+            $usuarios=$miembros->pluck('user_id');            
+            return($usuarios[rand(0,count($usuarios)-1)]);
+        }
+        if($tipo=='4') //MENOS OCUPADO
+        { 
+            $sql_miembros="
+            select user_id,manager,COALESCE(atendiendo, 0) as atendiendo from(
+            (SELECT * FROM `miembro_grupos` as a where a.grupo_id=".$grupo_id.") as a
+            left join 
+            (select asignado_a,count(*) as atendiendo from tickets where estatus=1 group by asignado_a ) as b 
+            ON a.user_id=b.asignado_a)
+            where manager=0
+            order by atendiendo asc
+            ";
+            $miembros=DB::select(DB::raw($sql_miembros));
+            $miembros=collect($miembros);
+            return($miembros->first()->user_id);
+        }
+        if($tipo=='5')  //MANAGER
+        {
+            $sql_miembros="
+            select user_id,manager,COALESCE(atendiendo, 0) as atendiendo from(
+            (SELECT * FROM `miembro_grupos` as a where a.grupo_id=".$grupo_id.") as a
+            left join 
+            (select asignado_a,count(*) as atendiendo from tickets where estatus=1 group by asignado_a ) as b 
+            ON a.user_id=b.asignado_a)
+            where manager=1
+            order by atendiendo asc
+            ";
+            $miembros=DB::select(DB::raw($sql_miembros));
+            $miembros=collect($miembros);
+            return($miembros->first()->user_id);
+        }
     }
     public function show(Request $request)
     {

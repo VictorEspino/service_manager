@@ -1,19 +1,21 @@
 <div>
-    <x-jet-danger-button wire:click="$set('open',true)">CREAR NUEVO GRUPO</x-jet-danger-button>
+    <x-jet-danger-button wire:click="abrir">CREAR NUEVO GRUPO</x-jet-danger-button>
 
     <x-jet-dialog-modal wire:model="open" maxWidth="5xl">
         <x-slot name="title">
-            Crear nuevo grupo
+            Crear nuevo grupo {{$miembros}} - {{$manager}}
         </x-slot>
         <x-slot name="content">
             <div class="flex flex-col w-full">
                 <div class="w-full mb-2">
                     <x-jet-label value="Nombre" />
-                    <x-jet-input class="w-full text-sm" type="text" name="nombre" wire:model.defer="nombre"/>
+                    <x-jet-input class="w-full text-sm" type="text" wire:model.defer="nombre"/>
+                    @error('nombre') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
                 </div>
                 <div class="w-full mb-2">
                     <x-jet-label value="Descripcion" />
-                    <textarea class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" type="text" name="descripcion"  wire:model.defer="descripcion"></textarea>
+                    <textarea class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"  wire:model.defer="descripcion"></textarea>
+                    @error('descripcion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
                 </div>
                 <div class="w-full bg-gray-700 p-2 rounded flex justify-between">
                     <span class="text-base text-gray-100">Miembros</span>
@@ -50,7 +52,8 @@
                         <div class="w-full rounded p-2 bg-gray-200 text-center">
                             Miembros del grupo
                         </div>
-                        <div class="w-full p-2 flex justify-center">
+                        <div class="w-full p-2 flex justify-center flex flex-col">
+                            <div class="w-full">
                             @if (is_array($usuarios_principal) || is_object($usuarios_principal))
                                 <table>
                                     <tr>
@@ -70,6 +73,13 @@
                                 @endforeach
                                 </table>
                             @endif
+                            </div>
+                            <div class="w-full">
+                            @error('miembros') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="w-full">
+                            @error('manager') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                     </div>
                     
@@ -78,8 +88,8 @@
             </div>
         </x-slot>
         <x-slot name="footer">
-            <x-jet-secondary-button wire:click="$set('open',false)">CANCELAR</x-jet-secondary-button>
-            <x-jet-danger-button wire:click="guardar">GUARDAR GRUPO</x-jet-secondary-button>
+            <x-jet-secondary-button wire:click="cancelar">CANCELAR</x-jet-secondary-button>
+            <button {{$procesando==1?'disabled':''}} class='inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition' wire:click.prevent="guardar">GUARDAR GRUPO</button>
         </x-slot>
     </x-jet-dialog-modal>
 </div>

@@ -373,7 +373,7 @@
                     @livewire('ticket.buscar-ticket')
                 </div>
                 <div class="w-full">
-                    @livewire('user.calificacion-user')
+                    @livewire('users.calificacion-user')
                 </div>
                 <div class="w-full">
                     @livewire('ticket.cerrados-recientemente')

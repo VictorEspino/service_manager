@@ -80,8 +80,8 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('dashboard')?'bg-gray-100':'br-gray-800'}}">
-                                    <a href="{{ route('dashboard') }}" 
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('usuarios')?'bg-gray-100':'br-gray-800'}}">
+                                    <a href="{{ route('usuarios') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-user float-left mx-2"></i>
                                         Usuarios

@@ -3,7 +3,7 @@
 
     <x-jet-dialog-modal wire:model="open" maxWidth="5xl">
         <x-slot name="title">
-            Crear nuevo topico {{$campo_actualizado}}
+            Crear nuevo topico
         </x-slot>
         <x-slot name="content">
             <div class="flex flex-col w-full">
@@ -18,9 +18,9 @@
                     @error('descripcion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
                 </div>
                 <div class="w-full mb-2 flex flex-row space-x-3">
-                    <div class="w-1/2">
+                    <div class="w-1/3">
                         <x-jet-label value="Grupo" />
-                        <select name="grupo" wire:model.defer="grupo" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                        <select name="grupo" wire:model="grupo" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
                             <option></option>
                             @foreach ($grupos as $grupo_opcion)
                                 <option value="{{$grupo_opcion->id}}">{{$grupo_opcion->nombre}}</option>    
@@ -28,10 +28,9 @@
                         </select>  
                         @error('grupo') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
                     </div>
-                    <div class="w-1/2">
-                        <x-jet-label value="Tipo de asignación" />
-                        
-                        <select name="tipo_asignacion" wire:model.defer="tipo_asignacion" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                    <div class="w-1/3">
+                        <x-jet-label value="Tipo de asignación" />                    
+                        <select name="tipo_asignacion" wire:model="tipo_asignacion" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
                             <option></option>
                         @foreach ($tipo_asignaciones as $tipo)
                             <option value="{{$tipo->id}}">{{$tipo->descripcion}}</option>    
@@ -39,6 +38,18 @@
                         </select> 
                         @error('tipo_asignacion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror                            
                     </div>
+                    @if($enable_automatico)
+                    <div class="w-1/3">
+                        <x-jet-label value="Asignar automaticamente a:" />                    
+                        <select name="user_id_automatico" wire:model.defer="user_id_automatico" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                            <option></option>
+                        @foreach ($usuarios_grupo_disponibles as $usuarios_automatico)
+                            <option value="{{$usuarios_automatico->user->id}}">{{$usuarios_automatico->user->name}}</option>    
+                        @endforeach
+                        </select> 
+                        @error('user_id_automatico') <span class="text-xs text-red-400">{{ $message }}</span> @enderror                            
+                    </div>
+                    @endif
                 </div>
                 <div class="w-full mb-2">
                     <x-jet-label value="Tiempo de resolucion en minutos" />
@@ -183,9 +194,9 @@
                             <div class="w-1/12 px-3">                                  
                             </div>
                             <div class="w-10/12 flex flex-row">
-                                <div class="w-1/3 px-3">
+                                <div class="w-1/2 px-3">
                                     <x-jet-label value="Grupo" />
-                                    <select wire:model.defer="actividades_adicionales.{{$index}}.grupo" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                    <select wire:model="actividades_adicionales.{{$index}}.grupo" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
                                         <option></option>
                                         @foreach ($grupos as $grupo_opcion)
                                         <option value="{{$grupo_opcion->id}}">{{$grupo_opcion->nombre}}</option>    
@@ -193,9 +204,20 @@
                                     </select>   
                                     @error('actividades_adicionales.'.$index.'.grupo') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
                                 </div>
-                                <div class="w-1/3 px-3">
+                                <div class="w-1/2 px-3">
+                                    <x-jet-label value="Tiempo de resolucion en minutos" />
+                                    <x-jet-input class="w-full text-sm" type="text"  wire:model.defer="actividades_adicionales.{{$index}}.sla"/>
+                                    @error('actividades_adicionales.'.$index.'.sla') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full p-1 flex flex-row">
+                            <div class="w-1/12 px-3">                                  
+                            </div>
+                            <div class="w-10/12 flex flex-row">
+                                <div class="w-1/2 px-3">
                                     <x-jet-label value="Tipo de asignación" />                
-                                    <select wire:model.defer="actividades_adicionales.{{$index}}.tipo_asignacion" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                    <select wire:model="actividades_adicionales.{{$index}}.tipo_asignacion" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
                                         <option></option>
                                     @foreach ($tipo_asignaciones as $tipo)
                                         <option value="{{$tipo->id}}">{{$tipo->descripcion}}</option>    
@@ -203,11 +225,23 @@
                                     </select>  
                                     @error('actividades_adicionales.'.$index.'.tipo_asignacion') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
                                 </div>
-                                <div class="w-1/3 px-3">
-                                    <x-jet-label value="Tiempo de resolucion en minutos" />
-                                    <x-jet-input class="w-full text-sm" type="text"  wire:model.defer="actividades_adicionales.{{$index}}.sla"/>
-                                    @error('actividades_adicionales.'.$index.'.sla') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                                <div class="w-1/2 px-3">
+                                    @if($actividades_adicionales[$index]['enable_automatico'])
+                                    <x-jet-label value="Asignar automaticamente a:" />                
+                                    <select wire:model="actividades_adicionales.{{$index}}.user_id_automatico" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                        <option></option>
+                                        @php
+                                        $array=json_decode(json_encode($actividades_adicionales[$index]['usuarios_grupo_disponibles']), true);
+                                        $array=collect($array);        
+                                        @endphp
+                                    @foreach ($array as $user_grupo_disponible)
+                                    <option value="{{$user_grupo_disponible['user']['id']}}">{{$user_grupo_disponible['user']['name']}}</option>    
+                                    @endforeach
+                                    </select>  
+                                    @error('actividades_adicionales.'.$index.'.user_id_automatico') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
+                                    @endif
                                 </div>
+                               
                             </div>
                             <div class="w-1/12 flex items-center justify-center">
                             </div>
@@ -273,7 +307,7 @@
                             <div class="w-1/12 px-3">                                  
                             </div>
                             <div class="w-10/12 bg-gray-400 p-2 rounded flex justify-between">
-                                <span class="text-base text-gray-100">Usuarios invitados a la actividad {{$campo_actualizado}}</span>
+                                <span class="text-base text-gray-100">Usuarios invitados a la actividad</span>
                             </div>
                             <div class="w-1/12 flex items-center justify-center">
                             </div>
@@ -288,24 +322,27 @@
                                         <x-jet-input type="text" class="flex-1 text-sm" wire:model="actividades_adicionales.{{$index}}.invitados_buscar" />
                                     </div>
                                     <div class="w-full p-2">
-                                        @if (is_array($actividades_adicionales[$index]['invitados_disponibles']) || is_object($actividades_adicionales[$index]['invitados_disponibles']))
+                                        @php
+                                        $array=json_decode(json_encode($actividades_adicionales[$index]['invitados_disponibles']), true);
+                                        $array=collect($array);        
+                                        @endphp
+        
                                             <table>
                                                 <tr>
                                                     <td class="border bg-blue-500 text-white px-2">User</td>
                                                     <td class="border bg-blue-500 text-white px-2">Nombre</td>
                                                     <td class="border bg-blue-500 text-white px-2">Agregar</td>
                                                 </tr>
-
-                            
-                                            @foreach ($actividades_adicionales[$index]['invitados_disponibles'] as $opcion_actividad)
+                                            @foreach ($array as $opcion_actividad)
                                                 <tr>
-                                                    <td class="border px-2">{{$opcion_actividad->user}}</td>
-                                                    <td class="border px-2">{{$opcion_actividad->name}}</td>
-                                                    <td class="border"><center><i wire:click="agregar_invitado_actividad_adicional({{$index}},{{$opcion_actividad->id}},'{{$opcion_actividad->user}}','{{$opcion_actividad->name}}')" class="text-green-500 text-lg fas fa-user-plus" style="cursor:pointer"></i></td>
+                                                    <td class="border px-2">{{$opcion_actividad['user']}}</td>
+                                                    <td class="border px-2">{{$opcion_actividad['name']}}</td>
+                                                    <td class="border"><center><i wire:click="agregar_invitado_actividad_adicional({{$index}},{{$opcion_actividad['id']}},'{{$opcion_actividad['user']}}','{{$opcion_actividad['name']}}')" class="text-green-500 text-lg fas fa-user-plus" style="cursor:pointer"></i></td>
+                                                    
                                                 </tr>
                                             @endforeach
+                            
                                             </table>
-                                        @endif
                                     </div>
                                 </div>
                                 <div class="w-1/2 flex flex-col">

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\Topico\ShowTopicos;
 use App\Http\Livewire\Grupo\ShowGrupos;
+use App\Http\Livewire\Usuario\ShowUsuarios;
 use App\Http\Livewire\Ticket\TicketDetalle;
 use App\Http\Controllers\TicketController;
 
@@ -24,6 +25,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/topicos',ShowTopicos::class)->name('topicos')->middleware('auth');
+Route::get('/usuarios',ShowUsuarios::class)->name('usuarios')->middleware('auth');
 Route::get('/grupos',ShowGrupos::class)->name('grupos')->middleware('auth');
 Route::get('/tickets',[TicketController::class,'show'])->name('tickets')->middleware('auth');
 

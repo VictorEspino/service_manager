@@ -21,6 +21,7 @@ class CreateActividadTopicosTable extends Migration
             $table->integer('sla')->default(60);
             $table->foreignId('grupo_id');
             $table->foreignId('tipo_asignacion');
+            $table->foreignId('user_id_automatico')->default(0);
             $table->timestamps();
         });
     }

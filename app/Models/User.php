@@ -24,7 +24,12 @@ class User extends Authenticatable
      * @var string[]
      */
     protected $fillable = [
+        'user',
         'name',
+        'puesto',
+        'perfil',
+        'area',
+        'sub_area',
         'email',
         'password',
     ];
@@ -58,4 +63,13 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function area_user()
+    {
+        return $this->belongsTo(Area::class,'area');
+    }
+    public function subarea()
+    {
+        return $this->belongsTo(SubArea::class,'sub_area');
+    }
 }

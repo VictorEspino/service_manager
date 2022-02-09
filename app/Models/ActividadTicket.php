@@ -16,6 +16,7 @@ class ActividadTicket extends Model
         'descripcion',
         'sla',
         'grupo_id',
-        'tipo_asignacion'
+        'tipo_asignacion',
+        'user_id_automatico',
     ];
 }

@@ -89,6 +89,8 @@ class NuevoTicket extends Component
         if(strlen($this->buscar_usuario)>1)
         {
         $this->usuarios_disponibles=User::where('name','like','%'.$this->buscar_usuario.'%')
+                                        ->where('visible',1)
+                                        ->where('estatus',1)
                                         ->get()
                                         ->take(5);
         }
@@ -114,6 +116,8 @@ class NuevoTicket extends Component
         if(strlen($this->buscar_invitado)>1)
         {
         $this->invitados_disponibles=User::where('name','like','%'.$this->buscar_invitado.'%')
+                                        ->where('visible',1)
+                                        ->where('estatus',1)
                                         ->get()
                                         ->take(5);
         $this->agregar_invitado=true;

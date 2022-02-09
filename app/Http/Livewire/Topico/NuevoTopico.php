@@ -10,6 +10,7 @@ use App\Models\Invitado;
 use App\Models\ActividadTopico;
 use App\Models\ActividadCampos;
 use App\Models\TipoAsignaciones;
+use App\Models\MiembroGrupo;
 
 class NuevoTopico extends Component
 {
@@ -29,6 +30,10 @@ class NuevoTopico extends Component
 
     public $actividades_adicionales=[];
     public $numero_actividades_adicionales;
+
+    public $user_id_automatico=null;
+    public $enable_automatico=false;
+    public $usuarios_grupo_disponibles=[];
 
     public function mount()
     {
@@ -50,6 +55,12 @@ class NuevoTopico extends Component
             'tipo_asignacion'=>'required',
             'sla'=>'required|numeric',
           ];
+        if($this->tipo_asignacion=='2') //ASIGNACION AUTOMATICA
+        {
+          $reglas = array_merge($reglas, [
+            'user_id_automatico' => 'required',
+          ]);
+        }
         foreach ($this->campos_principal as $index => $campos) 
           {
             $reglas = array_merge($reglas, [
@@ -71,6 +82,12 @@ class NuevoTopico extends Component
                     'actividades_adicionales.'.$index.'.grupo'=> 'required',
                     'actividades_adicionales.'.$index.'.tipo_asignacion'=> 'required',
                   ]);
+                  if($actividad_adicional['tipo_asignacion']=='2') //ASIGNACION AUTOMATICA
+                    {
+                    $reglas = array_merge($reglas, [
+                        'actividades_adicionales.'.$index.'.user_id_automatico'=> 'required',
+                    ]);
+                    }
 
                   foreach($actividad_adicional['campos'] as $index_campo =>$campo)
                   {
@@ -109,6 +126,7 @@ class NuevoTopico extends Component
             'grupo_id'=>$this->grupo,
             'tipo_asignacion'=>$this->tipo_asignacion,
             'topico_id'=>$nuevo_topico->id,
+            'user_id_automatico'=>is_null($this->user_id_automatico)?0:$this->user_id_automatico,
         ]);
 
         foreach($this->campos_principal as $index => $campo)
@@ -138,7 +156,8 @@ class NuevoTopico extends Component
                 'grupo_id'=>$actividad_adicional['grupo'],
                 'tipo_asignacion'=>$actividad_adicional['tipo_asignacion'],
                 'topico_id'=>$nuevo_topico->id,
-                'secuencia'=>$siguiente_actividad
+                'secuencia'=>$siguiente_actividad,
+                'user_id_automatico'=>is_null($actividad_adicional['user_id_automatico'])?0:$actividad_adicional['user_id_automatico'],
             ]);
 
             foreach($this->actividades_adicionales[$index]['campos'] as $campo)
@@ -164,8 +183,7 @@ class NuevoTopico extends Component
             $siguiente_actividad=$siguiente_actividad+1;
         }
 
-
-        $this->reset(['open','nombre','descripcion','sla','grupo','tipo_asignacion','campos_principal','invitados_principal','invitados_disponibles','invitados_buscar','actividades_adicionales','numero_actividades_adicionales']);
+        $this->reset(['user_id_automatico','enable_automatico','usuarios_grupo_disponibles','open','nombre','descripcion','sla','grupo','tipo_asignacion','campos_principal','invitados_principal','invitados_disponibles','invitados_buscar','actividades_adicionales','numero_actividades_adicionales']);
         $this->emit('topicoAgregado');
         $this->emit('alert_ok','El topico se creo satisfactoriamente');
     }
@@ -188,6 +206,8 @@ class NuevoTopico extends Component
         if(strlen($this->invitados_buscar)>1)
         {
         $this->invitados_disponibles=User::where('name','like','%'.$this->invitados_buscar.'%')
+                                        ->where('visible',1)
+                                        ->where('estatus',1)
                                         ->get()
                                         ->take(5);
         }
@@ -238,6 +258,9 @@ class NuevoTopico extends Component
                 'invitados_buscar'=>'',
                 'invitados_disponibles'=>null,
                 'invitados'=>[],
+                'user_id_automatico'=>null,
+                'enable_automatico'=>false,
+                'usuarios_grupo_disponibles'=>[]
             ];
         }
     }
@@ -265,28 +288,54 @@ class NuevoTopico extends Component
         unset($this->actividades_adicionales[$id]['campos'][$id_campo]);
         $this->actividades_adicionales[$id]['campos']=array_values($this->actividades_adicionales[$id]['campos']);
     }
-    public function updated($property)
-    {
-        $valores=explode('.',$property);
-        try{        
-        if($valores[2]=="invitados_buscar")
-            $busqueda=$this->actividades_adicionales[intval($valores[1])]['invitados_buscar'];
-            if(strlen($busqueda)>2)
-            {
-                $this->actividades_adicionales[intval($valores[1])]['invitados_disponibles']=
-                                        User::where('name','like','%'.$busqueda.'%')
-                                        ->get()
-                                        ->take(5);            
-            }
-            else
-            {
-                $this->actividades_adicionales[intval($valores[1])]['invitados_disponibles']=null;
-            }
 
+    public function updatedActividadesAdicionales($valor,$anidado)
+    {
+        $this->campo_actualizado=$valor."-".$anidado;
+        $datos_campo = explode(".", $anidado);
+        $indice=$datos_campo[0];
+        $propiedad=$datos_campo[1];
+        if($propiedad=='invitados_buscar' && strlen($valor)>2)
+        {
+            $this->actividades_adicionales[$indice]['invitados_disponibles']=
+                                            User::where('name','like','%'.$valor.'%')
+                                            ->where('visible',1)
+                                            ->where('estatus',1)
+                                            ->get()
+                                            ->take(5);
         }
-        catch(\Exception $e)
-        {;}
+        if($propiedad=='tipo_asignacion' && $valor==2)
+        {
+            $this->actividades_adicionales[$indice]['usuarios_grupo_disponibles']=
+                                                MiembroGrupo::with('user')
+                                                ->where('grupo_id',$this->actividades_adicionales[$indice]['grupo'])
+                                                ->get();
+            $this->actividades_adicionales[$indice]['enable_automatico']=true;
+            $this->actividades_adicionales[$indice]['user_id_automatico']=null;
+        }
+        if($propiedad=='tipo_asignacion' && $valor!=2)
+        {
+            $this->actividades_adicionales[$indice]['usuarios_grupo_disponibles']=[]; 
+            $this->actividades_adicionales[$indice]['enable_automatico']=false;  
+            $this->actividades_adicionales[$indice]['user_id_automatico']=null;                                             
+        }
+        if($propiedad=='grupo' && $this->actividades_adicionales[$indice]['tipo_asignacion']==2)
+        {
+            $this->actividades_adicionales[$indice]['usuarios_grupo_disponibles']=
+                                                MiembroGrupo::with('user')
+                                                ->where('grupo_id',$this->actividades_adicionales[$indice]['grupo'])
+                                                ->get();
+            $this->actividades_adicionales[$indice]['enable_automatico']=true;
+            $this->actividades_adicionales[$indice]['user_id_automatico']=null;
+        }
+        if($propiedad=='grupo' && $this->actividades_adicionales[$indice]['tipo_asignacion']!=2)
+        {
+            $this->actividades_adicionales[$indice]['usuarios_grupo_disponibles']=[];
+            $this->actividades_adicionales[$indice]['enable_automatico']=false;
+            $this->actividades_adicionales[$indice]['user_id_automatico']=null;
+        }
     }
+
     public function agregar_invitado_actividad_adicional($indice,$id,$empleado,$nombre)
     {
         $ya_esta="NO";
@@ -326,7 +375,40 @@ class NuevoTopico extends Component
         $this->tipo_asignacion=null;
         $this->nombre='';
         $this->descripcion='';
+        $this->reset(['user_id_automatico','enable_automatico','usuarios_grupo_disponibles','open','nombre','descripcion','sla','grupo','tipo_asignacion','campos_principal','invitados_principal','invitados_disponibles','invitados_buscar','actividades_adicionales','numero_actividades_adicionales']);
         $this->resetErrorBag();
         $this->resetValidation();
+    }
+    public function updatedTipoAsignacion()
+    {
+        $this->user_id_automatico=null;
+        if($this->tipo_asignacion=='2') //ASIGNACION AUTOMATICA
+        {
+            $this->enable_automatico=true; 
+            $this->usuarios_grupo_disponibles=MiembroGrupo::with('user')
+                                            ->where('grupo_id',$this->grupo)
+                                            ->get();
+        }
+        else
+        {
+            $this->enable_automatico=false; 
+            $this->usuarios_grupo_disponibles=[];
+        }
+    }
+    public function updatedGrupo()
+    {
+        $this->user_id_automatico=null;
+        if($this->tipo_asignacion=='2') //ASIGNACION AUTOMATICA
+        {
+            $this->enable_automatico=true; 
+            $this->usuarios_grupo_disponibles=MiembroGrupo::with('user')
+                                            ->where('grupo_id',$this->grupo)
+                                            ->get();
+        }
+        else
+        {
+            $this->enable_automatico=false; 
+            $this->usuarios_grupo_disponibles=[];
+        }
     }
 }

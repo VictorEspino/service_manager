@@ -145,11 +145,11 @@ class TicketDetalle extends Component
         if($actividad_avance=='7'){$asignado_previo=$ticket->a_a7;}
         if($actividad_avance=='8'){$asignado_previo=$ticket->a_a8;}
         
-        if(intval($asignado_previo)==0)
-        {
-            //Correr asignacion dinamica
-            $asignado_previo=1;
-        }
+        //if(intval($asignado_previo)==0)
+        //{
+        //    //Correr asignacion dinamica
+        //    $asignado_previo=1;
+        //}
         TicketAvance::create([
             'ticket_id'=>$this->ticket_id,
             'user_id'=>Auth::user()->id,

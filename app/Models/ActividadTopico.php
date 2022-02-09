@@ -9,7 +9,7 @@ class ActividadTopico extends Model
 {
     use HasFactory;
 
-    protected $fillable=['topico_id','sla','grupo_id','tipo_asignacion','nombre','descripcion','secuencia'];
+    protected $fillable=['topico_id','sla','grupo_id','tipo_asignacion','nombre','descripcion','secuencia','user_id_automatico'];
 
     public function topico()
     {
