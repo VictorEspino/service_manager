@@ -18,6 +18,7 @@ class CreateTopicosTable extends Migration
             $table->string('nombre',100);
             $table->string('descripcion',255);
             $table->boolean('estatus')->default(1);
+            $table->integer('emite_autorizacion')->default(0);
             $table->timestamps();
         });
     }

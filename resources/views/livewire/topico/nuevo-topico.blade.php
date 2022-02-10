@@ -7,10 +7,19 @@
         </x-slot>
         <x-slot name="content">
             <div class="flex flex-col w-full">
-                <div class="w-full mb-2">
-                    <x-jet-label value="Nombre" />
-                    <x-jet-input class="w-full text-sm" type="text" name="nombre" wire:model.defer="nombre"/>
-                    @error('nombre') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                <div class="w-full mb-2 flex flex-row space-x-4">
+                    <div class="w-3/4">
+                        <x-jet-label value="Nombre" />
+                        <x-jet-input class="w-full text-sm" type="text" name="nombre" wire:model.defer="nombre"/>
+                        @error('nombre') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="w-1/4">
+                        <x-jet-label value="Emite autorizacion" />
+                        <select name="emite_autorizacion" wire:model.defer="emite_autorizacion" class="w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                            <option value="NO">NO</option>
+                            <option value="SI">SI</option>
+                        </select>  
+                    </div>
                 </div>
                 <div class="w-full mb-2">
                     <x-jet-label value="Descripcion" />
@@ -78,7 +87,7 @@
                                     <option value="Texto">Texto</option>
                                     <option value="CheckBox">CheckBox</option>
                                     <option value="Lista">Lista</option>
-                                    <option value="Archivo">Archivo</option>
+                                    <option value="File">File</option>
                                 </select>
                             </div>
                             <div class="w-1/4 px-3">

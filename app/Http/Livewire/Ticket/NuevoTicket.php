@@ -11,8 +11,12 @@ use App\Models\ActividadCampos;
 
 use Illuminate\Support\Facades\Auth;
 
+use Livewire\WithFileUploads;
+
 class NuevoTicket extends Component
 {
+
+    use WithFileUploads;
 
     public $open=false;
 
@@ -26,6 +30,7 @@ class NuevoTicket extends Component
     public $descripcion;
     public $topico;
     public $descripcion_topico;
+    public $emite_autorizacion;
     public $campos_requeridos=[];
     public $prioridad;
     public $atencion_por;
@@ -63,7 +68,9 @@ class NuevoTicket extends Component
     }
     public function updatedTopico()
     {
-        $this->descripcion_topico=Topico::find($this->topico)->descripcion;
+        $topico=Topico::find($this->topico);
+        $this->descripcion_topico=$topico->descripcion;
+        $this->emite_autorizacion=$topico->emite_autorizacion;
         $actividad_principal=ActividadTopico::where('topico_id',$this->topico)
                                             ->where('secuencia',0)
                                             ->get()

@@ -24,11 +24,16 @@ class TicketDetalle extends Component
     public $open_reasignar=false;
     public $open_avanzar=false;
     public $open_previa=false;
+    public $open_confirm_rechazo=false;
+    public $open_confirm_autorizacion=false;
     public $procesando=0;
 
+    public $emite_autorizacion;
+    public $resultado_autorizacion;
     public $nuevo_posible_estatus;
     public $nuevo_posible_valor_estatus;
     public $valor_boton_cambio_estatus;
+
     
     public $asunto;
     public $topico_nombre;
@@ -74,7 +79,8 @@ class TicketDetalle extends Component
         $this->user_cerrador=$ticket->user_cerrador;
         $this->nombre_cerrador=$ticket->nombre_cerrador;
         $this->cierre_at=$ticket->cierre_at;
-
+        $this->emite_autorizacion=$ticket->emite_autorizacion;
+        $this->resultado_autorizacion=$ticket->resultado_autorizacion;
         $this->estatus=$ticket->estatus;
 
         if($ticket->estatus=='1')
@@ -286,6 +292,56 @@ class TicketDetalle extends Component
 
 
     }
+    public function autorizacion($resultado)
+    {
+        $this->procesando=1;
+        $this->open_confirm_rechazo=false;
+        $this->open_confirm_autorizacion=false;
+
+        $this->user_cerrador=Auth::user()->id;
+        $this->nombre_cerrador=Auth::user()->name;
+        $this->cierre_at=now()->toDateTimeString();       
+        $this->update_tiempos(Ticket::find($this->ticket_id));         
+        Ticket::where('id',$this->ticket_id)
+            ->update(['estatus'=>2,
+                      'user_cerrador'=>$this->user_cerrador,
+                      'nombre_cerrador'=>$this->nombre_cerrador,
+                      'resultado_autorizacion'=>$resultado,
+                      'cierre_at'=>$this->cierre_at
+                    ]);  
+        
+        $estatus_actual="";
+        if($this->estatus=='1')
+        {
+            $estatus_actual="ABIERTO";
+        }
+        if($this->estatus=='2')
+        {
+            $estatus_actual="CERRADO"; 
+        }
+        if($this->estatus=='3')
+        {
+            $estatus_actual="TERMINADO";
+        }
+
+        TicketAvance::create([
+            'ticket_id'=>$this->ticket_id,
+            'user_id'=>Auth::user()->id,
+            'nombre_usuario'=>Auth::user()->name,
+            'avance'=>$resultado==0?'Solicitud RECHAZADA':'SOLICITUD AUTORIZADA',
+            'tipo_avance'=>2,
+            ]);
+
+        TicketAvance::create([
+            'ticket_id'=>$this->ticket_id,
+            'user_id'=>Auth::user()->id,
+            'nombre_usuario'=>Auth::user()->name,
+            'avance'=>'Cambió el estatus '.$estatus_actual.' -> '.$this->nuevo_posible_estatus,
+            'tipo_avance'=>2,
+            ]);
+        
+        return;
+    }
     public function cambio_estatus()
     {
         $this->procesando=1;
@@ -338,6 +394,17 @@ class TicketDetalle extends Component
         $this->open_confirm_status=true;
         $this->procesando=0;
 
+    }
+    public function open_modal_confirm_rechazo()
+    {
+        $this->open_confirm_rechazo=true;
+        $this->procesando=0;
+        
+    }
+    public function open_modal_confirm_autorizacion()
+    {
+        $this->open_confirm_autorizacion=true;
+        $this->procesando=0;
     }
     public function open_reasignar_modal()
     {

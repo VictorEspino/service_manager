@@ -25,6 +25,7 @@ class NuevoTopico extends Component
 
     public $nombre,$descripcion;
     public $sla,$grupo,$tipo_asignacion;
+    public $emite_autorizacion='NO';
     public $campos_principal=[];    
     public $invitados_principal=[];
 
@@ -118,7 +119,8 @@ class NuevoTopico extends Component
         $this->validacion();
         $nuevo_topico=Topico::create([
             'nombre'=>$this->nombre,
-            'descripcion'=>$this->descripcion
+            'descripcion'=>$this->descripcion,
+            'emite_autorizacion'=>$this->emite_autorizacion=='NO'?0:1
         ]);
         
         $actividad_principal=ActividadTopico::create([

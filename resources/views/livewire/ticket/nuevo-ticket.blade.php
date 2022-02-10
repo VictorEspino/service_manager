@@ -122,6 +122,7 @@
                                     @endif
                                 </select><br />
                                 @error('topico')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                                <input name="emite_autorizacion" wire:model="emite_autorizacion" type="hidden">
                             </td>
                         </tr>
                         <tr class="p-2 border">
@@ -216,6 +217,7 @@
                             <option value="2">Alta</option>
                         </select>
                     </div>
+                    <!--
                     <div class="pt-4">
                         <x-jet-label class="text-gray-400 font-bold" value="Seras atendido por:" />
                     </div>     
@@ -225,6 +227,7 @@
                             <option value="Alta">Alta</option>
                         </select>
                     </div>    
+                -->
                 </div>
             </div>
 

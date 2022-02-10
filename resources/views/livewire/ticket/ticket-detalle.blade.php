@@ -5,13 +5,16 @@
     <x-ticket-nav />
     <div class="w-full flex flex-row bg-white h-screen">
         <div class="flex-1 p-4 flex flex-col text-gray-600">
-            <div class="w-full">
+            <div class="w-full pb-6">
                 <div class="text-xl font-semibold text-gray-600">Ticket: {{ticket($ticket_id)}} - {{$asunto}}</div>
-                <div class="text-xs pb-6">{{$topico_nombre}}</div>
+                <div class="text-xs">{{$topico_nombre}}</div>
+                @if($emite_autorizacion==1 && $estatus==2)
+                <div class="text-xl font-bold {{$resultado_autorizacion==1?'text-green-500':'text-red-500'}}">Solicitud {{$resultado_autorizacion==1?'AUTORIZADA':'RECHAZADA'}}</div>
+                @endif
             </div>
             <div class="w-full overflow-y-scroll pr-4">
                 <div class="w-full rounded border bg-gray-200 px-2 py-3 flex flex-col py-6">
-                    @if(($time_to=='-1' && Auth::user()->id==$solicitante_id) || $time_to!='-1')
+                    @if((($time_to=='-1' && Auth::user()->id==$solicitante_id) || $time_to!='-1') && $estatus==1)
                     <form action="{{route('save_avance')}}" method="POST" enctype="multipart/form-data" id="save_avance">
                         @csrf
                         <input type="hidden" name="id" value="{{$ticket_id}}">
@@ -71,7 +74,11 @@
                     </form>
                         
                     @else
-                        <span class="w-full flex justify-center text-red-500 font-bold">ESTE TICKET ESTA EN ESPERA DE UNA RESPUESTA DEL SOLICITANTE</span>
+                        @if($estatus!=2)
+                        <span class="w-full flex justify-center text-red-500 font-bold">
+                            ESTE TICKET ESTA EN ESPERA DE UNA RESPUESTA DEL SOLICITANTE
+                        </span>
+                        @endif
                     @endif
                 </div>
                 <div class="w-full">
@@ -118,11 +125,26 @@
                     {{$estatus=='1'?'abierto':($estatus=='2'?'cerrado':'terminado')}}
                 </div>
             </div>
+            
+            @if(($estatus==1 && $emite_autorizacion==0 && Auth::user()->id!=$solicitante_id) || ($estatus==2 && $emite_autorizacion==1 && Auth::user()->id==$solicitante_id))
             <div class="w-full flex flex-row justify-center pt-3">
                 <div class="py-1 px-3">
                     <x-jet-secondary-button wire:click.prevent="open_modal_confirm_status">{{$valor_boton_cambio_estatus}}</x-jet-secondary-button>
                 </div>
             </div>
+            @endif
+            @if($estatus==1 && $emite_autorizacion==1 && (($valor_boton_cambio_estatus=='CERRAR' && Auth::user()->id!=$solicitante_id)))
+            <div class="w-full flex flex-row justify-center pt-3">
+                <div class="py-1 px-3 flex flex-row">
+                    <div class="w-1/2">
+                        <x-jet-danger-button wire:click.prevent="open_modal_confirm_rechazo">Rechazar</x-jet-danger-button>
+                    </div>
+                    <div class="w-1/2">
+                        <x-jet-button wire:click.prevent="open_modal_confirm_autorizacion">Autorizar</x-jet-button>
+                    </div>
+                </div>
+            </div>
+            @endif
             @if($estatus=='2')
             <div class="w-full flex flex-col justify-center text-xs text-gray-500">
                 <div class="px-2 flex justify-center">
@@ -159,7 +181,10 @@
             @endif
             <div class="w-full flex flex-row justify-center pt-6">
                 <div class="py-1 px-3 font-bold text-gray-500 text-sm">
-                    Asesor <span class="text-xs text-blue-500" style="cursor: pointer;" wire:click="open_reasignar_modal">reasignar</span>
+                    Asesor 
+                    @if($estatus==1)
+                    <span class="text-xs text-blue-500" style="cursor: pointer;" wire:click="open_reasignar_modal">reasignar</span>
+                    @endif
                 </div>
             </div>
             <div class="w-full flex flex-row justify-center text-sm">
@@ -212,6 +237,52 @@
             </div>
         </div>
     </div>
+    <x-jet-dialog-modal wire:model="open_confirm_rechazo" maxWidth="md">
+        <x-slot name="title">
+            Accion Rechazada
+        </x-slot>
+        <x-slot name="content">
+            <div class="w-full flex flex-row">
+                <div class="w-24 text-7xl text-amber-500 flex justify-center py-8"><i class="far fa-question-circle"></i></div>
+                <div class="flex-1 text-sm text-gray-600 px-5 flex flex-col items-center">  
+                    <div class="pt-4">
+                    Esta accion dara por <b>RECHAZADA</b> la peticion del solicitante y dara el ticket por CERRADO<br><br>
+                    </div>
+                    <div>
+                    ¿Desea continuar?
+                    </div>
+                </div>
+            </div> 
+            
+        </x-slot>
+        <x-slot name="footer">
+            <x-jet-secondary-button wire:click.prevent="$set('open_confirm_status',false)">Cancelar</x-jet-secondary-button>
+            <button {{$procesando==1?'disabled':''}} class='inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition' wire:click.prevent="autorizacion(0)">Confirmar</button>
+        </x-slot>
+    </x-jet-dialog-modal>
+    <x-jet-dialog-modal wire:model="open_confirm_autorizacion" maxWidth="md">
+        <x-slot name="title">
+            Accion Autorizada
+        </x-slot>
+        <x-slot name="content">
+            <div class="w-full flex flex-row">
+                <div class="w-24 text-7xl text-amber-500 flex justify-center py-8"><i class="far fa-question-circle"></i></div>
+                <div class="flex-1 text-sm text-gray-600 px-5 flex flex-col items-center">  
+                    <div class="pt-4">
+                    Esta accion dara por <b>AUTORIZADA</b> la peticion del solicitante y dara el ticket por CERRADO<br><br>
+                    </div>
+                    <div>
+                    ¿Desea continuar?
+                    </div>
+                </div>
+            </div> 
+            
+        </x-slot>
+        <x-slot name="footer">
+            <x-jet-secondary-button wire:click.prevent="$set('open_confirm_status',false)">Cancelar</x-jet-secondary-button>
+            <button {{$procesando==1?'disabled':''}} class='inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition' wire:click.prevent="autorizacion(1)">Confirmar</button>
+        </x-slot>
+    </x-jet-dialog-modal>
     <x-jet-dialog-modal wire:model="open_confirm_status" maxWidth="md">
         <x-slot name="title">
             Cambio de estatus

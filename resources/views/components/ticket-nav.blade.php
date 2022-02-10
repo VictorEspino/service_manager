@@ -4,7 +4,7 @@
         <span class="ml-5 font-semibold text-gray-600 text-2xl">TICKETS</span>
     </div>
     <div class="border-l-4 border-gray-300 flex items-center px-5 text-gray-600">
-        Tablero
+        <a href="{{route('tickets')}}">Tablero</a>
     </div>
     <div class="border-l-4 border-gray-300 flex items-center px-5 text-gray-600">
         Tickets Abiertos
@@ -13,7 +13,7 @@
         Tickets Cerrados
     </div>
     <div class="border-l-4 border-gray-300 flex items-center px-5 text-gray-600">
-        Reportes
+        <a href="{{route('reportes')}}">Reportes</a>
     </div>
     <div class="flex-1 justify-end border-l-4 border-r-4 border-gray-300 flex items-center px-5 text-gray-600">
         @livewire('ticket.nuevo-ticket')

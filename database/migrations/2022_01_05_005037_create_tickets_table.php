@@ -18,6 +18,8 @@ class CreateTicketsTable extends Migration
             $table->foreignId('creador_id');
             $table->foreignId('de_id');
             $table->foreignId('topico_id');
+            $table->integer('emite_autorizacion')->default(0);
+            $table->integer('resultado_autorizacion')->default(0);
             $table->string('asunto');
             $table->integer('prioridad');
             $table->integer('privacidad')->default(1); //privado

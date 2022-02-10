@@ -42,7 +42,7 @@
             $registros=$registros+1;   
             @endphp
             <div class="w-full flex flex-row bg-white rounded-lg shadow-lg p-3 border border-blue-200">
-                <div class="w-1/3 text-gray-700 font-semibold text-xl px-3">{{$user->name}}<br/><span class="text-xs">{{$user->perfil}}</span></div>
+                <div class="w-1/3 text-gray-700 font-semibold text-xl px-3">{{$user->name}}<br/><span class="text-xs">({{$user->user}}) - {{$user->perfil}}</span></div>
                 <div class="w-1/6 text-gray-700 text-xs px-2">{{$user->puesto}}</div>
                 <div class="w-1/6 text-gray-700 text-xs px-2">Area: {{$user->area_user->nombre}}</div>
                 <div class="w-1/6 text-gray-700 text-xs px-2">Subarea: {{$user->subarea->nombre}}</div>

@@ -20,6 +20,7 @@ class Ticket extends Model
         'a_a0',
         'n_actividades',
         'n_minutos',
+        'emite_autorizacion'
     ];
 
     public function solicitante()

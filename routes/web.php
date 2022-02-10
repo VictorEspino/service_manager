@@ -6,6 +6,7 @@ use App\Http\Livewire\Grupo\ShowGrupos;
 use App\Http\Livewire\Usuario\ShowUsuarios;
 use App\Http\Livewire\Ticket\TicketDetalle;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ReportesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,9 +29,10 @@ Route::get('/topicos',ShowTopicos::class)->name('topicos')->middleware('auth');
 Route::get('/usuarios',ShowUsuarios::class)->name('usuarios')->middleware('auth');
 Route::get('/grupos',ShowGrupos::class)->name('grupos')->middleware('auth');
 Route::get('/tickets',[TicketController::class,'show'])->name('tickets')->middleware('auth');
+Route::get('/reportes',function (){return view ('reporte-tickets');})->name('reportes')->middleware('auth');
+Route::post('/reportes',[ReportesController::class,'listado'])->name('reportes')->middleware('auth');
 
 Route::post('/save_ticket',[TicketController::class,'save'])->middleware('auth')->name('save_ticket');
-//Route::get('/ticket/{id}',TicketDetalle::class)->name('ticket')->middleware('auth');
 Route::get('/ticket/{id}',[TicketController::class,'ticket'])->name('ticket')->middleware('auth');
 Route::post('/save_avance',[TicketController::class,'save_avance'])->middleware('auth')->name('save_avance');
 Route::post('/avanzar_etapa',[TicketController::class,'avanzar_etapa'])->middleware('auth')->name('avanzar_etapa');

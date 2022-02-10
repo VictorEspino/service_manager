@@ -1198,9 +1198,6 @@ select {
 .w-52 {
   width: 13rem;
 }
-.w-2\/6 {
-  width: 33.333333%;
-}
 .min-w-0 {
   min-width: 0px;
 }
@@ -1342,6 +1339,11 @@ select {
   margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
 }
+.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
 .overflow-hidden {
   overflow: hidden;
 }
@@ -1394,6 +1396,10 @@ select {
 .rounded-b-lg {
   border-bottom-right-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
+}
+.rounded-t {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
 }
 .rounded-tl {
   border-top-left-radius: 0.25rem;
@@ -1747,6 +1753,9 @@ select {
 }
 .pr-2 {
   padding-right: 0.5rem;
+}
+.pb-10 {
+  padding-bottom: 2.5rem;
 }
 .text-left {
   text-align: left;

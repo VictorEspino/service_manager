@@ -9,5 +9,5 @@ class Topico extends Model
 {
     use HasFactory;
 
-    protected $fillable=['nombre','descripcion'];
+    protected $fillable=['nombre','descripcion','emite_autorizacion'];
 }

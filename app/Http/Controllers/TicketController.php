@@ -116,7 +116,6 @@ class TicketController extends Controller
                 
             }
         }
-
         return(back());
     }
     public function save(Request $request)
@@ -153,6 +152,7 @@ class TicketController extends Controller
                         'a_a0'=>$asignacion,
                         'n_actividades'=>$n_actividades,
                         'n_minutos'=>$n_minutos,
+                        'emite_autorizacion'=>$request->emite_autorizacion,
                         ]);
 
         if(isset($request->adjunto))
