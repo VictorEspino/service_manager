@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Ticket;
+use App\Models\Invitado;
 use App\Models\TicketAvance;
 use App\Models\TicketAvancesCampo;
 use App\Models\ActividadTicket;
@@ -19,7 +20,32 @@ class TicketController extends Controller
 {
     public function ticket(Request $request)
     {
-        return(view('ticket',['id'=>$request->id]));
+        if(Auth::user()->perfil=='MIEMBRO')
+        {
+            $tickets_autorizados=DB::select(DB::raw(getSQLUniverso(Auth::user()->id)));
+            $tickets_autorizados=collect($tickets_autorizados);
+            $universo=$tickets_autorizados->pluck('ticket_id','ticket_id');
+            try
+            {
+                $universo[$request->id];
+            } 
+            catch(\Exception $e)
+            {
+                return(view('no_autorizado',['mensaje'=>'No cuenta con autorizacion para revisar el ticket: '.ticket($request->id).' dado que no forma parte del grupo(s) de atencion, ni ha sido invitado a alguna de las actividades del ticket.']));
+            }            
+        }
+        $buscar="NO";
+        $busqueda="";
+        if(isset($_GET['q']))
+        {
+            $busqueda=$_GET['q'];
+            if($busqueda!="")
+            {
+                $buscar="SI";
+            }
+        }
+
+        return(view('ticket',['id'=>$request->id,'buscar'=>$buscar,'busqueda'=>$busqueda]));
     }
     public function avanzar_etapa(Request $request)
     {
@@ -172,7 +198,6 @@ class TicketController extends Controller
         $actividad_principal=0;
         foreach($actividades_topico as $actividad_estructura)
         {
-            
             $actividad_ticket=ActividadTicket::create([
                                     'ticket_id'=>$ticket->id,
                                     'secuencia'=>$actividad_estructura->secuencia,
@@ -202,6 +227,16 @@ class TicketController extends Controller
                                         'referencia'=>$campos_actividad_ticket->id,
                                     ]);
             }
+            $invitados_estructura=Invitado::where('actividad_id',$actividad_estructura->id)
+                                            ->get();
+            foreach($invitados_estructura as $invitado_actividad)
+            {
+                InvitadoTicket::create([
+                    'user_id'=>$invitado_actividad->user_id,
+                    'actividad_id'=>$actividad_ticket->id,
+                    'ticket_id'=>$ticket->id,
+                ]);
+            }
         }
 
         if(isset($request->invitados))
@@ -211,6 +246,7 @@ class TicketController extends Controller
                 InvitadoTicket::create([
                     'ticket_id'=>$ticket->id,
                     'user_id'=>$invitado['id'],
+                    'actividad_id'=>$actividad_principal
                 ]);
             }
         }
@@ -305,14 +341,28 @@ class TicketController extends Controller
     public function show(Request $request)
     {
         $asignados_a_mi=Ticket::with('solicitante')
-                            ->where('asignado_a',Auth::user()->id)
-                            ->orWhere(function($query) {
-                                $query->where('time_to', '-1')
-                                      ->where('de_id', Auth::user()->id);
+                            ->where(function($query_main){
+                                $query_main->where('asignado_a',Auth::user()->id);
+                                $query_main->orWhere(function($query) {
+                                    $query->where('time_to', '-1')
+                                          ->where('de_id', Auth::user()->id);
+                                    });
                             })
+                            ->where('estatus',1)
+                            ->get();
+        $creados_por_mi=Ticket::with('asesor')
+                            ->where('de_id',Auth::user()->id)
+                            ->where('estatus',1)
+                            ->get();
+        $participante=Ticket::with('asesor','solicitante')
+                            ->where('estatus',1)
+                            ->whereRaw('id in ('.getSQLParticipante(Auth::user()->id).')')
+                            ->where('asignado_a','!=',Auth::user()->id)
                             ->get();
         return (view('tickets',[
                 'asignados_a_mi'=>$asignados_a_mi,
+                'creados_por_mi'=>$creados_por_mi,
+                'participante'=>$participante,
             ]));
     }
     private function update_tiempos($ticket)

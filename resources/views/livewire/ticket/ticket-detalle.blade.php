@@ -6,7 +6,7 @@
     <div class="w-full flex flex-row bg-white h-screen">
         <div class="flex-1 p-4 flex flex-col text-gray-600">
             <div class="w-full pb-6">
-                <div class="text-xl font-semibold text-gray-600">Ticket: {{ticket($ticket_id)}} - {{$asunto}}</div>
+                <div class="text-xl font-semibold text-gray-600">Ticket: {{ticket($ticket_id)}} - {!!$buscar=="NO"?$asunto:destaca_busqueda($asunto,$busqueda)!!}</div>
                 <div class="text-xs">{{$topico_nombre}}</div>
                 @if($emite_autorizacion==1 && $estatus==2)
                 <div class="text-xl font-bold {{$resultado_autorizacion==1?'text-green-500':'text-red-500'}}">Solicitud {{$resultado_autorizacion==1?'AUTORIZADA':'RECHAZADA'}}</div>
@@ -47,6 +47,8 @@
                             </div>
                         </div>
                         @endif
+                        @if($solicitante_id!=Auth::user()->id)
+                        @if(($estatus==1 && $emite_autorizacion==0 && Auth::user()->id==$asignado_a))
                         <div class="flex flex-row pt-3">
                             <div class="w-20">
                             &nbsp; 
@@ -55,6 +57,7 @@
                                 <x-jet-checkbox wire:model="cerrar_al_responder" name="cerrar_al_responder"/>Cerrar ticket al responder
                             </div>
                         </div>
+                        @endif
                         <div class="flex flex-row">
                             <div class="w-20">
                             &nbsp; 
@@ -63,6 +66,7 @@
                                 <x-jet-checkbox wire:model="esperando_respuesta" name="esperando_respuesta"/>Marcar como "Esperando respuesta del solicitante" despues de responder
                             </div>
                         </div> 
+                        @endif
                         <div class="flex flex-row">
                             <div class="w-20">
                             &nbsp; 
@@ -111,7 +115,9 @@
                     <div class="w-full flex {{($avances_ticket[$i-1]['tipo_avance']=='1' || $avances_ticket[$i-1]['tipo_avance']=='4')?'':'justify-end'}}">
                         <div class="w-10/12 flex-row">
                             <div class="px-2 {{$avances_ticket[$i-1]['tipo_avance']=='1'?'bg-lime-100':($avances_ticket[$i-1]['tipo_avance']=='2'?'bg-amber-100':($avances_ticket[$i-1]['tipo_avance']=='3'?'bg-sky-100':'bg-rose-100'))}} rounded-md py-3 px-5 text-xs font-semibold">
-                                {!!nl2br($avances_ticket[$i-1]['avance'])!!}
+                                {!!$buscar=="NO"?nl2br($avances_ticket[$i-1]['avance']):destaca_busqueda(nl2br($avances_ticket[$i-1]['avance']),$busqueda)!!}
+
+                                
                             </div>
                         </div>
                     </div>
@@ -126,7 +132,7 @@
                 </div>
             </div>
             
-            @if(($estatus==1 && $emite_autorizacion==0 && Auth::user()->id!=$solicitante_id) || ($estatus==2 && $emite_autorizacion==1 && Auth::user()->id==$solicitante_id))
+            @if(($estatus==1 && $emite_autorizacion==0 && Auth::user()->id==$asignado_a) || ($estatus==2 && $emite_autorizacion==1 && Auth::user()->id==$solicitante_id) || ($estatus==2 && Auth::user()->id==$solicitante_id))
             <div class="w-full flex flex-row justify-center pt-3">
                 <div class="py-1 px-3">
                     <x-jet-secondary-button wire:click.prevent="open_modal_confirm_status">{{$valor_boton_cambio_estatus}}</x-jet-secondary-button>
@@ -168,6 +174,7 @@
                     <div class="flex-1">{{$actividad->nombre}}</div>
                 </div>
                 @endforeach
+                @if($estatus==1 && Auth::user()->id==$asignado_a)
                 <div class="w-full text-xs flex flex-row pt-3">
                     <div class="w-1/2">
                         <button {{$actividad_actual=='0'?'disabled':''}} class='inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 active:text-gray-800 active:bg-gray-50 disabled:opacity-25 transition' wire:click.prevent="open_confirm_previa">Previa</button>
@@ -175,8 +182,8 @@
                     <div class="w-1/2">                        
                         @livewire('ticket.siguiente-etapa', ['ticket_id' => $ticket_id])
                     </div>
-
                 </div>
+                @endif
             </div>
             @endif
             <div class="w-full flex flex-row justify-center pt-6">

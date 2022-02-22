@@ -17,6 +17,7 @@ class CreateInvitadoTicketsTable extends Migration
             $table->id();
             $table->foreignId('ticket_id');
             $table->foreignId('user_id');
+            $table->foreignId('actividad_id');
             $table->timestamps();
         });
     }

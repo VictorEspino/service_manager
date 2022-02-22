@@ -5,9 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InvitadoTicket extends Model
+class Busqueda extends Model
 {
     use HasFactory;
-
-    protected $fillable=['ticket_id','user_id','actividad_id'];
 }

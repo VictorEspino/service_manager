@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
 class TicketDetalle extends Component
 {
     public $ticket_id;
+    public $buscar;
+    public $busqueda;
 
     public $open_confirm_status=false;
     public $open_reasignar=false;
@@ -39,6 +41,7 @@ class TicketDetalle extends Component
     public $topico_nombre;
     public $solicitante;
     public $solicitante_id;
+    public $asignado_a;
     public $asesor;
 
     public $estatus;
@@ -82,6 +85,7 @@ class TicketDetalle extends Component
         $this->emite_autorizacion=$ticket->emite_autorizacion;
         $this->resultado_autorizacion=$ticket->resultado_autorizacion;
         $this->estatus=$ticket->estatus;
+        $this->asignado_a=$ticket->asignado_a;
 
         if($ticket->estatus=='1')
         {

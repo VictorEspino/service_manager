@@ -7,6 +7,7 @@ use App\Http\Livewire\Usuario\ShowUsuarios;
 use App\Http\Livewire\Ticket\TicketDetalle;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ReportesController;
+use App\Http\Controllers\BusquedaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,3 +37,6 @@ Route::post('/save_ticket',[TicketController::class,'save'])->middleware('auth')
 Route::get('/ticket/{id}',[TicketController::class,'ticket'])->name('ticket')->middleware('auth');
 Route::post('/save_avance',[TicketController::class,'save_avance'])->middleware('auth')->name('save_avance');
 Route::post('/avanzar_etapa',[TicketController::class,'avanzar_etapa'])->middleware('auth')->name('avanzar_etapa');
+
+Route::get('/busqueda',[BusquedaController::class,'busqueda'])->middleware('auth')->name('busqueda');
+Route::get('/busqueda_simple',[BusquedaController::class,'busqueda_simple'])->middleware('auth')->name('busqueda_simple');

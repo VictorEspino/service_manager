@@ -3,49 +3,11 @@
         Cerrados recientemente
     </div>
     <div class="border-l border-r bg-white flex flex-col rounded-b-lg shadow-lg overflow-y-scroll">
+        @foreach ($tickets as $ticket)
         <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        <div class="p-3 text-xs text-gray-600 border-b"> 
-            #0000000012 Asunto del ticket que se cerro recientemente
-        </div>
-        
+            <a href="{{route('ticket',['id'=>$ticket->id])}}">{{ticket($ticket->id)}}</a> {{$ticket->asunto}}
+        </div>        
+        @endforeach
     </div>    
 </div>
 

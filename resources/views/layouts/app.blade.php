@@ -42,6 +42,7 @@
                                 <i class="fas fa-bars pr-2 text-white" onclick="sidebarToggle()"></i>
     
                                 {{ $header }}
+
                         </h2>
                     </div>
                 </header>

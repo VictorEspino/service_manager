@@ -10,11 +10,18 @@
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
+                <!-- Navigation Links 
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-jet-nav-link>
+                </div>-->
+                <div class="text-base px-10 py-5">
+                    <form action="{{route('busqueda')}}" method="GET">
+                        @csrf
+                        <x-jet-input size=40 class="px-3" name='buscar' placeholder='Buscar'/>
+                        <x-jet-button class="bg-gray-300 hover:bg-gray-500 text-red-700"><i class="fas fa-search"></i></x-jet-button>
+                    </form>
                 </div>
             </div>
             <div class="hidden sm:flex sm:items-center sm:ml-6">
