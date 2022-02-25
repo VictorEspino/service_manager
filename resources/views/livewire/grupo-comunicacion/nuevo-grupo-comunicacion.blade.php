@@ -3,7 +3,7 @@
 
     <x-jet-dialog-modal wire:model="open" maxWidth="5xl">
         <x-slot name="title">
-            Crear nuevo grupo de atención
+            Crear nuevo grupo de comunicación
         </x-slot>
         <x-slot name="content">
             <div class="flex flex-col w-full">

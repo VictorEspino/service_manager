@@ -77,7 +77,15 @@
                                     <a href="{{ route('grupos') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-users-cog float-left mx-2"></i>
-                                        Grupos
+                                        Grupos atencion
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li> 
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupos_comunicacion')?'bg-gray-100':'br-gray-800'}}">
+                                    <a href="{{ route('grupos_comunicacion') }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-users-cog float-left mx-2"></i>
+                                        Grupos comunicacion
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 

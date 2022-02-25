@@ -5,8 +5,8 @@
     <div class="w-full flex flex-col px-5 md:py-6">
         <div class="w-full">
             <x-jet-section-title>
-                <x-slot name="title">Administracion grupos de atención</x-slot>
-                <x-slot name="description">Permite visualizar y dar mantenimiento a los grupos configurados en el sistema para la atencion de tickets</x-slot>
+                <x-slot name="title">Administracion grupos de comunicación</x-slot>
+                <x-slot name="description">Permite visualizar y dar mantenimiento a los grupos configurados en el sistema para la comunicacion de informacion</x-slot>
             </x-jet-section-title>
         </div>
     </div>
@@ -25,7 +25,7 @@
             </div>
             <div class="flex flex-1 px-5">
                 <x-jet-input class="flex-1 text-sm mr-5" type="text"  wire:model="filtro" placeholder="¿Que desea buscar?"/>
-                @livewire("grupo.nuevo-grupo")
+                @livewire("grupo-comunicacion.nuevo-grupo-comunicacion")
             </div>
             
         </div>

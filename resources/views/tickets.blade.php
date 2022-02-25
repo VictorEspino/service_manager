@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __('Dashboard') }}
+        {{ __('Tickets') }}
     </x-slot>
     <x-ticket-nav />
     <div class="w-full h-full bg-gray-100 flex flex-col pt-5 px-8">
