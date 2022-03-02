@@ -49,9 +49,10 @@ class TicketController extends Controller
     }
     public function avanzar_etapa(Request $request)
     {
-        //return $request->all();
+       // return $request->all();
         $ticket=Ticket::find($request->id);
         $actividad_avance=$ticket->actividad_actual+1;
+        $asignacion_seleccionada_usuario=$request->siguiente_etapa_atencion_seleccionada;
 
         $asignado_previo=0;
         if($actividad_avance=='1'){$asignado_previo=$ticket->a_a1;}
@@ -73,9 +74,9 @@ class TicketController extends Controller
 
         $actividad_siguiente=$actividad_next->id;
         $asignacion=$asignado_previo;
-        if(intval($asignado_previo)==0)
+        if(intval($asignado_previo)==0 || $actividad_next->tipo_asignacion=='6')
         {
-            $asignacion=$this->obtenerAsignacion($actividad_next->tipo_asignacion,$actividad_next->grupo_id,$actividad_next->user_id_automatico);
+            $asignacion=$this->obtenerAsignacion($actividad_next->tipo_asignacion,$actividad_next->grupo_id,$actividad_next->user_id_automatico,$asignacion_seleccionada_usuario);
         }
         $this->update_tiempos($ticket); 
         Ticket::where('id',$request->id)
@@ -154,6 +155,7 @@ class TicketController extends Controller
         $tipo_asignacion_requerido=0;
         $grupo_a_asignar=0;
         $asignacion_automatica=0;
+        $asignacion_seleccionada_usuario=$request->atencion_por;
         $asignacion=0;
         foreach($actividades_topico as $actividad_estructura)
         {
@@ -166,7 +168,7 @@ class TicketController extends Controller
                 $asignacion_automatica=$actividad_estructura->user_id_automatico;
             }
         }
-        $asignacion=$this->obtenerAsignacion($tipo_asignacion_requerido,$grupo_a_asignar,$asignacion_automatica);
+        $asignacion=$this->obtenerAsignacion($tipo_asignacion_requerido,$grupo_a_asignar,$asignacion_automatica,$asignacion_seleccionada_usuario);
         $ticket=Ticket::create([
                         'creador_id'=>Auth::user()->id,
                         'de_id'=>$request->de_id,
@@ -287,7 +289,7 @@ class TicketController extends Controller
         //return(view('ticket',['id'=>$ticket->id]));
         return redirect()->route('ticket',['id'=>$ticket->id]);
     }
-    private function obtenerAsignacion($tipo,$grupo_id,$automatico)
+    private function obtenerAsignacion($tipo,$grupo_id,$automatico,$seleccionada)
     {
         if($tipo=='1') return(0); //MANUAL
         if($tipo=='2') return($automatico); //AUTOMATICA
@@ -336,6 +338,10 @@ class TicketController extends Controller
             $miembros=DB::select(DB::raw($sql_miembros));
             $miembros=collect($miembros);
             return($miembros->first()->user_id);
+        }
+        if($tipo=='6')  //SELECCIONADO POR USUARIO
+        {
+            return($seleccionada);
         }
     }
     public function show(Request $request)

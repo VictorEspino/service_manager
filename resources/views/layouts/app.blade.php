@@ -54,6 +54,7 @@
                     <div id="sidebar" class="bg-gray-300 text-gray-700 h-screen flex w-52 flex-shrink-0 border-r border-side-nav md:block lg:block">
                         <div>
                             <ul class="list-reset flex flex-col">
+                                <!--
                                 <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('dashboard')?'bg-gray-100':'br-gray-800'}}">
                                     <a href="{{ route('dashboard') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
@@ -62,6 +63,8 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 
+                                -->
+                                @if(Auth::user()->perfil=='ADMIN')
                                 <li class=" w-full h-full py-3 px-2 border-b border-light-border bg-blue-200">
                                         Configuracion
                                 </li> 
@@ -97,10 +100,11 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li>
+                                @endif
                                 <li class=" w-full h-full py-3 px-2 border-b border-light-border bg-blue-200">
                                     Tickets
                                 </li> 
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('tickets')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('tickets') || request()->routeIs('root')?'bg-gray-100':'br-gray-800'}}">
                                     <a href="{{ route('tickets') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-file-invoice float-left mx-2"></i>
@@ -108,6 +112,29 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 
+                                @php
+                                 $n_grupos=DB::select(DB::raw("SELECT count(*) as n_grupos FROM miembro_grupo_comunicacions WHERE user_id='".Auth::user()->id."'")); 
+                                 $n_grupos=collect($n_grupos)->first()->n_grupos;
+                                 if($n_grupos>0)
+                                 {
+                                    $lista_grupos=App\Models\MiembroGrupoComunicacion::with('grupo')->where('user_id',Auth::user()->id)->get();
+                                 }
+                                @endphp
+                                @if($n_grupos>0)
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border bg-blue-200">
+                                    Grupos
+                                </li> 
+                                @foreach($lista_grupos as $grupo)
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupo')?'bg-gray-100':'br-gray-800'}}">
+                                    <a href="{{ route('grupo',['id'=>$grupo->grupo->id]) }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-user-friends float-left mx-2"></i>
+                                        {{$grupo->grupo->nombre}}
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li> 
+                                @endforeach
+                                @endif
                             </ul>                
                         </div>
                     </div>

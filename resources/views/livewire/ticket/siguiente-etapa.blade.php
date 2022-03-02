@@ -54,11 +54,27 @@
                             @error('siguiente_etapa_campos.'.$index.'.valor')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
                         </div>
                     </div>
-                    @endforeach
+                    @endforeach                   
                 </div>
             </div>
-            
-        
+            @if($siguiente_etapa_asignacion_seleccionable)
+            <div class="w-full flex flex-col">
+                <div class="py-2 w-full flex flex-row">
+                    <div class="px-4 w-32 flex justify-end items-start">
+                        <x-jet-label value="Sera atendido por:"/>
+                    </div>
+                    <div class="">
+                        <select wire:model="siguiente_etapa_atencion_seleccionada" name="siguiente_etapa_atencion_seleccionada" class="text-xs w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                            <option></option>
+                            @foreach ($siguiente_etapa_usuarios_disponibles as $seleccionable)
+                            <option value="{{$seleccionable->user->id}}">{{$seleccionable->user->name}}</option> 
+                            @endforeach                           
+                        </select>
+                        @error('siguiente_etapa_atencion_seleccionada')<br /><span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                    </div>
+                </div>                
+            </div>
+            @endif        
         </div>
     </x-slot>
     <x-slot name="footer">

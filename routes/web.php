@@ -7,6 +7,7 @@ use App\Http\Livewire\GrupoComunicacion\ShowGruposComunicacion;
 use App\Http\Livewire\Usuario\ShowUsuarios;
 use App\Http\Livewire\Ticket\TicketDetalle;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\GrupoComunicacionController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\BusquedaController;
 
@@ -21,7 +22,7 @@ use App\Http\Controllers\BusquedaController;
 |
 */
 
-Route::get('/', function () {return view('dashboard');})->middleware('auth');
+Route::get('/', [TicketController::class,'show'])->middleware('auth')->name('root');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
@@ -42,3 +43,7 @@ Route::post('/avanzar_etapa',[TicketController::class,'avanzar_etapa'])->middlew
 
 Route::get('/busqueda',[BusquedaController::class,'busqueda'])->middleware('auth')->name('busqueda');
 Route::get('/busqueda_simple',[BusquedaController::class,'busqueda_simple'])->middleware('auth')->name('busqueda_simple');
+
+
+Route::get('/grupo/{id}',[GrupoComunicacionController::class,'grupo'])->name('grupo')->middleware('auth');
+Route::post('/save_post',[GrupoComunicacionController::class,'save_post'])->middleware('auth')->name('save_post');

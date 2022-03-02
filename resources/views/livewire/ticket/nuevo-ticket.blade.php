@@ -217,17 +217,20 @@
                             <option value="2">Alta</option>
                         </select>
                     </div>
-                    <!--
+                    @if($atencion_seleccionable)
                     <div class="pt-4">
                         <x-jet-label class="text-gray-400 font-bold" value="Seras atendido por:" />
                     </div>     
                     <div class="w-full">
-                        <select name="atencion" class="text-xs w-full ml-2 mr-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
-                            <option value="Normal">Normal</option>
-                            <option value="Alta">Alta</option>
+                        <select wire:model="atencion_por" name="atencion_por" class="text-xs w-full ml-2 mr-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                            <option></option>
+                            @foreach ($usuarios_atencion_seleccionable as $seleccionable)
+                            <option value="{{$seleccionable->user->id}}">{{$seleccionable->user->name}}</option> 
+                            @endforeach                           
                         </select>
+                        @error('atencion_por')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
                     </div>    
-                -->
+                    @endif
                 </div>
             </div>
 

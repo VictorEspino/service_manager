@@ -7,10 +7,12 @@ use App\Models\ActividadTicket;
 use App\Models\ActividadTicketCampos;
 use App\Models\TicketAvance;
 use App\Models\Ticket;
+use App\Models\MiembroGrupo;
 
 class SiguienteEtapa extends Component
 {
     public $ticket_id;
+    public $ticket;
     public $procesando=0;
     public $actividades_total;
     public $actividad_actual;
@@ -21,11 +23,16 @@ class SiguienteEtapa extends Component
     public $siguiente_etapa_descripcion;
     public $siguiente_etapa_campos=[];
 
+    public $siguiente_etapa_asignacion_seleccionable=false;
+    public $siguiente_etapa_atencion_seleccionada;
+    public $siguiente_etapa_usuarios_disponibles=[];
+
     protected $listeners = ['etapa' => 'render'];
 
     public function render()
     {
         $ticket=Ticket::find($this->ticket_id);
+        $this->ticket=$ticket;
         $this->actividades_total=$ticket->n_actividades;
         $this->actividad_actual=$ticket->actividad_actual;
         return view('livewire.ticket.siguiente-etapa');
@@ -37,6 +44,35 @@ class SiguienteEtapa extends Component
         ->where('secuencia',$actividad_avance)
         ->get()
         ->first();
+
+        $asignado_previo=0;
+        if($actividad_avance==1){$asignado_previo=$this->ticket->a_a1;}
+        if($actividad_avance==2){$asignado_previo=$this->ticket->a_a2;}
+        if($actividad_avance==3){$asignado_previo=$this->ticket->a_a3;}
+        if($actividad_avance==4){$asignado_previo=$this->ticket->a_a4;}
+        if($actividad_avance==5){$asignado_previo=$this->ticket->a_a5;}
+        if($actividad_avance==6){$asignado_previo=$this->ticket->a_a6;}
+        if($actividad_avance==7){$asignado_previo=$this->ticket->a_a7;}
+        if($actividad_avance==8){$asignado_previo=$this->ticket->a_a8;}
+        if($actividad_avance==9){$asignado_previo=$this->ticket->a_a9;}
+
+        if($actividad_ticket->tipo_asignacion=='6')
+        {
+            $this->siguiente_etapa_asignacion_seleccionable=true;
+            $this->siguiente_etapa_usuarios_disponibles=MiembroGrupo::with('user')
+                                    ->where('grupo_id',$actividad_ticket->grupo_id)
+                                    ->get();
+
+            if($asignado_previo!=0)
+            {
+                $this->siguiente_etapa_atencion_seleccionada=$asignado_previo;
+            }
+        }
+        else
+        {
+            $this->siguiente_etapa_asignacion_seleccionable=false;
+            $this->siguiente_etapa_usuarios_disponibles=[];
+        }
 
         $this->siguiente_etapa_id=$actividad_ticket->id;
         $this->siguiente_etapa_nombre=$actividad_ticket->nombre;
@@ -72,6 +108,12 @@ class SiguienteEtapa extends Component
                   ]);
             }
           }
+        if($this->siguiente_etapa_asignacion_seleccionable)
+        {
+            $reglas = array_merge($reglas, [
+                'siguiente_etapa_atencion_seleccionada' => 'required',
+              ]);
+        }
         
         //dd($reglas);
         $this->validate($reglas,

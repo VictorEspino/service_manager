@@ -15,4 +15,8 @@ class MiembroGrupoComunicacion extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function grupo()
+    {
+        return $this->belongsTo(GrupoComunicacion::class,'grupo_id');
+    }
 }

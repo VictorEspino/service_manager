@@ -8,6 +8,7 @@ use App\Models\Topico;
 use App\Models\User;
 use App\Models\ActividadTopico;
 use App\Models\ActividadCampos;
+use App\Models\MiembroGrupo;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +34,10 @@ class NuevoTicket extends Component
     public $emite_autorizacion;
     public $campos_requeridos=[];
     public $prioridad;
+
+    public $atencion_seleccionable=false;
     public $atencion_por;
+    public $usuarios_atencion_seleccionable=[];
 
     public $cambiar_usuario=false;
     public $buscar_usuario;
@@ -71,11 +75,15 @@ class NuevoTicket extends Component
         $topico=Topico::find($this->topico);
         $this->descripcion_topico=$topico->descripcion;
         $this->emite_autorizacion=$topico->emite_autorizacion;
-        $actividad_principal=ActividadTopico::where('topico_id',$this->topico)
-                                            ->where('secuencia',0)
-                                            ->get()
-                                            ->first()
-                                            ->id;
+        $actividad_inicial_ticket=ActividadTopico::where('topico_id',$this->topico)
+                                    ->where('secuencia',0)
+                                    ->get()
+                                    ->first();
+
+        $actividad_principal=$actividad_inicial_ticket->id;
+        $grupo_inicial_atencion=$actividad_inicial_ticket->grupo_id;
+        $tipo_asignacion_inicial=$actividad_inicial_ticket->tipo_asignacion;
+
         $campos_actividad=ActividadCampos::where('actividad_id',$actividad_principal)
                                             ->get();
         $this->campos_requeridos=[];
@@ -90,6 +98,20 @@ class NuevoTicket extends Component
                                     'valor'=>'',
             ];
         }
+        if($tipo_asignacion_inicial=='6') //SELECCIONABLE POR USUARIO
+        {
+            $this->atencion_seleccionable=true;
+            $this->usuarios_atencion_seleccionable=MiembroGrupo::with('user')
+                                                    ->where('grupo_id',$grupo_inicial_atencion)
+                                                    ->get();
+        }
+        else
+        { 
+            $this->atencion_seleccionable=false;
+            $this->usuarios_atencion_seleccionable=[];
+        }
+
+
     }
     public function updatedBuscarUsuario()
     {
@@ -168,6 +190,9 @@ class NuevoTicket extends Component
         $this->usuarios_disponibles="";
         $this->campos_requeridos=[];
         $this->open=false;
+        $this->atencion_seleccionable=false;
+        $this->atencion_por=null;
+        $this->usuarios_atencion_seleccionable=[];
         $this->resetErrorBag();
         $this->resetValidation();
     }
@@ -187,6 +212,12 @@ class NuevoTicket extends Component
                   ]);
             }
           }
+        if($this->atencion_seleccionable)
+        {
+            $reglas = array_merge($reglas, [
+                'atencion_por' => 'required',
+              ]);   
+        }
         
         //dd($reglas);
         $this->validate($reglas,
