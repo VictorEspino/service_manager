@@ -14,7 +14,7 @@ class ShowUsuarios extends Component
     public $filtro='';
     public $elementos=10;
 
-    protected $listeners = ['usuarioAgregado' => 'render'];
+    protected $listeners = ['usuarioAgregado' => 'render','usuarioModificado'=>'render'];
 
     public function updatingElementos()
     {
@@ -24,7 +24,6 @@ class ShowUsuarios extends Component
     {
         $this->resetPage();
     }
-
     public function render()
     {
         $users=User::with('area_user','subarea')->where('name','like','%'.$this->filtro.'%')

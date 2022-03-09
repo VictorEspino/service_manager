@@ -44,7 +44,7 @@
             <div class="w-full flex flex-row bg-white rounded-lg shadow-lg p-3 border border-blue-200">
                 <div class="w-1/4 text-gray-700 font-semibold text-xl px-3">{{$topico->nombre}}</div>
                 <div class="w-1/2 text-gray-700 text-sm px-2">{{$topico->descripcion}}</div>
-                <div class="w-1/4 text-gray-700 text-3xl flex justify-center flex flex-col text-center">
+                <div class="w-1/6 text-gray-700 text-3xl flex justify-center flex flex-col text-center">
                     @if($topico->estatus=="1")
                         <i class="text-green-600 fas fa-check-circle"></i>
                         <span class="text-xs">Activo</span>
@@ -52,6 +52,9 @@
                         <i class="text-red-400 fas fa-times-circle"></i>
                         <span class="text-xs">Inactivo</span>
                     @endif
+                </div>
+                <div class="w-1/6">
+                    @livewire('topico.update-topico',['id_topico'=>$topico->id,key($topico->id)])
                 </div>
             </div>
         @endforeach

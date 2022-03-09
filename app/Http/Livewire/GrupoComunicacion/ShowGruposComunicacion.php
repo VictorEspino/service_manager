@@ -14,7 +14,7 @@ class ShowGruposComunicacion extends Component
     public $filtro='';
     public $elementos=10;
 
-    protected $listeners = ['grupoAgregado' => 'render'];
+    protected $listeners = ['grupoAgregado' => 'render','grupoModificado'=>'render'];
 
     public function updatingElementos()
     {

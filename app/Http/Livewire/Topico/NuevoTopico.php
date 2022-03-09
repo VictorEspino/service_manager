@@ -128,6 +128,7 @@ class NuevoTopico extends Component
             'grupo_id'=>$this->grupo,
             'tipo_asignacion'=>$this->tipo_asignacion,
             'topico_id'=>$nuevo_topico->id,
+            'descripcion'=>'PRINCIPAL',
             'user_id_automatico'=>is_null($this->user_id_automatico)?0:$this->user_id_automatico,
         ]);
 

@@ -9,4 +9,9 @@ class Invitado extends Model
 {
     use HasFactory;
     protected $fillable=['actividad_id','user_id'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -37,23 +37,26 @@
         @php
         $registros=0;   
         @endphp
-        @foreach ($users as $user)
+        @foreach ($users as $user_listado)
             @php
             $registros=$registros+1;   
             @endphp
             <div class="w-full flex flex-row bg-white rounded-lg shadow-lg p-3 border border-blue-200">
-                <div class="w-1/3 text-gray-700 font-semibold text-xl px-3">{{$user->name}}<br/><span class="text-xs">({{$user->user}}) - {{$user->perfil}}</span></div>
-                <div class="w-1/6 text-gray-700 text-xs px-2">{{$user->puesto}}</div>
-                <div class="w-1/6 text-gray-700 text-xs px-2">Area: {{$user->area_user->nombre}}</div>
-                <div class="w-1/6 text-gray-700 text-xs px-2">Subarea: {{$user->subarea->nombre}}</div>
-                <div class="w-1/6 text-gray-700 text-3xl flex justify-center flex flex-col text-center">
-                    @if($user->estatus=="1")
+                <div class="w-1/3 text-gray-700 font-semibold text-xl px-3">{{$user_listado->name}}<br/><span class="text-xs">({{$user_listado->user}}) - {{$user_listado->perfil}}</span></div>
+                <div class="w-1/6 text-gray-700 text-xs px-2">{{$user_listado->puesto}}</div>
+                <div class="w-1/6 text-gray-700 text-xs px-2">Area: {{$user_listado->area_user->nombre}}</div>
+                <div class="w-1/6 text-gray-700 text-xs px-2">Subarea: {{$user_listado->subarea->nombre}}</div>
+                <div class="w-1/12 text-gray-700 text-3xl flex justify-center flex flex-col text-center">
+                    @if($user_listado->estatus=="1")
                         <i class="text-green-600 fas fa-check-circle"></i>
                         <span class="text-xs">Activo</span>
                     @else
                         <i class="text-red-400 fas fa-times-circle"></i>
                         <span class="text-xs">Inactivo</span>
                     @endif
+                </div>
+                <div class="w-1/12">
+                    @livewire('usuario.update-usuario',['id_user'=>$user_listado->id,key($user_listado->id)])
                 </div>
             </div>
         @endforeach

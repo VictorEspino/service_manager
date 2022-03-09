@@ -14,7 +14,7 @@ class ShowTopicos extends Component
     public $filtro='';
     public $elementos=10;
 
-    protected $listeners = ['topicoAgregado' => 'render'];
+    protected $listeners = ['topicoAgregado' => 'render','topicoModificado'=>'render'];
 
     public function updatingElementos()
     {
