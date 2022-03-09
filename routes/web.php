@@ -5,6 +5,7 @@ use App\Http\Livewire\Topico\ShowTopicos;
 use App\Http\Livewire\Grupo\ShowGrupos;
 use App\Http\Livewire\GrupoComunicacion\ShowGruposComunicacion;
 use App\Http\Livewire\Usuario\ShowUsuarios;
+use App\Http\Livewire\Lista\ShowLista;
 use App\Http\Livewire\Ticket\TicketDetalle;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\GrupoComunicacionController;
@@ -30,6 +31,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 Route::get('/topicos',ShowTopicos::class)->name('topicos')->middleware('auth');
 Route::get('/usuarios',ShowUsuarios::class)->name('usuarios')->middleware('auth');
+Route::get('/listas',ShowLista::class)->name('listas')->middleware('auth');
 Route::get('/grupos',ShowGrupos::class)->name('grupos')->middleware('auth');
 Route::get('/grupos_comunicacion',ShowGruposComunicacion::class)->name('grupos_comunicacion')->middleware('auth');
 Route::get('/tickets',[TicketController::class,'show'])->name('tickets')->middleware('auth');

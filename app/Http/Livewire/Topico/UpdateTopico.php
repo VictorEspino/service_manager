@@ -11,6 +11,7 @@ use App\Models\ActividadTopico;
 use App\Models\ActividadCampos;
 use App\Models\TipoAsignaciones;
 use App\Models\MiembroGrupo;
+use App\Models\Lista;
 
 class UpdateTopico extends Component
 {
@@ -26,7 +27,7 @@ class UpdateTopico extends Component
     public $invitados_disponibles=[];
 
     public $nombre,$descripcion;
-    public $sla,$grupo,$tipo_asignacion;
+    public $sla,$grupo,$tipo_asignacion,$estatus;
     public $emite_autorizacion='NO';
     public $campos_principal=[];    
     public $invitados_principal=[];
@@ -38,6 +39,8 @@ class UpdateTopico extends Component
     public $enable_automatico=false;
     public $usuarios_grupo_disponibles=[];
 
+    public $listas_valores_disponibles=[];
+
     public function render()
     {
         return view('livewire.topico.update-topico');
@@ -47,6 +50,7 @@ class UpdateTopico extends Component
         $this->id_topico=$id_topico;
         $this->tipo_asignaciones=TipoAsignaciones::all();
         $this->grupos=Grupo::all();
+        $this->listas_valores_disponibles=Lista::where('estatus','1')->orderBy('nombre','asc')->get();
         $this->numero_actividades_adicionales=0;
     }
 
@@ -62,6 +66,7 @@ class UpdateTopico extends Component
                                             ->orderBy('secuencia','asc')
                                             ->get();
         $this->numero_actividades_adicionales=0;
+        $this->estatus=$topico->estatus;
         $this->campos_principal=[];
         $this->invitados_principal=[];
         $this->actividades_adicionales=[];
@@ -551,5 +556,12 @@ class UpdateTopico extends Component
         Invitado::whereIn('actividad_id',$actividades)->delete();
         ActividadCampos::whereIn('actividad_id',$actividades)->delete();
         ActividadTopico::whereIn('id',$actividades)->delete();
+    }
+    public function cambiar_estatus()
+    {
+        Topico::where('id',$this->id_topico)
+            ->update(['estatus'=>($this->estatus=='1'?0:1)]);
+        $this->open=false;
+        $this->emit('topicoModificado');
     }
 }

@@ -57,7 +57,7 @@ class NuevoTicket extends Component
 
     public function mount()
     {
-        $this->grupos=Grupo::orderBy('nombre')->get();
+        $this->grupos=Grupo::where('estatus','1')->orderBy('nombre')->get();
         $this->de_id=Auth::user()->id;
         $this->de_etiqueta=Auth::user()->name." <".Auth::user()->email.">";
     }

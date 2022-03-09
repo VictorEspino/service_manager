@@ -9,7 +9,14 @@
     </div>
     <x-jet-dialog-modal wire:model="open" maxWidth="5xl">
         <x-slot name="title">
-            Editar grupo de comunicación
+            <div class="w-full flex flex-row">
+                <div class="w-3/4">
+                    Editar grupo de comunicación {{$id_grupo}}
+                </div>
+                <div class="flex-1">
+                    <x-jet-button wire:click.prevent="cambiar_estatus">Marcar como {{$estatus=='1'?'INACTIVO':'ACTIVO'}}</x-jet-button>
+                </div>
+            </div>
         </x-slot>
         <x-slot name="content">
             <div class="flex flex-col w-full">

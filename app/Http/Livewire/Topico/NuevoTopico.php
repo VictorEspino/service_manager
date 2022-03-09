@@ -11,6 +11,7 @@ use App\Models\ActividadTopico;
 use App\Models\ActividadCampos;
 use App\Models\TipoAsignaciones;
 use App\Models\MiembroGrupo;
+use App\Models\Lista;
 
 class NuevoTopico extends Component
 {
@@ -36,10 +37,13 @@ class NuevoTopico extends Component
     public $enable_automatico=false;
     public $usuarios_grupo_disponibles=[];
 
+    public $listas_valores_disponibles=[];
+
     public function mount()
     {
         $this->tipo_asignaciones=TipoAsignaciones::all();
         $this->grupos=Grupo::all();
+        $this->listas_valores_disponibles=Lista::where('estatus','1')->orderBy('nombre','asc')->get();
         $this->numero_actividades_adicionales=0;
     }
     public function render()

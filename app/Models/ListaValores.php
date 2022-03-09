@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class ListaValores extends Model
 {
     use HasFactory;
+    protected $fillable=['lista_id','valor'];
 }

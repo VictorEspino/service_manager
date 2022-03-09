@@ -9,7 +9,14 @@
     </div>
     <x-jet-dialog-modal wire:model="open" maxWidth="5xl">
         <x-slot name="title">
-            Editar topico ({{$id_topico}})
+            <div class="w-full flex flex-row">
+                <div class="w-3/4">
+                    Editar topico {{$id_topico}}
+                </div>
+                <div class="flex-1">
+                    <x-jet-button wire:click.prevent="cambiar_estatus">Marcar como {{$estatus=='1'?'INACTIVO':'ACTIVO'}}</x-jet-button>
+                </div>
+            </div>
         </x-slot>
         <x-slot name="content">
             <div class="flex flex-col w-full">
@@ -107,10 +114,9 @@
                                 <x-jet-label value="Lista Valores" />
                                 <select wire:model="campos_principal.{{$index}}.lista" class="w-full text-xs p-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
                                     <option></option>
-                                    <option value="1">Sucursales</option>
-                                    <option value="2">Equipos</option>
-                                    <option value="3">Empleados</option>
-                                    <option value="4">Estatus</option>
+                                    @foreach($listas_valores_disponibles as $lista)
+                                        <option value="{{$lista->id}}">{{$lista->nombre}}</option>
+                                    @endforeach
                                 </select>
                                 @error('campos_principal.'.$index.'.lista') <span class="text-xs text-red-400">{{ $message }}</span> @enderror
                             </div>
@@ -302,10 +308,9 @@
                                         <x-jet-label value="Lista Valores" />
                                         <select wire:model="actividades_adicionales.{{$index}}.campos.{{$index_campos}}.lista" class="w-full text-xs p-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
                                             <option></option>
-                                            <option value="1">Sucursales</option>
-                                            <option value="2">Equipos</option>
-                                            <option value="3">Empleados</option>
-                                            <option value="4">Estatus</option>
+                                            @foreach($listas_valores_disponibles as $lista)
+                                                <option value="{{$lista->id}}">{{$lista->nombre}}</option>
+                                            @endforeach
                                         </select>
                                         @error('actividades_adicionales.'.$index.'.campos.'.$index_campos.'.lista') <span class="text-xs text-red-400">{{ $message }}</span> @enderror 
                                     </div>

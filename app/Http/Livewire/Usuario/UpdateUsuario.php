@@ -24,6 +24,7 @@ class UpdateUsuario extends Component
     public $puesto;
     public $area;
     public $sub_area;
+    public $estatus;
 
     public $areas=[];
     public $sub_areas=[];
@@ -56,6 +57,7 @@ class UpdateUsuario extends Component
         $this->perfil=$user->perfil;
         $this->area=$user->area;
         $this->sub_area=$user->sub_area;
+        $this->estatus=$user->estatus;
     }
 
     public function cancelar()
@@ -115,5 +117,12 @@ class UpdateUsuario extends Component
                 'email'=>'Se requiere una direccion de correo valida'
             ],
           );
+    }
+    public function cambiar_estatus()
+    {
+        User::where('id',$this->id_user)
+            ->update(['estatus'=>($this->estatus=='1'?0:1)]);
+        $this->open=false;
+        $this->emit('usuarioModificado');
     }
 }

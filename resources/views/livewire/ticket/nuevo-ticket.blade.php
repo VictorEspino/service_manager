@@ -117,7 +117,9 @@
                                     <option value=""></option>
                                     @if (is_array($topicos_disponibles) || is_object($topicos_disponibles))
                                         @foreach ($topicos_disponibles as $topico_opcion)
-                                        <option value="{{$topico_opcion->topico->id}}">{{$topico_opcion->topico->nombre}}</option>
+                                        @if($topico_opcion->topico->estatus=='1')
+                                            <option value="{{$topico_opcion->topico->id}}">{{$topico_opcion->topico->nombre}}</option>
+                                        @endif
                                         @endforeach
                                     @endif
                                 </select><br />
@@ -168,7 +170,7 @@
                                                     <select name="campos[{{$index}}][valor]" class="text-xs flex-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" wire:model="campos_requeridos.{{$index}}.valor">
                                                         <option value=""></option>
                                                         @php
-                                                         $valores=App\Models\ListaValores::all();
+                                                         $valores=App\Models\ListaValores::where('lista_id',$campo['lista_id'])->orderBy('id','asc')->get();
                                                          foreach ($valores as $valor) {
                                                         @endphp   
                                                             <option value="{{$valor->valor}}">{{$valor->valor}}</option>

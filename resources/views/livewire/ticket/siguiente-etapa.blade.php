@@ -42,7 +42,7 @@
                             <select name="campos[{{$index}}][valor]" class="text-xs flex-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" wire:model.defer="siguiente_etapa_campos.{{$index}}.valor">
                                 <option value=""></option>
                                 @php
-                                    $valores=App\Models\ListaValores::all();
+                                    $valores=App\Models\ListaValores::where('lista_id',$campo['lista_id'])->orderBy('id','asc')->get();
                                     foreach ($valores as $valor) {
                                 @endphp   
                                     <option value="{{$valor->valor}}">{{$valor->valor}}</option>

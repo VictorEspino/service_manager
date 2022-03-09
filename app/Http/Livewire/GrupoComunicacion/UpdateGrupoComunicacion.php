@@ -13,6 +13,7 @@ class UpdateGrupoComunicacion extends Component
 
     public $nombre;
     public $descripcion;
+    public $estatus;
 
     public $miembros;
     public $manager;
@@ -38,6 +39,7 @@ class UpdateGrupoComunicacion extends Component
         $grupo=GrupoComunicacion::find($this->id_grupo);
         $this->nombre=$grupo->nombre;
         $this->descripcion=$grupo->descripcion;
+        $this->estatus=$grupo->estatus;
         $this->usuarios_disponibles=[];
         $this->usuarios_principal=[];
         $miembros_guardados=MiembroGrupoComunicacion::with('user')->where('grupo_id',$this->id_grupo)->get();
@@ -161,6 +163,13 @@ class UpdateGrupoComunicacion extends Component
         }
 
         $this->reset(['miembros','manager','open','nombre','descripcion','usuarios_principal','usuarios_disponibles','miembros_buscar']);
+        $this->emit('grupoModificado');
+    }
+    public function cambiar_estatus()
+    {
+        GrupoComunicacion::where('id',$this->id_grupo)
+            ->update(['estatus'=>($this->estatus=='1'?0:1)]);
+        $this->open=false;
         $this->emit('grupoModificado');
     }
 }

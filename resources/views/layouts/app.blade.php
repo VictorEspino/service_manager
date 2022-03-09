@@ -100,6 +100,14 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li>
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('listas')?'bg-gray-100':'br-gray-800'}}">
+                                    <a href="{{ route('listas') }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-list float-left mx-2"></i>
+                                        Listas
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li>
                                 @endif
                                 <li class=" w-full h-full py-3 px-2 border-b border-light-border bg-blue-200">
                                     Tickets
