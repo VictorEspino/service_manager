@@ -9,6 +9,7 @@ use App\Models\ActividadTicket;
 use App\Models\ActividadTicketCampos;
 use App\Models\TicketAvance;
 use App\Models\TicketAvancesCampo;
+use App\Models\InvitadoTicket;
 
 use App\Models\Grupo;
 use App\Models\User;
@@ -69,6 +70,8 @@ class TicketDetalle extends Component
     public $actividad_actual;
     public $actividades_total;
     public $actividades_atencion=[];
+
+    public $invitados_ticket=[];
 
     public function render()
     {
@@ -131,6 +134,8 @@ class TicketDetalle extends Component
 
         $this->miembros_disponibles=MiembroGrupo::with('user')->where('grupo_id',$this->grupo_seleccionado)
                                     ->get();
+        
+        $this->invitados_ticket=InvitadoTicket::with('user')->where('ticket_id',$id)->get();
     } 
     
     public function retroceder_etapa()
@@ -208,7 +213,12 @@ class TicketDetalle extends Component
             }
             if($campos->tipo_control=="File")
             {
-                $desc_inicial=$desc_inicial."<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                if($campos->valor=="")
+                {
+                    $archivo_valor_desplegar="<br />".$campos->etiqueta.": SIN ARCHIVO";
+                }
+                $desc_inicial=$desc_inicial."".$archivo_valor_desplegar;
             }
             $x=$x+1;
         }
@@ -252,7 +262,12 @@ class TicketDetalle extends Component
                     }
                     if($campos->tipo=="File")
                     {
-                        $desc_inicial=$desc_inicial."<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                        $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                        if($campos->valor=="")
+                        {
+                            $archivo_valor_desplegar="<br />".$campos->etiqueta.": SIN ARCHIVO";
+                        }
+                        $desc_inicial=$desc_inicial."".$archivo_valor_desplegar;
                     }
                     $x=$x+1;
                 }

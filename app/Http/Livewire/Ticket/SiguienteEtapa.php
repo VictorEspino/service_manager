@@ -135,4 +135,9 @@ class SiguienteEtapa extends Component
         $this->resetValidation();
         $this->open_avanzar=false;
     }
+    public function archivo_seleccionado($valor,$campo)
+    {
+        $campo_archivo=explode('.',$campo);
+        $this->siguiente_etapa_campos[intval($campo_archivo[1])]['valor']=$valor;
+    }
 }

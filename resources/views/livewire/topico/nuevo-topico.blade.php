@@ -281,7 +281,7 @@
                                             <option value="Texto">Texto</option>
                                             <option value="CheckBox">CheckBox</option>
                                             <option value="Lista">Lista</option>
-                                            <option value="Archivo">Archivo</option>
+                                            <option value="File">File</option>
                                         </select>
                                     </div>
                                     <div class="w-1/4 px-3">

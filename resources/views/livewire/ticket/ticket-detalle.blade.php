@@ -237,10 +237,12 @@
                     Otros invitados al ticket
                 </div>
             </div>
-            <div class="w-full flex flex-row justify-center text-sm">
-                <div class="py-1 px-3 font-normal text-blue-500">
-                    Administrador de sistema
+            <div class="w-full flex flex-col justify-center text-center text-sm">
+                @foreach($invitados_ticket as $invitado_registro)
+                <div class="px-3 font-normal text-blue-500">
+                    {{$invitado_registro->user->name}}
                 </div>
+                @endforeach
             </div>
         </div>
     </div>

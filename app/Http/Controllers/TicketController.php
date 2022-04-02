@@ -125,9 +125,16 @@ class TicketController extends Controller
                 if($campos['tipo']=='File')
                 {
                     $upload_path = public_path('archivos');
-                    $file_name = $campos['valor']->getClientOriginalName();
-                    $generated_new_name = $ticket->id.'_'.$actividad_principal.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
-                    $campos['valor']->move($upload_path, $generated_new_name);
+                    //$upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
+                    try{
+                        $file_name = $campos['valor']->getClientOriginalName();
+                        $generated_new_name = $ticket->id.'_'.$actividad_siguiente.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
+                        $campos['valor']->move($upload_path, $generated_new_name);
+                    }
+                    catch(\Exception $e)
+                    {
+                        $generated_new_name="";
+                    }
                     $valor=$generated_new_name;
                 }
                 ActividadTicketCampos::where('actividad_ticket_id',$actividad_siguiente)
@@ -186,6 +193,7 @@ class TicketController extends Controller
         if(isset($request->adjunto))
         {
             $upload_path = public_path('archivos');
+            //$upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
             $file_name = $request->adjunto->getClientOriginalName();
             $generated_new_name = $ticket->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);
@@ -276,9 +284,16 @@ class TicketController extends Controller
                 if($campos['tipo']=='File')
                 {
                     $upload_path = public_path('archivos');
+                    //$upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
+                    try{
                     $file_name = $campos['valor']->getClientOriginalName();
                     $generated_new_name = $ticket->id.'_'.$actividad_principal.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
                     $campos['valor']->move($upload_path, $generated_new_name);
+                    }
+                    catch(\Exception $e)
+                    {
+                       $generated_new_name="";
+                    }
                     $valor=$generated_new_name;
                 }
                 ActividadTicketCampos::where('actividad_ticket_id',$actividad_principal)
@@ -415,6 +430,7 @@ class TicketController extends Controller
         if(isset($request->adjunto))
         {
             $upload_path = public_path('archivos');
+            //$upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
             $file_name = $request->adjunto->getClientOriginalName();
             $generated_new_name = $request->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);

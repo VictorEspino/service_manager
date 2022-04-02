@@ -22,6 +22,7 @@ class NuevaLista extends Component
     public function abrir()
     {
         $this->open=true;
+        $this->procesando=0;
     }
     public function agregar_valor()
     {

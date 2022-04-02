@@ -164,7 +164,8 @@
                                                         <x-jet-checkbox name="campos[{{$index}}][valor]" class="ml-2 text-sm" wire:model="campos_requeridos.{{$index}}.valor"/>
                                                     @endif
                                                     @if($campo['tipo_control']=="File")
-                                                        <input type="file" class="p-2 w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="campos[{{$index}}][valor]" class="text-sm" wire:model="campos_requeridos.{{$index}}.valor"/>
+                                                        <input type="file" class="p-2 w-full text-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="campos[{{$index}}][valor]" class="text-sm" wire:change="archivo_seleccionado($event.target.value,'campos_requeridos.{{$index}}.valor')"/>
+                                                        <input type="hidden" wire:model="campos_requeridos.{{$index}}.valor">
                                                     @endif
                                                     @if($campo['tipo_control']=="Lista")
                                                     <select name="campos[{{$index}}][valor]" class="text-xs flex-1 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" wire:model="campos_requeridos.{{$index}}.valor">
@@ -244,4 +245,11 @@
     
     </x-jet-dialog-modal>
 </div>
+<script>
+    function archivoCambio(campo,archivo_sel)
+    {
+        alert ("cambio_archivo=" + campo + ", valor=" + archivo_sel);
+        document.getElementById(campo).value=archivo_sel;
+    }
+</script>
 </form>

@@ -232,4 +232,10 @@ class NuevoTicket extends Component
         $this->validacion();
         $this->emit('livewire_to_controller','nuevo_ticket');
     }
+
+    public function archivo_seleccionado($valor,$campo)
+    {
+        $campo_archivo=explode('.',$campo);
+        $this->campos_requeridos[intval($campo_archivo[1])]['valor']=$valor;
+    }
 }
