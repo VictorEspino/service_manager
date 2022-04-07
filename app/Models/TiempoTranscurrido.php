@@ -5,24 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Ticket extends Model
+class TiempoTranscurrido extends Model
 {
     use HasFactory;
-
-    protected $fillable=[
-        'creador_id',
-        'de_id',
-        'topico_id',
-        'asunto',
-        'descripcion',
-        'prioridad',
-        'asignado_a', 
-        'a_a0',
-        'n_actividades',
-        'n_minutos',
-        'emite_autorizacion'
-    ];
-
     public function solicitante()
     {
         return $this->belongsTo(User::class,'de_id');
@@ -34,9 +19,5 @@ class Ticket extends Model
     public function asesor()
     {
         return $this->belongsTo(User::class,'asignado_a');
-    }
-    public function actividades()
-    {
-        return $this->hasMany(ActividadTicket::class);
     }
 }

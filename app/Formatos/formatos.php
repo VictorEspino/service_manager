@@ -33,18 +33,3 @@ function busqueda_format($texto,$busqueda,$largo_maximo)
     }
     return($resultado);
 }
-function getSQLUniverso($user_id)
-{
-    $sql="select distinct ticket_id from (SELECT id as ticket_id FROM `tickets` WHERE de_id=".$user_id." UNION select distinct ticket_id from actividad_tickets where grupo_id in (SELECT grupo_id FROM `miembro_grupos` WHERE user_id=".$user_id.") UNION select distinct ticket_id from invitado_tickets where user_id=".$user_id.") as a";   
-    return($sql);
-}
-function getSQLParticipante($user_id)
-{
-    $sql="select distinct ticket_id from (select distinct ticket_id from actividad_tickets where grupo_id in (SELECT grupo_id FROM `miembro_grupos` WHERE user_id=".$user_id.") UNION select distinct ticket_id from invitado_tickets where user_id=".$user_id.") as a";
-    return($sql);
-}
-function getSQLGruposComunicacion($user_id)
-{
-    $sql="select distinct grupo_id from miembro_grupo_comunicacions where user_id='".$user_id."'";
-    return($sql);
-}

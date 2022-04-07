@@ -15,6 +15,7 @@ use App\Models\ActividadTicketCampos;
 use App\Models\ActividadTopico;
 use App\Models\ActividadCampos;
 use App\Models\InvitadoTicket;
+use App\Models\User;
 
 class TicketController extends Controller
 {
@@ -241,10 +242,13 @@ class TicketController extends Controller
                                             ->get();
             foreach($invitados_estructura as $invitado_actividad)
             {
+                $invitado_al_ticket=User::find($invitado_actividad->user_id);
                 InvitadoTicket::create([
                     'user_id'=>$invitado_actividad->user_id,
                     'actividad_id'=>$actividad_ticket->id,
                     'ticket_id'=>$ticket->id,
+                    'area_id'=>$invitado_al_ticket->area,
+                    'subarea_id'=>$invitado_al_ticket->sub_area,
                 ]);
             }
         }
@@ -253,10 +257,13 @@ class TicketController extends Controller
         {
             foreach($request->invitados as $invitado)
             {
+                $invitado_al_ticket=User::find($invitado['id']);
                 InvitadoTicket::create([
                     'ticket_id'=>$ticket->id,
                     'user_id'=>$invitado['id'],
-                    'actividad_id'=>$actividad_principal
+                    'actividad_id'=>$actividad_principal,
+                    'area_id'=>$invitado_al_ticket->area,
+                    'subarea_id'=>$invitado_al_ticket->sub_area,
                 ]);
             }
         }

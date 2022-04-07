@@ -7,6 +7,9 @@ use App\Http\Livewire\GrupoComunicacion\ShowGruposComunicacion;
 use App\Http\Livewire\Usuario\ShowUsuarios;
 use App\Http\Livewire\Lista\ShowLista;
 use App\Http\Livewire\Ticket\TicketDetalle;
+use App\Http\Livewire\Ticket\Abiertos;
+use App\Http\Livewire\Ticket\Cerrados;
+use App\Http\Livewire\Ticket\AvisoAtraso;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\GrupoComunicacionController;
 use App\Http\Controllers\ReportesController;
@@ -49,3 +52,7 @@ Route::get('/busqueda_simple',[BusquedaController::class,'busqueda_simple'])->mi
 
 Route::get('/grupo/{id}',[GrupoComunicacionController::class,'grupo'])->name('grupo')->middleware('auth');
 Route::post('/save_post',[GrupoComunicacionController::class,'save_post'])->middleware('auth')->name('save_post');
+
+Route::get('/tickets_abiertos',Abiertos::class)->name('tickets_abiertos')->middleware('auth');
+Route::get('/tickets_cerrados',Cerrados::class)->name('tickets_cerrados')->middleware('auth');
+Route::get('/atrasos',AvisoAtraso::class)->name('atrasos')->middleware('auth');

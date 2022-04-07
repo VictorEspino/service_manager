@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInvitadoTicketsTable extends Migration
+class CreateGrupoComunicacionPostComentariosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateInvitadoTicketsTable extends Migration
      */
     public function up()
     {
-        Schema::create('invitado_tickets', function (Blueprint $table) {
+        Schema::create('grupo_comunicacion_post_comentarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ticket_id');
+            $table->foreignId('post_id');
             $table->foreignId('user_id');
-            $table->foreignId('actividad_id');
-            $table->foreignId('area_id');
-            $tqble->foreignId('subarea_id');
+            $table->string('nombre_usuario');
+            $table->text('comentario');
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateInvitadoTicketsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('invitado_tickets');
+        Schema::dropIfExists('grupo_comunicacion_post_comentarios');
     }
 }

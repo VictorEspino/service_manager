@@ -69,7 +69,7 @@
                 <div class="w-full px-5 pt-6">
                     {{$posts->links()}}
                 </div>
-                <div class="w-full flex flex-col space-y-3 py-5 px-5">
+                <div class="w-full flex flex-col py-5 px-5">
                     @php
                     $registros=0;   
                     @endphp
@@ -78,17 +78,36 @@
                         $registros=$registros+1;   
                         @endphp
                         <div class="w-full flex flex-col bg-white p-3">
-                            <div class="w-full text-gray-700 font-bold text-sm px-3">{{$post_consulta->nombre_usuario}} <span class="font-normal">publicó</span></div>
-                            <div class="w-full text-gray-700 text-xs px-3">{{$post_consulta->created_at}}</div>
+                            <div class="w-full flex flex-row">
+                                <div class="w-3/4 flex flex-col">
+                                    <div class="w-full text-gray-700 font-bold text-sm px-3">{{$post_consulta->nombre_usuario}} <span class="font-normal">publicó</span></div>
+                                    <div class="w-full text-gray-700 text-xs px-3">{{$post_consulta->created_at}}</div>
+                                </div>
+                                <div class="flex flex-1 justify-end">
+                                    @livewire('grupo-comunicacion.nuevo-comentario-post', ['post_id' => $post_consulta->id], key($post_consulta->id))
+                                </div>
+                            </div>
+                            
                             <div class="w-full flex flex-col border rounded-lg shadow-lg px-5 py-3">
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 ">{{$post_consulta->post}}</div>
                                 @if($post_consulta->adjunto=='1')
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 pt-2">Archivo adjunto:</div>
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 text-red-500"><a download href="/archivos/{{$post_consulta->archivo_adjunto}}"><i class="fas fa-file-download"></i> Download</a></div>
-                                @endif
-                                
+                                @endif                                
                             </div>
                         </div>
+                        @foreach($post_consulta->comentarios as $comentario)
+                        <div class="w-full flex flex-row bg-white p-3 text-xs">
+                            <div class="w-20"></div>
+                            <div class="w-full flex flex-col">
+                                <div class="w-full text-gray-700 font-bold text-sm px-3">{{$comentario->nombre_usuario}} <span class="font-normal">comentó</span></div>
+                                <div class="w-full text-gray-700 text-xs px-3">{{$comentario->created_at}}</div>
+                                <div class="flex flex-1 bg-green-100 shadow-lg border rounded-lg px-3 py-1">
+                                    {{$comentario->comentario}}
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
                     @endforeach
                     @if($registros==0)
                         No se encontraron registros

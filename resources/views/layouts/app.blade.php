@@ -55,7 +55,7 @@
                         <div>
                             <ul class="list-reset flex flex-col">
                                 <!--
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('dashboard')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('dashboard')?'bg-gray-100':''}}">
                                     <a href="{{ route('dashboard') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-tachometer-alt float-left mx-2"></i>
@@ -68,7 +68,7 @@
                                 <li class=" w-full h-full py-3 px-2 border-b border-light-border bg-blue-200">
                                         Configuracion
                                 </li> 
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('topicos')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('topicos')?'bg-gray-100':''}}">
                                     <a href="{{ route('topicos') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-book float-left mx-2"></i>
@@ -76,7 +76,7 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupos')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupos')?'bg-gray-100':''}}">
                                     <a href="{{ route('grupos') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-users-cog float-left mx-2"></i>
@@ -84,7 +84,7 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupos_comunicacion')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupos_comunicacion')?'bg-gray-100':''}}">
                                     <a href="{{ route('grupos_comunicacion') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-users-cog float-left mx-2"></i>
@@ -92,7 +92,7 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('usuarios')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('usuarios')?'bg-gray-100':''}}">
                                     <a href="{{ route('usuarios') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-user float-left mx-2"></i>
@@ -100,7 +100,7 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li>
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('listas')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('listas')?'bg-gray-100':''}}">
                                     <a href="{{ route('listas') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-list float-left mx-2"></i>
@@ -112,7 +112,7 @@
                                 <li class=" w-full h-full py-3 px-2 border-b border-light-border bg-blue-200">
                                     Tickets
                                 </li> 
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('tickets') || request()->routeIs('root')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('tickets') || request()->routeIs('root')?'bg-gray-100':''}}">
                                     <a href="{{ route('tickets') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-file-invoice float-left mx-2"></i>
@@ -120,6 +120,19 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li> 
+                                @if(esManagerDeGrupo())
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('atrasos')?'bg-gray-100':''}}">
+                                    <a href="{{ route('atrasos') }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-clock float-left mx-2"></i>
+                                        @php
+                                          $atrasados_menu=actividadesAtrasadas()  
+                                        @endphp
+                                        Atrasos {!!$atrasados_menu>0?'<span class="rounded-full bg-red-500 px-2 text-white"><b>'.$atrasados_menu.'</b></span>':''!!}
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li> 
+                                @endif
                                 @php
                                  $n_grupos=DB::select(DB::raw("SELECT count(*) as n_grupos FROM miembro_grupo_comunicacions WHERE user_id='".Auth::user()->id."'")); 
                                  $n_grupos=collect($n_grupos)->first()->n_grupos;
@@ -133,7 +146,7 @@
                                     Grupos
                                 </li> 
                                 @foreach($lista_grupos as $grupo)
-                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupo')?'bg-gray-100':'br-gray-800'}}">
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('grupo')?'bg-gray-100':''}}">
                                     <a href="{{ route('grupo',['id'=>$grupo->grupo->id]) }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
                                         <i class="fas fa-user-friends float-left mx-2"></i>

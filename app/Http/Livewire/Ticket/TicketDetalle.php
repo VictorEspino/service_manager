@@ -135,7 +135,8 @@ class TicketDetalle extends Component
         $this->miembros_disponibles=MiembroGrupo::with('user')->where('grupo_id',$this->grupo_seleccionado)
                                     ->get();
         
-        $this->invitados_ticket=InvitadoTicket::with('user')->where('ticket_id',$id)->get();
+        $this->invitados_ticket=InvitadoTicket::with('user','area','subarea')->where('ticket_id',$id)->get();
+
     } 
     
     public function retroceder_etapa()

@@ -23,9 +23,12 @@ class ShowPosts extends Component
     public $file_include=false;
     public $puede_publicar=false;
 
+    protected $listeners = ['nuevo_comentario' => 'render'];
+
     public function render()
     {
-        $posts=GrupoComunicacionPost::where('post','like','%'.$this->filtro.'%')
+        $posts=GrupoComunicacionPost::with('comentarios')
+                        ->where('post','like','%'.$this->filtro.'%')
                         ->where('grupo_id',$this->grupo_id)
                         ->orderBy('id','desc')
                         ->paginate($this->elementos);

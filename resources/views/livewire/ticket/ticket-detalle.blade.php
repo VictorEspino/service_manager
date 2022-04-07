@@ -240,7 +240,7 @@
             <div class="w-full flex flex-col justify-center text-center text-sm">
                 @foreach($invitados_ticket as $invitado_registro)
                 <div class="px-3 font-normal text-blue-500">
-                    {{$invitado_registro->user->name}}
+                    {{$invitado_registro->user->name}} <span class="text-xs">({{$invitado_registro->area->nombre}} - {{$invitado_registro->subarea->nombre}})</span>
                 </div>
                 @endforeach
             </div>
