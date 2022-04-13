@@ -72,4 +72,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(SubArea::class,'sub_area');
     }
+    public function puesto_desc()
+    {
+        return $this->belongsTo(Puesto::class,'puesto');
+    }
 }

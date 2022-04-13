@@ -14,6 +14,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\GrupoComunicacionController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\BusquedaController;
+use App\Http\Controllers\ExcelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,3 +57,6 @@ Route::post('/save_post',[GrupoComunicacionController::class,'save_post'])->midd
 Route::get('/tickets_abiertos',Abiertos::class)->name('tickets_abiertos')->middleware('auth');
 Route::get('/tickets_cerrados',Cerrados::class)->name('tickets_cerrados')->middleware('auth');
 Route::get('/atrasos',AvisoAtraso::class)->name('atrasos')->middleware('auth');
+
+Route::get('/empleados_import',function (){return view ('empleados_import');})->name('empleados_import')->middleware('auth');
+Route::post('/empleados_import',[ExcelController::class,'empleados_import'])->name('empleados_import')->middleware('auth');

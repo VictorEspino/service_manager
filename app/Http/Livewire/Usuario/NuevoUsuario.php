@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Usuario;
 use Livewire\Component;
 use App\Models\Area;
 use App\Models\SubArea;
+use App\Models\Puesto;
 
 use App\Models\User;
 
@@ -20,6 +21,7 @@ class NuevoUsuario extends Component
     public $perfil='MIEMBRO';
     public $area;
     public $areas=[];
+    public $puestos=[];
     public $sub_area;
     public $sub_areas=[];
 
@@ -32,6 +34,7 @@ class NuevoUsuario extends Component
         $this->areas=Area::where('estatus',1)
                         ->orderBy('nombre','asc')
                         ->get();
+        $this->puestos=Puesto::orderBy('puesto','asc')->get();
     }
     public function nuevo()
     {

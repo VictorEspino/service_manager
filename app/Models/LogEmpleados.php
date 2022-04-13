@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Area extends Model
+class LogEmpleados extends Model
 {
-    protected $fillable=['nombre'];
+    protected $fillable=['carga_id','mensaje'];
     use HasFactory;
 }

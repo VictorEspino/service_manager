@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubArea extends Model
 {
+    protected $fillable=['area_id','nombre'];
     use HasFactory;
 }

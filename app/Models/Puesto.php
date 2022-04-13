@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Area extends Model
+class Puesto extends Model
 {
-    protected $fillable=['nombre'];
+    protected $fillable=['puesto','estatus'];
     use HasFactory;
 }

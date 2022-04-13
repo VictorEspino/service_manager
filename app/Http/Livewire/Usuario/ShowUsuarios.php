@@ -26,9 +26,11 @@ class ShowUsuarios extends Component
     }
     public function render()
     {
-        $users=User::with('area_user','subarea')->where('name','like','%'.$this->filtro.'%')
+        $users=User::with('area_user','subarea','puesto_desc')->where('name','like','%'.$this->filtro.'%')
                         ->where('visible',1)
                         ->orderBy('name','asc')
+                        //->get();
+        //dd($users);
                         ->paginate($this->elementos);
         return view('livewire.usuario.show-usuarios',['users'=>$users]);
     }

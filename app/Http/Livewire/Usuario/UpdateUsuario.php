@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\User;
 use App\Models\Area;
 use App\Models\SubArea;
+use App\Models\Puesto;
 
 class UpdateUsuario extends Component
 {
@@ -28,6 +29,7 @@ class UpdateUsuario extends Component
 
     public $areas=[];
     public $sub_areas=[];
+    public $puestos=[];
 
     public function render()
     {
@@ -44,6 +46,8 @@ class UpdateUsuario extends Component
         $user=User::find($this->id_user);
         $this->areas=Area::where('estatus',1)
                         ->orderBy('nombre','asc')
+                        ->get();
+        $this->puestos=Puesto::orderBy('puesto','asc')
                         ->get();
         $this->sub_areas=SubArea::where('area_id',$user->area)
                                 ->where('estatus',1)
