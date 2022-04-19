@@ -34,7 +34,7 @@ class NuevoUsuario extends Component
         $this->areas=Area::where('estatus',1)
                         ->orderBy('nombre','asc')
                         ->get();
-        $this->puestos=Puesto::orderBy('puesto','asc')->get();
+        $this->puestos=Puesto::where('estatus',1)->orderBy('puesto','asc')->get();
     }
     public function nuevo()
     {

@@ -10,11 +10,14 @@
     <x-jet-dialog-modal wire:model="open" maxWidth="5xl">
         <x-slot name="title">
             <div class="w-full flex flex-row">
-                <div class="w-3/4">
+                <div class="w-1/2">
                     Editar usuario
                 </div>
-                <div class="flex-1">
+                <div class="w-1/4">
                     <x-jet-button wire:click.prevent="cambiar_estatus">Marcar como {{$estatus=='1'?'INACTIVO':'ACTIVO'}}</x-jet-button>
+                </div>
+                <div class="w-1/4">
+                    <x-jet-button wire:click.prevent="reset_password">Reset Password</x-jet-button>
                 </div>
             </div>
         </x-slot>

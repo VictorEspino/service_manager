@@ -100,6 +100,16 @@
                                         <span><i class="fas fa-angle-right float-right"></i></span>
                                     </a>
                                 </li>
+                                @if(Auth::user()->carga_empleados==1)
+                                <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('empleados_import')?'bg-gray-100':''}}">
+                                    <a href="{{ route('empleados_import') }}" 
+                                        class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">
+                                        <i class="fas fa-users float-left mx-2"></i>
+                                        Import Plantilla
+                                        <span><i class="fas fa-angle-right float-right"></i></span>
+                                    </a>
+                                </li>
+                                @endif
                                 <li class=" w-full h-full py-3 px-2 border-b border-light-border {{request()->routeIs('listas')?'bg-gray-100':''}}">
                                     <a href="{{ route('listas') }}" 
                                         class="font-sans font-hairline hover:font-normal text-sm text-nav-item no-underline">

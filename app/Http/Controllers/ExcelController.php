@@ -33,7 +33,7 @@ class ExcelController extends Controller
             return back()->withFailures($e->failures());
         }  
         
-        return($this->aplicar_carga($carga_id));
+        $this->aplicar_carga($carga_id);
 
         return back()->withStatus('Archivo cargado con exito!');
     }
@@ -43,7 +43,7 @@ class ExcelController extends Controller
         $this->aplica_puestos($carga_id);
         $this->aplica_areas($carga_id);
         $this->aplica_subareas($carga_id);
-        return($this->aplica_usuarios($carga_id));
+        $this->aplica_usuarios($carga_id);
     }
     private function aplica_puestos($carga_id)
     {
@@ -140,6 +140,8 @@ class ExcelController extends Controller
     }
     private function aplica_usuarios($carga_id)
     {
+        $password_default='$2y$10$jK3NdYnXIUxIx.svFw/9SOXkXub0.RcR7p7cpiqWn/6inDrXeXZsq';
+
         $areas=Area::all();
         $areas=$areas->pluck('id','nombre');
 
@@ -149,13 +151,47 @@ class ExcelController extends Controller
         $puestos=Puesto::all();
         $puestos=$puestos->pluck('id','puesto');
 
-        $usuarios=User::all();
-        $usuarios=$usuarios->pluck('id','user');
-
         $empleados_cargados=CargaEmpleados::select('numero_empleado','nombre','area','subarea','puesto','estatus')
                         ->where('carga_id',$carga_id)
                         ->get();
+
+        foreach($empleados_cargados as $emp_cargado)
+        {
+            $actaulizados=0;
+            $actualizados=User::where('user',$emp_cargado->numero_empleado)
+                    ->update([
+                        'name'=>$emp_cargado->nombre,
+                        'puesto'=>$puestos[$emp_cargado->puesto],
+                        'area'=>$areas[$emp_cargado->area],
+                        'sub_area'=>$subareas[$emp_cargado->subarea],
+                    ]);
+
+            if($actualizados>0 && $emp_cargado->estatus=='Inactivo')
+            {
+                User::where('user',$emp_cargado->numero_empleado)
+                    ->update([
+                        'password'=>'INACTIVO', 
+                        'estatus'=>0,
+                        'visible'=>1                      
+                    ]);
+            }
+            if($actualizados==0 && $emp_cargado->estatus=='Activo')
+            {
+                User::create([
+                    'user'=>$emp_cargado->numero_empleado,
+                    'name'=>$emp_cargado->nombre,
+                    'perfil'=>'MIEMBRO',
+                    'puesto'=>$puestos[$emp_cargado->puesto],
+                    'area'=>$areas[$emp_cargado->area],
+                    'sub_area'=>$subareas[$emp_cargado->subarea],
+                    'email'=>$emp_cargado->numero_empleado.'@bca.mx',
+                    'password'=>$password_default,            
+                    ]);
+            }
+
+
+        }
         
-        return($usuarios);
+
     }
 }

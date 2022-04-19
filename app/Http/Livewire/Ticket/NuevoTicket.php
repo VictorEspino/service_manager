@@ -11,6 +11,7 @@ use App\Models\ActividadCampos;
 use App\Models\MiembroGrupo;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 use Livewire\WithFileUploads;
 
@@ -57,7 +58,14 @@ class NuevoTicket extends Component
 
     public function mount()
     {
-        $this->grupos=Grupo::where('estatus','1')->orderBy('nombre')->get();
+        $sql_grupos_con_topico_autorizado="SELECT distinct a.grupo_id FROM actividad_topicos a,topico_puestos b WHERE a.topico_id=b.topico_id and b.puesto_id=".Auth::user()->puesto." and b.autorizado=1";
+        $grupos_autorizados=DB::select(DB::raw($sql_grupos_con_topico_autorizado));
+        $grupos_autorizados=collect($grupos_autorizados);
+        $grupos_autorizados=$grupos_autorizados->pluck('grupo_id');
+
+        $this->grupos=Grupo::where('estatus','1')
+                        ->whereIn('id',$grupos_autorizados)
+                        ->orderBy('nombre')->get();
         $this->de_id=Auth::user()->id;
         $this->de_etiqueta=Auth::user()->name." <".Auth::user()->email.">";
     }
@@ -65,48 +73,71 @@ class NuevoTicket extends Component
     public function updatedGrupo()
     {
         $this->descripcion_topico='';
+        $this->campos_requeridos=[];  
+        $this->emite_autorizacion=0;
+        $this->atencion_seleccionable=false;
+        $this->usuarios_atencion_seleccionable=[];
+
+        $sql_topicos_autorizados_en_grupo="SELECT distinct a.topico_id FROM actividad_topicos a,topico_puestos b WHERE a.topico_id=b.topico_id and b.puesto_id=".Auth::user()->puesto." and b.autorizado=1 and a.grupo_id='".$this->grupo."'";
+        $topicos_autorizados=DB::select(DB::raw($sql_topicos_autorizados_en_grupo));
+        $topicos_autorizados=collect($topicos_autorizados);
+        $topicos_autorizados=$topicos_autorizados->pluck('topico_id');
+        
         $this->topicos_disponibles=ActividadTopico::with('topico')
                                 ->where('grupo_id',$this->grupo)
+                                ->whereIn('topico_id',$topicos_autorizados)
                                 ->where('secuencia',0)
                                 ->get();
+                                
     }
     public function updatedTopico()
     {
-        $topico=Topico::find($this->topico);
-        $this->descripcion_topico=$topico->descripcion;
-        $this->emite_autorizacion=$topico->emite_autorizacion;
-        $actividad_inicial_ticket=ActividadTopico::where('topico_id',$this->topico)
-                                    ->where('secuencia',0)
-                                    ->get()
-                                    ->first();
-
-        $actividad_principal=$actividad_inicial_ticket->id;
-        $grupo_inicial_atencion=$actividad_inicial_ticket->grupo_id;
-        $tipo_asignacion_inicial=$actividad_inicial_ticket->tipo_asignacion;
-
-        $campos_actividad=ActividadCampos::where('actividad_id',$actividad_principal)
-                                            ->get();
-        $this->campos_requeridos=[];
-        foreach($campos_actividad as $campos)
+        if($this->topico!="")
         {
-            $this->campos_requeridos[]=[
-                                    'referencia'=>$campos->id,
-                                    'etiqueta'=>$campos->etiqueta,
-                                    'tipo_control'=>$campos->tipo_control,
-                                    'requerido'=>$campos->requerido,
-                                    'lista_id'=>$campos->lista_id,
-                                    'valor'=>'',
-            ];
-        }
-        if($tipo_asignacion_inicial=='6') //SELECCIONABLE POR USUARIO
-        {
-            $this->atencion_seleccionable=true;
-            $this->usuarios_atencion_seleccionable=MiembroGrupo::with('user')
-                                                    ->where('grupo_id',$grupo_inicial_atencion)
-                                                    ->get();
+            $topico=Topico::find($this->topico);
+            $this->descripcion_topico=$topico->descripcion;
+            $this->emite_autorizacion=$topico->emite_autorizacion;
+            $actividad_inicial_ticket=ActividadTopico::where('topico_id',$this->topico)
+                                        ->where('secuencia',0)
+                                        ->get()
+                                        ->first();
+
+            $actividad_principal=$actividad_inicial_ticket->id;
+            $grupo_inicial_atencion=$actividad_inicial_ticket->grupo_id;
+            $tipo_asignacion_inicial=$actividad_inicial_ticket->tipo_asignacion;
+
+            $campos_actividad=ActividadCampos::where('actividad_id',$actividad_principal)
+                                                ->get();
+            $this->campos_requeridos=[];
+            foreach($campos_actividad as $campos)
+            {
+                $this->campos_requeridos[]=[
+                                        'referencia'=>$campos->id,
+                                        'etiqueta'=>$campos->etiqueta,
+                                        'tipo_control'=>$campos->tipo_control,
+                                        'requerido'=>$campos->requerido,
+                                        'lista_id'=>$campos->lista_id,
+                                        'valor'=>'',
+                ];
+            }
+            if($tipo_asignacion_inicial=='6') //SELECCIONABLE POR USUARIO
+            {
+                $this->atencion_seleccionable=true;
+                $this->usuarios_atencion_seleccionable=MiembroGrupo::with('user')
+                                                        ->where('grupo_id',$grupo_inicial_atencion)
+                                                        ->get();
+            }
+            else
+            { 
+                $this->atencion_seleccionable=false;
+                $this->usuarios_atencion_seleccionable=[];
+            }
         }
         else
-        { 
+        {
+            $this->campos_requeridos=[];  
+            $this->descripcion_topico="";
+            $this->emite_autorizacion=0;
             $this->atencion_seleccionable=false;
             $this->usuarios_atencion_seleccionable=[];
         }

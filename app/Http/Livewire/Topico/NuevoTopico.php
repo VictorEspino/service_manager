@@ -12,6 +12,8 @@ use App\Models\ActividadCampos;
 use App\Models\TipoAsignaciones;
 use App\Models\MiembroGrupo;
 use App\Models\Lista;
+use App\Models\Puesto;
+use App\Models\TopicoPuesto;
 
 class NuevoTopico extends Component
 {
@@ -189,6 +191,19 @@ class NuevoTopico extends Component
 
             $siguiente_actividad=$siguiente_actividad+1;
         }
+        //INCLUYE LOS PUESTOS ACTUALES PARA INTEGRARLOS EN SU AUTORIZACION
+
+        $puestos_actuales=Puesto::select('id')->where('estatus',1)->get();
+
+        foreach($puestos_actuales as $puesto_procesado)
+        {
+            TopicoPuesto::create([
+             'topico_id'=> $nuevo_topico->id,
+             'puesto_id'=> $puesto_procesado->id,
+            ]);
+            
+        }
+
 
         $this->reset(['user_id_automatico','enable_automatico','usuarios_grupo_disponibles','open','nombre','descripcion','sla','grupo','tipo_asignacion','campos_principal','invitados_principal','invitados_disponibles','invitados_buscar','actividades_adicionales','numero_actividades_adicionales']);
         $this->emit('topicoAgregado');

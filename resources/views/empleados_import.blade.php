@@ -3,14 +3,14 @@
             {{ __('Importar Empleados') }}
     </x-slot>
 
-    <div class="flex flex-col w-full bg-white text-gray-700 shadow-lg rounded-lg">
-        <div class="w-full rounded-t-lg bg-gray-600 p-3 flex flex-col border-b border-gray-800"> <!--ENCABEZADO-->
+    <div class="p-10 flex flex-col w-full text-gray-700">
+        <div class="w-full rounded-t-lg bg-gray-400 p-3 flex flex-col border-b border-gray-800"> <!--ENCABEZADO-->
             <div class="w-full text-lg font-semibold text-gray-100">Archivo de Empleados</div>            
             <div class="w-full text-sm font-semibold text-gray-100">{{Auth::user()->name}}</div>            
         </div> <!--FIN ENCABEZADO-->
         <form method="post" action="{{route('empleados_import')}}" enctype="multipart/form-data">
             @csrf
-        <div class="w-full rounded-b-lg bg-ttds-secundario p-3 flex flex-col"> <!--CONTENIDO-->
+        <div class="w-full p-3 flex flex-col"> <!--CONTENIDO-->
             <div class="w-full flex flex-row space-x-2">
                 <div class="w-full">
                     <span class="text-xs text-ttds">Archivo</span><br>
@@ -21,8 +21,8 @@
                 </div>                
             </div>
         </div> <!--FIN CONTENIDO-->
-        <div class="w-full flex justify-center py-4 bg-ttds-secundario">
-            <button class="rounded p-1 border bg-ttds hover:bg-ttdshover text-gray-100 font-semibold">Guardar</button>
+        <div class="w-full flex justify-center py-4 shadow-lg">
+            <x-jet-button>GUARDAR</x-jet-button>
         </div>
         </form>
         @if(session('status'))

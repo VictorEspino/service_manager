@@ -47,7 +47,7 @@ class UpdateUsuario extends Component
         $this->areas=Area::where('estatus',1)
                         ->orderBy('nombre','asc')
                         ->get();
-        $this->puestos=Puesto::orderBy('puesto','asc')
+        $this->puestos=Puesto::where('estatus',1)->orderBy('puesto','asc')
                         ->get();
         $this->sub_areas=SubArea::where('area_id',$user->area)
                                 ->where('estatus',1)
@@ -126,6 +126,13 @@ class UpdateUsuario extends Component
     {
         User::where('id',$this->id_user)
             ->update(['estatus'=>($this->estatus=='1'?0:1)]);
+        $this->open=false;
+        $this->emit('usuarioModificado');
+    }
+    public function reset_password()
+    {
+        User::where('id',$this->id_user)
+            ->update(['password'=>'$2y$10$jK3NdYnXIUxIx.svFw/9SOXkXub0.RcR7p7cpiqWn/6inDrXeXZsq']);
         $this->open=false;
         $this->emit('usuarioModificado');
     }

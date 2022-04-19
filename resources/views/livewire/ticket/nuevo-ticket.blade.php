@@ -107,23 +107,34 @@
                                 <x-jet-label class="text-gray-400 font-bold" value="Topico" />
                             </td>
                             <td class="flex-1 flex py-2">
-                                <select wire:model="grupo" class="text-xs ml-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
-                                    <option value=""></option>
-                                    @foreach ($grupos as $grupo_select)
-                                        <option value='{{$grupo_select->id}}'>{{$grupo_select->nombre}}</option>
-                                    @endforeach
-                                </select>
-                                <select wire:model="topico" name="topico" class="text-xs flex-1 ml-2 mr-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
-                                    <option value=""></option>
-                                    @if (is_array($topicos_disponibles) || is_object($topicos_disponibles))
-                                        @foreach ($topicos_disponibles as $topico_opcion)
-                                        @if($topico_opcion->topico->estatus=='1')
-                                            <option value="{{$topico_opcion->topico->id}}">{{$topico_opcion->topico->nombre}}</option>
-                                        @endif
-                                        @endforeach
-                                    @endif
-                                </select><br />
-                                @error('topico')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                                <div class="w-full flex flex-col px-2">
+                                    <div class="w-full">
+                                        <x-jet-label class="text-gray-400 text-xs" value="Grupo" />
+                                        <select wire:model="grupo" class="w-full text-xs border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                            <option value=""></option>
+                                            @foreach ($grupos as $grupo_select)
+                                                <option value='{{$grupo_select->id}}'>{{$grupo_select->nombre}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="w-full">
+                                        <x-jet-label class="text-gray-400 text-xs" value="Topico" />
+                                        <select wire:model="topico" name="topico" class="text-xs w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                                            <option value=""></option>
+                                            @if (is_array($topicos_disponibles) || is_object($topicos_disponibles))
+                                                @foreach ($topicos_disponibles as $topico_opcion)
+                                                @if($topico_opcion->topico->estatus=='1')
+                                                    <option value="{{$topico_opcion->topico->id}}">{{$topico_opcion->topico->nombre}}</option>
+                                                @endif
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="w-full">
+                                        @error('topico')<span class="text-xs text-red-400">{{ $message }}</span> @enderror
+                                    </div>
+                            </div>
+                            
                                 <input name="emite_autorizacion" wire:model="emite_autorizacion" type="hidden">
                             </td>
                         </tr>
