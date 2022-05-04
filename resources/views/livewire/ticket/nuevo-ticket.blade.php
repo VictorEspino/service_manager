@@ -70,7 +70,7 @@
                                     <div class="w-full flex flex-wrap">
                                         @foreach($invitados_ticket as $index=>$invitado)
                                         <div class="ml-2 mb-2 bg-lime-300 border py-2 px-3 text-sm rounded">
-                                            {{$invitado['nombre']}} [{{$invitado['email']}}]
+                                            {{$invitado['nombre']}}
                                             <span wire:click="borrar_invitado_ticket({{$index}})" style="cursor: pointer;" class="p-2 text-xs font-bold bg-lime-500 rounded border border-gray-300">X</span>
                                             <input type="hidden" name="invitados[{{$index}}][id]" value="{{$invitado['id']}}">
                                         </div>    

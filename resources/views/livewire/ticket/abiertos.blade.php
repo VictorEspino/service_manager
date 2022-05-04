@@ -161,10 +161,10 @@
                                 {{$actividad->nombre}}{{$leyenda}}
                             </div>
                             <div class="w-1/3">
-                                {{$actividad->sla}}
+                                {{show_transcurrido($actividad->sla)}}
                             </div>
                             <div class="w-1/3">
-                                {{number_format($minutos_transcurridos,0)}}
+                                {{show_transcurrido($minutos_transcurridos)}}
                             </div>
                             <div class="w-1/3 font-bold">
                                 @if($minutos_transcurridos<=$actividad->sla)

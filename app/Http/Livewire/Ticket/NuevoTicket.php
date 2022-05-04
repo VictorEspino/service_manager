@@ -67,7 +67,7 @@ class NuevoTicket extends Component
                         ->whereIn('id',$grupos_autorizados)
                         ->orderBy('nombre')->get();
         $this->de_id=Auth::user()->id;
-        $this->de_etiqueta=Auth::user()->name." <".Auth::user()->email.">";
+        $this->de_etiqueta=Auth::user()->name;
     }
 
     public function updatedGrupo()

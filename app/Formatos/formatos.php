@@ -33,3 +33,31 @@ function busqueda_format($texto,$busqueda,$largo_maximo)
     }
     return($resultado);
 }
+function show_parcial($texto,$largo)
+{
+    $final="";
+    if(strlen($texto)>$largo) $final="...";
+    return(substr($texto,0,$largo).''.$final);
+}
+function show_transcurrido($minutos)
+{
+    $respuesta="";
+    $minutos_restantes=intval($minutos);
+
+    $dias=$minutos_restantes/1440;
+    if ($dias>=1)
+    {
+        $dias=intval($dias);
+        $respuesta=$dias.'d ';
+        $minutos_restantes=$minutos_restantes-(1440*$dias);
+    }
+    $horas=$minutos_restantes/60;
+    if ($horas>=1)
+    {
+        $horas=intval($horas);
+        $respuesta=$respuesta.''.$horas.'h ';
+        $minutos_restantes=$minutos_restantes-(60*$horas);
+    }
+    $respuesta=$respuesta.''.$minutos_restantes.'m';
+    return($respuesta);
+}

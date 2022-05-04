@@ -4,6 +4,8 @@ namespace App\Http\Livewire\Topico;
 
 use Livewire\Component;
 use App\Models\TopicoPuesto;
+use App\Models\Puesto;
+
 
 class AutorizarPuesto extends Component
 {
@@ -25,8 +27,12 @@ class AutorizarPuesto extends Component
     {
         $this->open=true;
         $this->procesando=0;
+        $puestos_visibles=Puesto::select('id')->where('estatus',1)->get();
+        $puestos_visibles=$puestos_visibles->pluck('id');
+
         $puestos_aut_actual=TopicoPuesto::with('puesto')
                                     ->where('topico_id',$this->id_topico)
+                                    ->whereIn('puesto_id',$puestos_visibles)
                                     ->get();
 
         $this->puestos_autorizados=[];
@@ -35,7 +41,7 @@ class AutorizarPuesto extends Component
             $this->puestos_autorizados[]=[
                                 'id'=>$puesto_procesado->puesto_id,
                                 'puesto'=>$puesto_procesado->puesto->puesto,
-                                'autorizado'=>$puesto_procesado->autorizado,
+                                'autorizado'=>$puesto_procesado->autorizado==1?true:false,
                             ];
         }        
     }

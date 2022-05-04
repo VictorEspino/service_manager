@@ -49,8 +49,9 @@
                             </div>
 
                         </div>
-                        <div class="w-1/6 flex justify-center text-xs font-bold">
-                            {{$ticket->solicitante->name}}
+                        <div class="w-1/6 text-xs font-bold">
+                            {{$ticket->solicitante->name}} 
+                            <span class="text-xs font-normal">({{$ticket->area_solicitante->nombre}} - {{$ticket->subarea_solicitante->nombre}})</span>
                         </div>
                         <div class="flex-1 text-xs">
                             {{$ticket->created_at}}
@@ -162,8 +163,9 @@
                                     </div>
         
                                 </div>
-                                <div class="w-1/6 flex justify-center text-xs font-bold">
+                                <div class="w-1/6 text-xs font-bold">
                                     {{$ticket->solicitante->name}}
+                                    <span class="text-xs font-normal">({{$ticket->area_solicitante->nombre}} - {{$ticket->subarea_solicitante->nombre}})</span>
                                 </div>
                                 <div class="w-1/6 flex justify-center text-xs font-bold">
                                     {{$ticket->asesor->name}}

@@ -229,7 +229,7 @@
             </div>
             <div class="w-full flex flex-row justify-center text-sm">
                 <div class="py-1 px-3 font-normal text-blue-500">
-                    {{$solicitante}}
+                    {{$solicitante}}  <span class="text-xs">({{$area_solicitante}} - {{$subarea_solicitante}})</span>
                 </div>
             </div>
             <div class="w-full flex flex-row justify-center pt-6">

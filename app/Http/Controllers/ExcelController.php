@@ -161,7 +161,7 @@ class ExcelController extends Controller
             $actualizados=User::where('user',$emp_cargado->numero_empleado)
                     ->update([
                         'name'=>$emp_cargado->nombre,
-                        'puesto'=>$puestos[$emp_cargado->puesto],
+                        'puesto'=>$emp_cargado->puesto=='AUXILIAR DE ATENCIÓN A CLIENTES'?$puestos['AUXILIAR DE ATENCION A CLIENTES']:$puestos[$emp_cargado->puesto],
                         'area'=>$areas[$emp_cargado->area],
                         'sub_area'=>$subareas[$emp_cargado->subarea],
                     ]);

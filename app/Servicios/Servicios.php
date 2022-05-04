@@ -18,7 +18,12 @@ function getSQLGruposComunicacion($user_id)
 
 function esManagerDeGrupo()
 {
-    return(true);
+    $cuantos=App\Models\MiembroGrupo::select(Illuminate\Support\Facades\DB::raw('count(*) as n'))
+                                    ->where('user_id',Illuminate\Support\Facades\Auth::user()->id)
+                                    ->where('manager',1)
+                                    ->get()->first();
+    if($cuantos->n>0) return(true);
+    return(false);
 }
 function actividadesAtrasadas()
 {

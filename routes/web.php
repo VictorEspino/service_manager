@@ -42,6 +42,8 @@ Route::get('/tickets',[TicketController::class,'show'])->name('tickets')->middle
 Route::get('/reportes',function (){return view ('reporte-tickets');})->name('reportes')->middleware('auth');
 Route::post('/reportes',[ReportesController::class,'listado'])->name('reportes')->middleware('auth');
 
+Route::get('/export_users',[ReportesController::class,'export_empleados'])->name('export_empleados')->middleware('auth');
+
 Route::post('/save_ticket',[TicketController::class,'save'])->middleware('auth')->name('save_ticket');
 Route::get('/ticket/{id}',[TicketController::class,'ticket'])->name('ticket')->middleware('auth');
 Route::post('/save_avance',[TicketController::class,'save_avance'])->middleware('auth')->name('save_avance');

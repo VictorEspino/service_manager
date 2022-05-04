@@ -11,12 +11,12 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
         <!-- Styles -->
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+        <link rel="stylesheet" href="{{ mix('css/app.css') }}?{{rand()}}">
 
         @livewireStyles
 
         <!-- Scripts -->
-        <script src="{{ mix('js/app.js') }}" defer></script>
+        <script src="{{ mix('js/app.js') }}??{{rand()}}" defer></script>
         <script src="https://kit.fontawesome.com/a692f93986.js" crossorigin="anonymous"></script>
 
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

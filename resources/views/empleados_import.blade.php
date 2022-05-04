@@ -6,7 +6,11 @@
     <div class="p-10 flex flex-col w-full text-gray-700">
         <div class="w-full rounded-t-lg bg-gray-400 p-3 flex flex-col border-b border-gray-800"> <!--ENCABEZADO-->
             <div class="w-full text-lg font-semibold text-gray-100">Archivo de Empleados</div>            
-            <div class="w-full text-sm font-semibold text-gray-100">{{Auth::user()->name}}</div>            
+            <div class="w-full flex flex-row">
+                <div class="w-3/4 text-sm font-semibold text-gray-100">{{Auth::user()->name}}</div>            
+                <div class="flex-1 text-lg font-semibold text-gray-100 flex justify-center items-center"><a href="{{route('export_empleados')}}">Exportar&nbsp;&nbsp;<i class="fas fa-file-excel"></i></a></div>            
+            </div>
+            
         </div> <!--FIN ENCABEZADO-->
         <form method="post" action="{{route('empleados_import')}}" enctype="multipart/form-data">
             @csrf

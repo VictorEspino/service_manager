@@ -12,6 +12,8 @@ class Ticket extends Model
     protected $fillable=[
         'creador_id',
         'de_id',
+        'area_id',
+        'subarea_id',
         'topico_id',
         'asunto',
         'descripcion',
@@ -38,5 +40,13 @@ class Ticket extends Model
     public function actividades()
     {
         return $this->hasMany(ActividadTicket::class);
+    }
+    public function area_solicitante()
+    {
+        return $this->belongsTo(Area::class,'area_id');
+    }
+    public function subarea_solicitante()
+    {
+        return $this->belongsTo(SubArea::class,'subarea_id');
     }
 }

@@ -31,4 +31,13 @@ class ReportesController extends Controller
         $usuarios=$usuarios->pluck('name','id');
         return(view('export_listado',['listado'=>$listado,'usuarios'=>$usuarios,'n_actividades'=>$actividades_topico]));
     }
+    public function export_empleados()
+    {
+        $registros=User::with('area_user','subarea','puesto_desc')
+                        ->where('visible',1)
+                        ->orderBy('user','asc')
+                        ->get();
+
+        return(view('export_users',['usuarios'=>$registros]));
+    }
 }

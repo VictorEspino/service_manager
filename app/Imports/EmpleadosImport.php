@@ -26,7 +26,7 @@ class EmpleadosImport implements ToModel,WithHeadingRow,WithValidation,WithBatch
     {
         return new CargaEmpleados([
             'numero_empleado'=>$row['empleado'],
-            'nombre'=>trim($row['nombre_completo']),
+            'nombre'=>trim($row['nombre']).' '.trim($row['apellido_paterno']).' '.trim($row['apellido_materno']),
             'area'=>trim($row['area']),
             'subarea'=>trim($row['subarea']),
             'puesto'=>trim($row['puesto']),
@@ -39,7 +39,7 @@ class EmpleadosImport implements ToModel,WithHeadingRow,WithValidation,WithBatch
     {
         return [
             '*.empleado' => ['required','numeric'],
-            '*.nombre_completo' => ['required'],
+            '*.nombre' => ['required'],
             '*.area' => ['required'],
             '*.subarea' => ['required'],
             '*.puesto' => ['required'],
@@ -51,7 +51,7 @@ class EmpleadosImport implements ToModel,WithHeadingRow,WithValidation,WithBatch
         return [
             'empleado.required' => 'Campo requerido',
             'empleado.numeric' => 'Se espera valor numerico',
-            'nombre_completo.required' => 'Campo requerido',
+            'nombre.required' => 'Campo requerido',
             'area.required' => 'Campo requerido',
             'subarea.required' => 'Campo requerido',
             'puesto.required' => 'Campo requerido',

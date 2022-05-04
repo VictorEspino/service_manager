@@ -42,6 +42,8 @@ class TicketDetalle extends Component
     public $topico_nombre;
     public $solicitante;
     public $solicitante_id;
+    public $area_solicitante;
+    public $subarea_solicitante;
     public $asignado_a;
     public $asesor;
 
@@ -75,12 +77,16 @@ class TicketDetalle extends Component
 
     public function render()
     {
-        $ticket=Ticket::with('topico','solicitante','asesor')->find($this->ticket_id);
-        
+        $ticket=Ticket::with('topico','solicitante','asesor','area_solicitante','subarea_solicitante')->find($this->ticket_id);
+
         $this->asunto=$ticket->asunto;
         $this->topico_nombre=$ticket->topico->nombre;
         $this->solicitante=$ticket->solicitante->name;
         $this->solicitante_id=$ticket->solicitante->id;
+
+        $this->area_solicitante=$ticket->area_solicitante->nombre;
+        $this->subarea_solicitante=$ticket->subarea_solicitante->nombre;;
+
         $this->asesor=$ticket->asesor->name;
         $this->user_cerrador=$ticket->user_cerrador;
         $this->nombre_cerrador=$ticket->nombre_cerrador;
