@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Models\MiembroGrupo;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TicketDetalle extends Component
 {
@@ -141,8 +142,67 @@ class TicketDetalle extends Component
         $this->miembros_disponibles=MiembroGrupo::with('user')->where('grupo_id',$this->grupo_seleccionado)
                                     ->get();
         
-        $this->invitados_ticket=InvitadoTicket::with('user','area','subarea')->where('ticket_id',$id)->get();
+        $invitados_ticket=InvitadoTicket::with('user','area','subarea')->where('ticket_id',$id)->get();
+        
+        $involucrados_a_desplegar=[];
 
+        foreach($invitados_ticket as $invitado_del_ticket)
+        {
+            $esta_presente="NO";
+            foreach($involucrados_a_desplegar as $existente)
+            {
+                if($existente["user"]==$invitado_del_ticket->user->name &&
+                   $existente["area"]==$invitado_del_ticket->area->nombre &&
+                   $existente["subarea"]==$invitado_del_ticket->subarea->nombre
+                  )
+                {
+                    $esta_presente="SI";
+                }
+            }
+            if($esta_presente=="NO")
+            {
+                $involucrados_a_desplegar[]=[
+                    'user'=>$invitado_del_ticket->user->name,
+                    'area'=>$invitado_del_ticket->area->nombre,
+                    'subarea'=>$invitado_del_ticket->subarea->nombre
+                ];
+            }
+        }
+        
+        //INTEGRA LOS MIEMBROS DEL GRUPO DE ATENCION
+
+        $grupos_del_ticket=ActividadTicket::select(DB::raw('distinct grupo_id as grupo'))
+                                            ->where('ticket_id',$this->ticket_id)
+                                            ->get();
+        $grupos_del_ticket=$grupos_del_ticket->pluck('grupo');
+        
+        $miembros_de_grupos_de_ticket=MiembroGrupo::with('user','user.area_user','user.subarea')
+                                            ->whereIn('grupo_id',$grupos_del_ticket)
+                                            ->get();
+
+        foreach($miembros_de_grupos_de_ticket as $invitado_del_ticket)
+        {
+            $esta_presente="NO";
+            foreach($involucrados_a_desplegar as $existente)
+            {
+                if($existente["user"]==$invitado_del_ticket->user->name &&
+                   $existente["area"]==$invitado_del_ticket->user->area_user->nombre &&
+                   $existente["subarea"]==$invitado_del_ticket->user->subarea->nombre
+                  )
+                {
+                    $esta_presente="SI";
+                }
+            }
+            if($esta_presente=="NO")
+            {
+                $involucrados_a_desplegar[]=[
+                    'user'=>$invitado_del_ticket->user->name,
+                    'area'=>$invitado_del_ticket->user->area_user->nombre,
+                    'subarea'=>$invitado_del_ticket->user->subarea->nombre
+                ];
+            }
+        }
+        $this->invitados_ticket=$involucrados_a_desplegar;
     } 
     
     public function retroceder_etapa()

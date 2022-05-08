@@ -7,7 +7,7 @@
         <div class="w-full">
             <x-jet-section-title>
                 <x-slot name="title">Tickets Cerrados</x-slot>
-                <x-slot name="description">Permite visualizar todos los tickets abiertos atendidos por los grupos de los cuales eres miembro o has sido invitado</x-slot>
+                <x-slot name="description">Permite visualizar todos los tickets cerrados atendidos por los grupos de los cuales eres miembro o has sido invitado</x-slot>
             </x-jet-section-title>
         </div>
     </div>

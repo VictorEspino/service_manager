@@ -140,7 +140,7 @@ class ExcelController extends Controller
     }
     private function aplica_usuarios($carga_id)
     {
-        $password_default='$2y$10$jK3NdYnXIUxIx.svFw/9SOXkXub0.RcR7p7cpiqWn/6inDrXeXZsq';
+        $password_default='$2y$10$3WETO/uYpSjxNmqa8w2IZexzOlTXpKGWv6MxD9RCyFPUEHalkloGi';
 
         $areas=Area::all();
         $areas=$areas->pluck('id','nombre');

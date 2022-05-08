@@ -38,7 +38,7 @@ class EmpleadosImport implements ToModel,WithHeadingRow,WithValidation,WithBatch
     public function rules(): array
     {
         return [
-            '*.empleado' => ['required','numeric'],
+            '*.empleado' => ['required'],
             '*.nombre' => ['required'],
             '*.area' => ['required'],
             '*.subarea' => ['required'],

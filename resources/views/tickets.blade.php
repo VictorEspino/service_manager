@@ -42,7 +42,9 @@
                         </div>
                         <div class="w-1/2 ml-3 flex flex-col">
                             <div class="w-full text-blue-500 text-base font-normal">
-                                {{$ticket->asunto}}
+                                <a href="{{route('ticket',['id'=>$ticket->id])}}">
+                                    {{$ticket->asunto}}
+                                </a>
                             </div>
                             <div class="w-full text-gray-600 text-xs font-normal">
                                 {{$ticket->created_at}}
@@ -98,7 +100,9 @@
                                 </div>
                                 <div class="w-1/2 ml-3 flex flex-col">
                                     <div class="w-full text-blue-500 text-base font-normal">
-                                        {{$ticket->asunto}}
+                                        <a href="{{route('ticket',['id'=>$ticket->id])}}">
+                                            {{$ticket->asunto}}
+                                        </a>
                                     </div>
                                     <div class="w-full text-gray-600 text-xs font-normal">
                                         {{$ticket->created_at}}
@@ -156,7 +160,9 @@
                                 </div>
                                 <div class="w-1/3 ml-3 flex flex-col">
                                     <div class="w-full text-blue-500 text-base font-normal">
-                                        {{$ticket->asunto}}
+                                        <a href="{{route('ticket',['id'=>$ticket->id])}}">
+                                            {{$ticket->asunto}}
+                                        </a>
                                     </div>
                                     <div class="w-full text-gray-600 text-xs font-normal">
                                         {{$ticket->created_at}}

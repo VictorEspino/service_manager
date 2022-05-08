@@ -228,8 +228,12 @@
                 </div>
             </div>
             <div class="w-full flex flex-row justify-center text-sm">
-                <div class="py-1 px-3 font-normal text-blue-500">
-                    {{$solicitante}}  <span class="text-xs">({{$area_solicitante}} - {{$subarea_solicitante}})</span>
+                <div class="py-1 px-3 font-normal text-blue-500 flex flex-col">
+                    <div class="w-full px-3 font-normal text-blue-500 flex flex-col">
+                        <div class="w-full font-bold">{{$solicitante}}</div>
+                        <div class="w-full text-xs text-gray-700">{{$area_solicitante}}</div>
+                        <div class="w-full text-xs text-gray-700">{{$subarea_solicitante}}</div>
+                    </div>
                 </div>
             </div>
             <div class="w-full flex flex-row justify-center pt-6">
@@ -237,10 +241,12 @@
                     Otros invitados al ticket
                 </div>
             </div>
-            <div class="w-full flex flex-col justify-center text-center text-sm">
+            <div class="w-full flex flex-col justify-center text-center text-xs">
                 @foreach($invitados_ticket as $invitado_registro)
-                <div class="px-3 font-normal text-blue-500">
-                    {{$invitado_registro->user->name}} <span class="text-xs">({{$invitado_registro->area->nombre}} - {{$invitado_registro->subarea->nombre}})</span>
+                <div class="w-full px-3 font-normal text-blue-500 flex flex-col border-t border-blue-400">
+                    <div class="w-full font-bold">{{$invitado_registro['user']}}</div>
+                    <div class="w-full text-xs text-gray-700">{{$invitado_registro['area']}}</div>
+                    <div class="w-full text-xs text-gray-700">{{$invitado_registro['subarea']}}</div>
                 </div>
                 @endforeach
             </div>

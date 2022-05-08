@@ -145,7 +145,7 @@ class NuevoTopico extends Component
                 'etiqueta'=>$this->campos_principal[$index]['etiqueta'],
                 'tipo_control'=>$this->campos_principal[$index]['tipo_control'],
                 'requerido'=>$this->campos_principal[$index]['requerido'],
-                'lista_id'=>is_null($this->campos_principal[$index]['lista'])?0:$this->campos_principal[$index]['lista'],
+                'lista_id'=>$this->campos_principal[$index]['lista']==''||is_null($this->campos_principal[$index]['lista'])?0:$this->campos_principal[$index]['lista'],
             ]);
         }
         foreach($this->invitados_principal as $index => $invitado)
@@ -176,7 +176,7 @@ class NuevoTopico extends Component
                     'etiqueta'=>$campo['etiqueta'],
                     'tipo_control'=>$campo['tipo_control'],
                     'requerido'=>$campo['requerido'],
-                    'lista_id'=>is_null($campo['lista'])?0:$campo['lista'],
+                    'lista_id'=>$campo['lista']==''||is_null($campo['lista'])?0:$campo['lista'],
                 ]);
             }
             foreach($this->actividades_adicionales[$index]['invitados'] as $invitado)

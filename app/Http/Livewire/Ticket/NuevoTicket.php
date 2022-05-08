@@ -51,6 +51,8 @@ class NuevoTicket extends Component
 
     public $file_include=false;
 
+    public $procesando=0;
+
     public function render()
     {
         return view('livewire.ticket.nuevo-ticket');
@@ -146,7 +148,7 @@ class NuevoTicket extends Component
     }
     public function updatedBuscarUsuario()
     {
-        if(strlen($this->buscar_usuario)>1)
+        if(strlen($this->buscar_usuario)>2)
         {
         $this->usuarios_disponibles=User::where('name','like','%'.$this->buscar_usuario.'%')
                                         ->where('visible',1)
@@ -158,7 +160,7 @@ class NuevoTicket extends Component
     public function cambiar_usuario($id,$nombre,$email)
     {
         $this->de_id=$id;
-        $this->de_etiqueta=$nombre." <".$email.">";
+        $this->de_etiqueta=$nombre;
         $this->cambiar_usuario=false;
         $this->buscar_usuario="";
         $this->usuarios_disponibles="";
@@ -166,7 +168,7 @@ class NuevoTicket extends Component
     public function reset_usuario()
     {
         $this->de_id=Auth::user()->id;
-        $this->de_etiqueta=Auth::user()->name." <".Auth::user()->email.">";
+        $this->de_etiqueta=Auth::user()->name;
         $this->cambiar_usuario=false;
         $this->buscar_usuario="";
         $this->usuarios_disponibles="";
@@ -214,7 +216,7 @@ class NuevoTicket extends Component
         $this->asunto="";
         $this->invitados_ticket=[];
         $this->de_id=Auth::user()->id;
-        $this->de_etiqueta=Auth::user()->name." <".Auth::user()->email.">";
+        $this->de_etiqueta=Auth::user()->name;
         $this->cambiar_usuario=false;
         $this->buscar_usuario="";
         $this->buscar_invitado="";
@@ -261,6 +263,7 @@ class NuevoTicket extends Component
     public function guardar()
     {
         $this->validacion();
+        $this->procesando=1;
         $this->emit('livewire_to_controller','nuevo_ticket');
     }
 
@@ -268,5 +271,10 @@ class NuevoTicket extends Component
     {
         $campo_archivo=explode('.',$campo);
         $this->campos_requeridos[intval($campo_archivo[1])]['valor']=$valor;
+    }
+    public function abrir_ventana()
+    {
+        $this->open=true;
+        $this->procesando=0;
     }
 }

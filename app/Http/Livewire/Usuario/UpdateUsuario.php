@@ -126,13 +126,19 @@ class UpdateUsuario extends Component
     {
         User::where('id',$this->id_user)
             ->update(['estatus'=>($this->estatus=='1'?0:1)]);
+
+        if($this->estatus=='1')
+        {
+            User::where('id',$this->id_user)
+            ->update(['password'=>'INACTIVO']);
+        }
         $this->open=false;
         $this->emit('usuarioModificado');
     }
     public function reset_password()
     {
         User::where('id',$this->id_user)
-            ->update(['password'=>'$2y$10$jK3NdYnXIUxIx.svFw/9SOXkXub0.RcR7p7cpiqWn/6inDrXeXZsq']);
+            ->update(['password'=>'$2y$10$3WETO/uYpSjxNmqa8w2IZexzOlTXpKGWv6MxD9RCyFPUEHalkloGi']);
         $this->open=false;
         $this->emit('usuarioModificado');
     }
