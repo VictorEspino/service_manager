@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Grupo;
 use App\Models\Topico;
 use App\Models\User;
+use App\Models\Participantes;
 use App\Models\ActividadTopico;
 use App\Models\ActividadCampos;
 use App\Models\MiembroGrupo;
@@ -60,10 +61,19 @@ class NuevoTicket extends Component
 
     public function mount()
     {
-        $sql_grupos_con_topico_autorizado="SELECT distinct a.grupo_id FROM actividad_topicos a,topico_puestos b WHERE a.topico_id=b.topico_id and b.puesto_id=".Auth::user()->puesto." and b.autorizado=1";
-        $grupos_autorizados=DB::select(DB::raw($sql_grupos_con_topico_autorizado));
-        $grupos_autorizados=collect($grupos_autorizados);
-        $grupos_autorizados=$grupos_autorizados->pluck('grupo_id');
+        //dd(Auth::user()->id);
+        if(Auth::user()->id!=45 && Auth::user()->id!=1)
+        {
+            $sql_grupos_con_topico_autorizado="SELECT distinct a.grupo_id FROM actividad_topicos a,topico_puestos b WHERE a.topico_id=b.topico_id and b.puesto_id=".Auth::user()->puesto." and b.autorizado=1";
+            $grupos_autorizados=DB::select(DB::raw($sql_grupos_con_topico_autorizado));
+            $grupos_autorizados=collect($grupos_autorizados);
+            $grupos_autorizados=$grupos_autorizados->pluck('grupo_id');
+        }
+        else
+        {
+            $grupos_autorizados=Grupo::all();
+            $grupos_autorizados=$grupos_autorizados->pluck('id');
+        }
 
         $this->grupos=Grupo::where('estatus','1')
                         ->whereIn('id',$grupos_autorizados)
@@ -80,10 +90,18 @@ class NuevoTicket extends Component
         $this->atencion_seleccionable=false;
         $this->usuarios_atencion_seleccionable=[];
 
-        $sql_topicos_autorizados_en_grupo="SELECT distinct a.topico_id FROM actividad_topicos a,topico_puestos b WHERE a.topico_id=b.topico_id and b.puesto_id=".Auth::user()->puesto." and b.autorizado=1 and a.grupo_id='".$this->grupo."'";
-        $topicos_autorizados=DB::select(DB::raw($sql_topicos_autorizados_en_grupo));
-        $topicos_autorizados=collect($topicos_autorizados);
-        $topicos_autorizados=$topicos_autorizados->pluck('topico_id');
+        if(Auth::user()->id!=45 && Auth::user()->id!=1)
+        {
+            $sql_topicos_autorizados_en_grupo="SELECT distinct a.topico_id FROM actividad_topicos a,topico_puestos b WHERE a.topico_id=b.topico_id and b.puesto_id=".Auth::user()->puesto." and b.autorizado=1 and a.grupo_id='".$this->grupo."'";
+            $topicos_autorizados=DB::select(DB::raw($sql_topicos_autorizados_en_grupo));
+            $topicos_autorizados=collect($topicos_autorizados);
+            $topicos_autorizados=$topicos_autorizados->pluck('topico_id');
+        }
+        else
+        {
+            $topicos_autorizados=Topico::all();
+            $topicos_autorizados=$topicos_autorizados->pluck('id');
+        }
         
         $this->topicos_disponibles=ActividadTopico::with('topico')
                                 ->where('grupo_id',$this->grupo)
@@ -177,11 +195,11 @@ class NuevoTicket extends Component
     {        
         if(strlen($this->buscar_invitado)>1)
         {
-        $this->invitados_disponibles=User::where('name','like','%'.$this->buscar_invitado.'%')
-                                        ->where('visible',1)
-                                        ->where('estatus',1)
+        $this->invitados_disponibles=Participantes::where('unificado','like','%'.$this->buscar_invitado.'%')
+                                        //->where('visible',1)
+                                        //->where('estatus',1)
                                         ->get()
-                                        ->take(5);
+                                        ->take(10);
         $this->agregar_invitado=true;
         }
         else
@@ -262,8 +280,8 @@ class NuevoTicket extends Component
     }
     public function guardar()
     {
-        $this->validacion();
-        $this->procesando=1;
+        $this->validacion();  
+        $this->procesando=1;                     
         $this->emit('livewire_to_controller','nuevo_ticket');
     }
 

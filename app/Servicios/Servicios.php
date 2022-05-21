@@ -2,7 +2,16 @@
 
 function getSQLUniverso($user_id)
 {
-    $sql="select distinct ticket_id from (SELECT id as ticket_id FROM `tickets` WHERE de_id=".$user_id." UNION select distinct ticket_id from actividad_tickets where grupo_id in (SELECT grupo_id FROM `miembro_grupos` WHERE user_id=".$user_id.") UNION select distinct ticket_id from invitado_tickets where user_id=".$user_id.") as a";   
+    $subarea=App\Models\User::find($user_id)->sub_area;
+    $sql="
+    select distinct ticket_id from (
+        SELECT id as ticket_id FROM `tickets` WHERE de_id=".$user_id." or asignado_a=".$user_id." or subarea_id=".$subarea." 
+        UNION 
+        select distinct ticket_id from actividad_tickets where grupo_id in (SELECT grupo_id FROM `miembro_grupos` WHERE user_id=".$user_id.") 
+        UNION 
+        select distinct ticket_id from invitado_tickets where user_id=".$user_id." 
+    ) as a
+    ";
     return($sql);
 }
 function getSQLParticipante($user_id)

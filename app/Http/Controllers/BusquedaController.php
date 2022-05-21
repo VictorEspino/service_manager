@@ -10,8 +10,22 @@ class BusquedaController extends Controller
 {
     public function busqueda(Request $request)
     {
-        $query=$request->buscar;
-        if(strlen($query)<=2) return view('busqueda',['ok'=>'NO']);
+        $consulta=$request->buscar;
+        $query=$consulta;
+        if(strlen($consulta)<=2) return view('busqueda',['ok'=>'NO']);
+        /*
+        $resultados=Busqueda::where(function ($query) use ($consulta){
+                                $query->where('texto','like','%'.$consulta.'%');
+                                $query->orWhere('ticket_id','like','%'.$consulta.'%');
+
+                              })
+                              ->orderBy('ticket_id','desc')
+                              ->orderBy('created_at','desc')
+                              ->when(Auth::user()->perfil=='MIEMBRO',function ($query){
+                                    $query->whereRaw('ticket_id in ('.getSQLUniverso(Auth::user()->id).')');
+                                    })
+                              ->paginate(10);
+        */
         $resultados=Busqueda::where('texto','like','%'.$query.'%')
                               ->orderBy('ticket_id','desc')
                               ->orderBy('created_at','desc')
@@ -19,9 +33,10 @@ class BusquedaController extends Controller
                                     $query->whereRaw('ticket_id in ('.getSQLUniverso(Auth::user()->id).')');
                                     })
                               ->paginate(10);
+        
         //return($resultados);
         $resultados->appends($request->all());
-        return view('busqueda',['ok'=>'SI','registros'=>$resultados,'query'=>$query]);
+        return view('busqueda',['ok'=>'SI','registros'=>$resultados,'query'=>$consulta]);
     }
     public function busqueda_simple(Request $request)
     {

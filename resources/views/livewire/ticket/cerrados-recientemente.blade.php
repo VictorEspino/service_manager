@@ -5,7 +5,7 @@
     <div class="border-l border-r bg-white flex flex-col rounded-b-lg shadow-lg overflow-y-scroll">
         @foreach ($tickets as $ticket)
         <div class="p-3 text-xs text-gray-600 border-b"> 
-            <a href="{{route('ticket',['id'=>$ticket->id])}}">{{ticket($ticket->id)}}</a> {{$ticket->asunto}}
+            <a href="{{route('ticket',['id'=>$ticket->id])}}">{{ticket($ticket->id)}} {{$ticket->asunto}}</a>
         </div>        
         @endforeach
     </div>    

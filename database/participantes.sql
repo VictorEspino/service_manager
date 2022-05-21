@@ -1,0 +1,3 @@
+CREATE OR REPLACE VIEW PARTICIPANTES
+    AS 
+SELECT users.user,users.id,concat(users.name,areas.nombre,sub_areas.nombre,puestos.puesto) as unificado,users.name,areas.nombre as area,sub_areas.nombre as subarea,puestos.puesto FROM users,areas,sub_areas,puestos WHERE users.area=areas.id and users.sub_area=sub_areas.id and users.puesto=puestos.id and users.visible=1 and users.estatus=1 and users.estatus=1

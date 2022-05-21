@@ -1,3 +1,10 @@
+@php
+    if(Illuminate\Support\Facades\Auth::user()->perfil=='MIEMBRO')
+    {
+        header("Location: /");
+        die();
+    }
+@endphp
 <x-app-layout>
     <x-slot name="header">
             {{ __('Importar Empleados') }}

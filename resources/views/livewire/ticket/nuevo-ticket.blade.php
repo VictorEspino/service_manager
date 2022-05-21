@@ -92,7 +92,7 @@
                                         @foreach ($invitados_disponibles as $opcion)
                                             <tr>
                                                 <td class="border px-2">{{$opcion->user}}</td>
-                                                <td class="border px-2">{{$opcion->name}}</td>
+                                                <td class="border px-2"><b>{{$opcion->name}}</b><br/><span class="text-xs">{{$opcion->puesto}} - {{$opcion->subarea}} - {{$opcion->area}}</span></td>
                                                 <td class="border px-3"><center><i wire:click="agregar_invitado_ticket({{$opcion->id}},'{{$opcion->name}}','{{$opcion->email}}')" class="text-green-500 text-lg far fa-hand-pointer" style="cursor:pointer"></i></td>
                                             </tr>
                                         @endforeach

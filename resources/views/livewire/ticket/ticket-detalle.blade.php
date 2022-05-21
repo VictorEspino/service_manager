@@ -126,7 +126,12 @@
             </div>
         </div>
         <div class="w-64 bg-blue-100 border-l-8 p-4 flex flex-col">
-            <div class="w-full flex flex-row justify-center">
+            <div class="flex flex-row justify-center">
+                <div class="rounded py-1 px-3 text-sm text-gray-500">
+                    <a href="{{route('impresion',['id'=>$ticket_id])}}" target="_blank">Imprimir <i class="fas fa-print"></i></a>
+                </div>
+            </div>
+            <div class="flex flex-row justify-center">
                 <div class="rounded py-1 px-3 {{$estatus=='1'?'bg-lime-500':($estatus=='2'?'bg-red-500':'bg-gray-500')}} text-3xl font-extrabold text-gray-100">
                     {{$estatus=='1'?'abierto':($estatus=='2'?'cerrado':'terminado')}}
                 </div>
@@ -334,9 +339,9 @@
                     <div class="flex-1">
                         <select class="w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" wire:model='grupo_seleccionado'>
                             <option value=""></option>
-                            @foreach($grupos_disponibles as $grupo)
-                            <option value={{$grupo->id}}>{{$grupo->nombre}}</option>
-                            @endforeach
+                            @foreach($grupos_disponibles as $grupo_seleccionable)
+                            <option value={{$grupo_seleccionable['id']}}>{{$grupo_seleccionable['nombre']}}</option>
+                            @endforeach 
                         </select>
                     </div>
                 </div>
@@ -348,7 +353,7 @@
                         <select class="w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm" wire:model='miembro_seleccionado'>
                             <option value=""></option>
                             @foreach($miembros_disponibles as $miembro)
-                            <option value={{$miembro->user_id}}>{{$miembro->user->name}}</option>
+                            <option value={{$miembro['user_id']}}>{{$miembro['name']}}</option>
                             @endforeach
                         </select><br />
                         @error('miembro_seleccionado') <span class="text-xs text-red-400">{{ $message }}</span> @enderror

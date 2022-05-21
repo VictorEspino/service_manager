@@ -15,6 +15,7 @@ use App\Models\ActividadTicketCampos;
 use App\Models\ActividadTopico;
 use App\Models\ActividadCampos;
 use App\Models\InvitadoTicket;
+use App\Models\MiembroGrupo;
 use App\Models\User;
 
 class TicketController extends Controller
@@ -370,7 +371,14 @@ class TicketController extends Controller
     }
     public function show(Request $request)
     {
-        $asignados_a_mi=Ticket::with('solicitante','area_solicitante','subarea_solicitante')
+        $busqueda=0;
+        $filtro=false;
+        if(isset($_GET['f']))
+        {
+            $filtro=true;
+            $busqueda=$_GET['tid'];
+        }
+        $asignados_a_mi=Ticket::with('solicitante','area_solicitante','subarea_solicitante','topico')
                             ->where(function($query_main){
                                 $query_main->where('asignado_a',Auth::user()->id);
                                 $query_main->orWhere(function($query) {
@@ -380,19 +388,43 @@ class TicketController extends Controller
                             })
                             ->where('estatus',1)
                             ->get();
-        $creados_por_mi=Ticket::with('asesor')
+        $creados_por_mi=Ticket::with('asesor','topico')
                             ->where('de_id',Auth::user()->id)
                             ->where('estatus',1)
                             ->get();
-        $participante=Ticket::with('asesor','solicitante')
+        $participante=Ticket::with('asesor','solicitante','topico')
                             ->where('estatus',1)
                             ->whereRaw('id in ('.getSQLParticipante(Auth::user()->id).')')
                             ->where('asignado_a','!=',Auth::user()->id)
                             ->get();
+        $topicos_participante=[];
+
+        foreach($participante as $participante_topico)
+        {
+            $esta="NO";
+            foreach($topicos_participante as $barrido)
+            {
+                if($barrido['topico_id']==$participante_topico->topico_id)
+                {
+                    $esta="SI";
+                }
+            }
+            if($esta=="NO")
+            {
+                $topicos_participante[]=[
+                    'topico_id'=>$participante_topico->topico_id,
+                    'nombre'=>$participante_topico->topico->nombre
+                ];
+            }
+        }
+
         return (view('tickets',[
                 'asignados_a_mi'=>$asignados_a_mi,
                 'creados_por_mi'=>$creados_por_mi,
                 'participante'=>$participante,
+                'topicos_participante'=>$topicos_participante,
+                'busqueda'=>$busqueda,
+                'filtro'=>$filtro,
             ]));
     }
     private function update_tiempos($ticket)
@@ -516,5 +548,202 @@ class TicketController extends Controller
                 ]);
         }
         return(back());
+    }
+    public function impresion(Request $request)
+    {
+        if(Auth::user()->perfil=='MIEMBRO')
+        {
+            $tickets_autorizados=DB::select(DB::raw(getSQLUniverso(Auth::user()->id)));
+            $tickets_autorizados=collect($tickets_autorizados);
+            $universo=$tickets_autorizados->pluck('ticket_id','ticket_id');
+            try
+            {
+                $universo[$request->id];
+            } 
+            catch(\Exception $e)
+            {
+                return(view('no_autorizado',['mensaje'=>'No cuenta con autorizacion para revisar el ticket: '.ticket($request->id).' dado que no forma parte del grupo(s) de atencion, ni ha sido invitado a alguna de las actividades del ticket.']));
+            }            
+        }
+        $ticket_id=$request->id;
+        $ticket=Ticket::with('solicitante','area_solicitante','subarea_solicitante','topico','asesor')->find($ticket_id);
+        /*
+        $invitados=InvitadoTicket::with('user','area','subarea')
+                                   ->select(DB::raw('distinct user_id,area_id,subarea_id'))
+                                   ->where('ticket_id',$ticket_id)
+                                   ->get();
+        */
+        $avances_ticket=$this->getAvances($ticket_id);
+
+
+        $invitados_ticket=InvitadoTicket::with('user','area','subarea')->where('ticket_id',$ticket_id)->get();
+        
+        $involucrados_a_desplegar=[];
+
+        foreach($invitados_ticket as $invitado_del_ticket)
+        {
+            $esta_presente="NO";
+            foreach($involucrados_a_desplegar as $existente)
+            {
+                if($existente["user"]==$invitado_del_ticket->user->name &&
+                   $existente["area"]==$invitado_del_ticket->area->nombre &&
+                   $existente["subarea"]==$invitado_del_ticket->subarea->nombre
+                  )
+                {
+                    $esta_presente="SI";
+                }
+            }
+            if($esta_presente=="NO")
+            {
+                $involucrados_a_desplegar[]=[
+                    'user'=>$invitado_del_ticket->user->name,
+                    'area'=>$invitado_del_ticket->area->nombre,
+                    'subarea'=>$invitado_del_ticket->subarea->nombre
+                ];
+            }
+        }
+        
+        //INTEGRA LOS MIEMBROS DEL GRUPO DE ATENCION
+
+        $grupos_del_ticket=ActividadTicket::select(DB::raw('distinct grupo_id as grupo'))
+                                            ->where('ticket_id',$ticket_id)
+                                            ->get();
+        $grupos_del_ticket=$grupos_del_ticket->pluck('grupo');
+        
+        $miembros_de_grupos_de_ticket=MiembroGrupo::with('user','user.area_user','user.subarea')
+                                            ->whereIn('grupo_id',$grupos_del_ticket)
+                                            ->get();
+
+        foreach($miembros_de_grupos_de_ticket as $invitado_del_ticket)
+        {
+            $esta_presente="NO";
+            foreach($involucrados_a_desplegar as $existente)
+            {
+                if($existente["user"]==$invitado_del_ticket->user->name &&
+                   $existente["area"]==$invitado_del_ticket->user->area_user->nombre &&
+                   $existente["subarea"]==$invitado_del_ticket->user->subarea->nombre
+                  )
+                {
+                    $esta_presente="SI";
+                }
+            }
+            if($esta_presente=="NO")
+            {
+                $involucrados_a_desplegar[]=[
+                    'user'=>$invitado_del_ticket->user->name,
+                    'area'=>$invitado_del_ticket->user->area_user->nombre,
+                    'subarea'=>$invitado_del_ticket->user->subarea->nombre
+                ];
+            }
+        }
+        
+
+        //dd($avances_ticket);
+
+        return(view('ticket_impresion',['ticket_id'=>$ticket_id,
+                                        'ticket'=>$ticket,
+                                        'invitados'=>$involucrados_a_desplegar,
+                                        'avances_ticket'=>$avances_ticket,
+                                        ]));
+    }
+    private function getAvances($ticket_id)
+    {
+        $avances=[];
+
+        $ticket=Ticket::with('solicitante')->find($ticket_id);
+
+        $descripcion_inicial=ActividadTicket::where('ticket_id',$ticket_id)
+                                            ->where('secuencia',0)
+                                            ->get()
+                                            ->first();
+
+        $campos_personalizados=ActividadTicketCampos::where('actividad_ticket_id',$descripcion_inicial->id)
+                                ->get();
+
+        $desc_inicial=$descripcion_inicial->descripcion;
+        $x=0;
+        foreach($campos_personalizados as $campos)
+        {
+            if($x==0)
+            {
+                $desc_inicial=$desc_inicial."<br /><br /><b>Campos Incluidos</b>";
+            }
+            if($campos->tipo_control=="Texto" || $campos->tipo_control=="Lista")
+            {
+                $desc_inicial=$desc_inicial."<br />".$campos->etiqueta.": ".$campos->valor;
+            }
+            if($campos->tipo_control=="File")
+            {
+                $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                if($campos->valor=="")
+                {
+                    $archivo_valor_desplegar="<br />".$campos->etiqueta.": SIN ARCHIVO";
+                }
+                $desc_inicial=$desc_inicial."".$archivo_valor_desplegar;
+            }
+            $x=$x+1;
+        }
+
+        if($ticket->adjunto=='1')
+        {
+            $desc_inicial=$desc_inicial."<br /><br /><b>Archivo adjunto</b>";
+            $desc_inicial=$desc_inicial."<br />Descargar: <a href='/archivos/".$ticket->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+        }
+                               
+        $avances[]=[
+            'created_at'=>$ticket->created_at,
+            'tipo_avance'=>'1',
+            'nombre'=>$ticket->solicitante->name,
+            'avance'=>$desc_inicial,
+            'adjunto'=>0,
+            'archivo_adjunto'=>''
+        ];
+
+        $avances_atencion=TicketAvance::with('campos')
+                                    ->where('ticket_id',$ticket_id)
+                                    ->get();
+        //dd($avances_atencion);
+        foreach($avances_atencion as $avance)
+        {
+        
+            $desc_inicial=$avance->avance.($avance->adjunto=='1'?"<br>Archivo adjunto: <a href='/archivos/".$avance->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>":"");
+            
+            if($avance->tipo_avance=='4')
+            {
+                $x=0;
+                foreach($avance->campos as $campos)
+                {
+                    if($x==0)
+                    {
+                        $desc_inicial=$desc_inicial."<br /><br /><b>Campos Incluidos</b>";
+                    }
+                    if($campos->tipo=="Texto" || $campos->tipo=="Lista")
+                    {
+                        $desc_inicial=$desc_inicial."<br />".$campos->etiqueta.": ".$campos->valor;
+                    }
+                    if($campos->tipo=="File")
+                    {
+                        $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                        if($campos->valor=="")
+                        {
+                            $archivo_valor_desplegar="<br />".$campos->etiqueta.": SIN ARCHIVO";
+                        }
+                        $desc_inicial=$desc_inicial."".$archivo_valor_desplegar;
+                    }
+                    $x=$x+1;
+                }
+            }
+
+            $avances[]=[
+                'created_at'=>$avance->created_at,
+                'tipo_avance'=>$avance->tipo_avance,
+                'nombre'=>$avance->nombre_usuario,
+                'avance'=>$desc_inicial,
+                'adjunto'=>$avance->adjunto,
+                'archivo_adjunto'=>$avance->archivo_adjunto
+            ];
+        }
+
+        return($avances);
     }
 }

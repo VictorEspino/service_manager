@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Grupo;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Grupo;
 
@@ -32,5 +33,12 @@ class ShowGrupos extends Component
                         ->orderBy('nombre','asc')
                         ->paginate($this->elementos);
         return view('livewire.grupo.show-grupos',['grupos'=>$grupos]);
+    }
+    public function mount()
+    {
+        if(Auth::user()->perfil=='MIEMBRO')
+        {
+            return redirect()->to('/');
+        }
     }
 }

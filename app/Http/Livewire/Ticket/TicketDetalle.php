@@ -58,8 +58,8 @@ class TicketDetalle extends Component
 
     public $avances_ticket=[];
 
-    public $grupos_disponibles;
-    public $miembros_disponibles;
+    public $grupos_disponibles=[];
+    public $miembros_disponibles=[];
 
     public $grupo_seleccionado;
     public $miembro_seleccionado;
@@ -128,7 +128,16 @@ class TicketDetalle extends Component
     public function mount($id)
     {
         $this->ticket_id=$id;
-        $this->grupos_disponibles=Grupo::orderBy('nombre')->get();
+        $grupos_disponibles_DB=Grupo::orderBy('nombre')->get();
+
+        $grupos_disponibles[]=['id'=>999999,'nombre'=>'INVITADOS TICKET'];
+
+        foreach($grupos_disponibles_DB as $grupo)
+        {
+            $grupos_disponibles[]=['id'=>$grupo->id,'nombre'=>$grupo->nombre];
+        }
+        $this->grupos_disponibles=$grupos_disponibles;
+
 
         $ticket=Ticket::find($this->ticket_id);
 
@@ -139,9 +148,16 @@ class TicketDetalle extends Component
                                         ->grupo_id;
         $this->miembro_seleccionado=$ticket->asignado_a;
 
-        $this->miembros_disponibles=MiembroGrupo::with('user')->where('grupo_id',$this->grupo_seleccionado)
+        $miembros_disponibles=MiembroGrupo::with('user')->where('grupo_id',$this->grupo_seleccionado)
                                     ->get();
-        
+        $this->miembros_disponibles=[];
+        foreach($miembros_disponibles as $miembro_grupo)
+        {
+            $this->miembros_disponibles[]=[
+                                            'user_id'=>$miembro_grupo->user_id,
+                                            'name'=>$miembro_grupo->user->name
+                                        ];
+        }
         $invitados_ticket=InvitadoTicket::with('user','area','subarea')->where('ticket_id',$id)->get();
         
         $involucrados_a_desplegar=[];
@@ -506,8 +522,34 @@ class TicketDetalle extends Component
 
     public function updatedGrupoSeleccionado()
     {
-        $this->miembros_disponibles=MiembroGrupo::with('user')->where('grupo_id',$this->grupo_seleccionado)
+        $this->miembros_disponibles=[];
+        if($this->grupo_seleccionado!=999999)
+        {
+            $miembros_disponibles=MiembroGrupo::with('user')->where('grupo_id',$this->grupo_seleccionado)
                                     ->get();
+            foreach($miembros_disponibles as $miembro_grupo_seleccionado)
+            {
+                $this->miembros_disponibles[]=[
+                    'user_id'=>$miembro_grupo_seleccionado->user_id,
+                    'name'=>$miembro_grupo_seleccionado->user->name
+                ];
+            }
+        }
+        else
+        {
+            $invitados=InvitadoTicket::with('user')
+                            ->where('ticket_id',$this->ticket_id)
+                            ->get();
+            $this->miembros_disponibles=[];
+            foreach($invitados as $invitado)
+            {
+                $this->miembros_disponibles[]=[
+                    'user_id'=>$invitado->user_id,
+                    'name'=>$invitado->user->name
+                ];
+            }
+        }
+
     }
     public function reasignar()
     {

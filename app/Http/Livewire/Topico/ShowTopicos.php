@@ -9,6 +9,7 @@ use App\Models\Topico;
 use App\Models\ActividadTopico;
 use App\Models\Grupo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ShowTopicos extends Component
 {
@@ -23,6 +24,10 @@ class ShowTopicos extends Component
 
     public function mount()
     {
+        if(Auth::user()->perfil=='MIEMBRO')
+        {
+            return redirect()->to('/');
+        }
         $this->grupos=Grupo::orderBy('nombre','asc')->get();
         $this->filtro='';
         $this->grupo=0;

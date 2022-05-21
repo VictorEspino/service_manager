@@ -5,6 +5,8 @@ namespace App\Http\Livewire\Lista;
 use Livewire\Component;
 use App\Models\Lista;
 
+use Illuminate\Support\Facades\Auth;
+
 use Livewire\WithPagination;
 
 class ShowLista extends Component
@@ -31,5 +33,12 @@ class ShowLista extends Component
                         ->orderBy('nombre','asc')
                         ->paginate($this->elementos);
         return view('livewire.lista.show-lista',['listas'=>$listas]);
+    }
+    public function mount()
+    {
+        if(Auth::user()->perfil=='MIEMBRO')
+        {
+            return redirect()->to('/');
+        }
     }
 }

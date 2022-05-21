@@ -89,7 +89,7 @@
                             </div>
                             
                             <div class="w-full flex flex-col border rounded-lg shadow-lg px-5 py-3">
-                                <div class="w-full text-gray-700 font-normal text-sm px-3 ">{{$post_consulta->post}}</div>
+                                <div class="w-full text-gray-700 font-normal text-sm px-3 ">{!!nl2br($post_consulta->post)!!}</div>
                                 @if($post_consulta->adjunto=='1')
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 pt-2">Archivo adjunto:</div>
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 text-red-500"><a download href="/archivos/{{$post_consulta->archivo_adjunto}}"><i class="fas fa-file-download"></i> Download</a></div>
@@ -103,7 +103,7 @@
                                 <div class="w-full text-gray-700 font-bold text-sm px-3">{{$comentario->nombre_usuario}} <span class="font-normal">comentó</span></div>
                                 <div class="w-full text-gray-700 text-xs px-3">{{$comentario->created_at}}</div>
                                 <div class="flex flex-1 bg-green-100 shadow-lg border rounded-lg px-3 py-1">
-                                    {{$comentario->comentario}}
+                                    {!!nl2br($comentario->comentario)!!}
                                 </div>
                             </div>
                         </div>

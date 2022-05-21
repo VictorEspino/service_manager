@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Usuario;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 
@@ -33,6 +34,13 @@ class ShowUsuarios extends Component
         //dd($users);
                         ->paginate($this->elementos);
         return view('livewire.usuario.show-usuarios',['users'=>$users]);
+    }
+    public function mount()
+    {
+        if(Auth::user()->perfil=='MIEMBRO')
+        {
+            return redirect()->to('/');
+        }
     }
 
 }

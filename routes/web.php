@@ -62,3 +62,5 @@ Route::get('/atrasos',AvisoAtraso::class)->name('atrasos')->middleware('auth');
 
 Route::get('/empleados_import',function (){return view ('empleados_import');})->name('empleados_import')->middleware('auth');
 Route::post('/empleados_import',[ExcelController::class,'empleados_import'])->name('empleados_import')->middleware('auth');
+
+Route::get('ticket_impresion/{id}',[TicketController::class,'impresion'])->name('impresion')->middleware('auth');
