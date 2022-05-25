@@ -2,7 +2,15 @@
 
 function getSQLUniverso($user_id)
 {
-    $subarea=App\Models\User::find($user_id)->sub_area;
+    $usuario=App\Models\User::find($user_id);
+    $subarea=$usuario->sub_area;
+    $puesto=$usuario->puesto;
+
+    if($subarea == 10 || $puesto==114)
+    {
+        $subarea=100000;
+    }
+
     $sql="
     select distinct ticket_id from (
         SELECT id as ticket_id FROM `tickets` WHERE de_id=".$user_id." or asignado_a=".$user_id." or subarea_id=".$subarea." 
