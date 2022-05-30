@@ -37,7 +37,7 @@ class ShowUsuarios extends Component
     }
     public function mount()
     {
-        if(Auth::user()->perfil=='MIEMBRO')
+        if(Auth::user()->perfil=='MIEMBRO' && Auth::user()->carga_empleados=="0")
         {
             return redirect()->to('/');
         }

@@ -1,5 +1,5 @@
 @php
-    if(Illuminate\Support\Facades\Auth::user()->perfil=='MIEMBRO')
+    if(Illuminate\Support\Facades\Auth::user()->carga_empleados==0)
     {
         header("Location: /");
         die();
