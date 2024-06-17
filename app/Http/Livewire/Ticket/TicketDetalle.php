@@ -296,7 +296,7 @@ class TicketDetalle extends Component
             }
             if($campos->tipo_control=="File")
             {
-                $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i> <span class='text-xs text-red-400'>Archivo</span></a>";
                 if($campos->valor=="")
                 {
                     $archivo_valor_desplegar="<br />".$campos->etiqueta.": SIN ARCHIVO";
@@ -309,7 +309,7 @@ class TicketDetalle extends Component
         if($ticket->adjunto=='1')
         {
             $desc_inicial=$desc_inicial."<br /><br /><b>Archivo adjunto</b>";
-            $desc_inicial=$desc_inicial."<br />Descargar: <a href='/archivos/".$ticket->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+            $desc_inicial=$desc_inicial."<br />Descargar: <a href='/archivos/".$ticket->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i> <span class='text-xs text-red-400'>Archivo</span></a>";
         }
                                
         $avances[]=[
@@ -328,7 +328,7 @@ class TicketDetalle extends Component
         foreach($avances_atencion as $avance)
         {
         
-            $desc_inicial=$avance->avance.($avance->adjunto=='1'?"<br>Archivo adjunto: <a href='/archivos/".$avance->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>":"");
+            $desc_inicial=$avance->avance.($avance->adjunto=='1'?"<br>Archivo adjunto: <a href='/archivos/".$avance->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i> <span class='text-xs text-red-400'>Archivo</span></a>":"");
             
             if($avance->tipo_avance=='4')
             {

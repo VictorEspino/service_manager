@@ -20,7 +20,7 @@ class CerradosRecientemente extends Component
                                 ->when(Auth::user()->perfil=='MIEMBRO',function ($query){
                                     $query->whereRaw('id in ('.getSQLUniverso(Auth::user()->id).')');
                                     })
-                                ->get()
-                                ->take(10);
+                                ->take(10)
+                                ->get();
     }
 }

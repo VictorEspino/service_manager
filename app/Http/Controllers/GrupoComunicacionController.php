@@ -38,7 +38,7 @@ class GrupoComunicacionController extends Controller
         if(isset($request->adjunto))
         {
             $upload_path = public_path('archivos');
-            //$upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
+            $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
             $file_name = $request->adjunto->getClientOriginalName();
             $generated_new_name = 'g_'.$post->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);

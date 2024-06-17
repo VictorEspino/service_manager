@@ -5,9 +5,9 @@ select b.name as solicitante,a.ticket_id,a.texto,a.campo,a.created_at from
 UNION
 Select id as ticket_id,asunto as texto,'Asunto' as campo,created_at from tickets
 UNION
-Select id as ticket_id,descripcion as texto,concat('Descripcion actividad ',secuencia+1) as campo,created_at from actividad_tickets
+Select ticket_id,descripcion as texto,concat('Descripcion actividad ',secuencia+1) as campo,created_at from actividad_tickets
 UNION
-Select id as ticket_id,nombre as texto,concat('Titulo actividad ',secuencia+1) as campo,created_at from actividad_tickets
+Select ticket_id,nombre as texto,concat('Titulo actividad ',secuencia+1) as campo,created_at from actividad_tickets
 UNION
 select ticket_id,avance as texto,'Comentarios avance' as campo,created_at from ticket_avances where avance not like 'Cambió el estatus%'
 UNION

@@ -92,7 +92,7 @@
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 ">{!!nl2br($post_consulta->post)!!}</div>
                                 @if($post_consulta->adjunto=='1')
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 pt-2">Archivo adjunto:</div>
-                                <div class="w-full text-gray-700 font-normal text-sm px-3 text-red-500"><a download href="/archivos/{{$post_consulta->archivo_adjunto}}"><i class="fas fa-file-download"></i> Download</a></div>
+                                <div class="w-full text-gray-700 font-normal text-sm px-3 text-red-500"><a href="/archivos/{{$post_consulta->archivo_adjunto}}"><i class="fas fa-file-download"></i> Archivo</a></div>
                                 @endif                                
                             </div>
                         </div>

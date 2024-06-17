@@ -127,7 +127,7 @@ class TicketController extends Controller
                 if($campos['tipo']=='File')
                 {
                     $upload_path = public_path('archivos');
-                    $upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
+                    $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
                     try{
                         $file_name = $campos['valor']->getClientOriginalName();
                         $generated_new_name = $ticket->id.'_'.$actividad_siguiente.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
@@ -197,7 +197,7 @@ class TicketController extends Controller
         if(isset($request->adjunto))
         {
             $upload_path = public_path('archivos');
-            $upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
+            $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
             $file_name = $request->adjunto->getClientOriginalName();
             $generated_new_name = $ticket->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);
@@ -294,7 +294,7 @@ class TicketController extends Controller
                 if($campos['tipo']=='File')
                 {
                     $upload_path = public_path('archivos');
-                    $upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
+                    $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
                     try{
                     $file_name = $campos['valor']->getClientOriginalName();
                     $generated_new_name = $ticket->id.'_'.$actividad_principal.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
@@ -471,7 +471,7 @@ class TicketController extends Controller
         if(isset($request->adjunto))
         {
             $upload_path = public_path('archivos');
-            $upload_path ='/home/icubecom/sm-bca.icube.com.mx/archivos';
+            $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
             $file_name = $request->adjunto->getClientOriginalName();
             $generated_new_name = $request->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);
