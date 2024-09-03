@@ -126,8 +126,8 @@ class TicketController extends Controller
                 }
                 if($campos['tipo']=='File')
                 {
-                    $upload_path = public_path('archivos');
-                    $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
+                    $upload_path = public_path('dwh');
+                    $upload_path ='/var/www/sm-bca.icube.com.mx/dwh';
                     try{
                         $file_name = $campos['valor']->getClientOriginalName();
                         $generated_new_name = $ticket->id.'_'.$actividad_siguiente.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
@@ -196,8 +196,8 @@ class TicketController extends Controller
 
         if(isset($request->adjunto))
         {
-            $upload_path = public_path('archivos');
-            $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
+            $upload_path = public_path('dwh');
+            $upload_path ='/var/www/sm-bca.icube.com.mx/dwh';
             $file_name = $request->adjunto->getClientOriginalName();
             $generated_new_name = $ticket->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);
@@ -293,8 +293,8 @@ class TicketController extends Controller
                 }
                 if($campos['tipo']=='File')
                 {
-                    $upload_path = public_path('archivos');
-                    $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
+                    $upload_path = public_path('dwh');
+                    $upload_path ='/var/www/sm-bca.icube.com.mx/dwh';
                     try{
                     $file_name = $campos['valor']->getClientOriginalName();
                     $generated_new_name = $ticket->id.'_'.$actividad_principal.'_'.$campos['referencia'].'_'.time().'.'. $campos['valor']->getClientOriginalExtension();
@@ -470,8 +470,8 @@ class TicketController extends Controller
             ]);
         if(isset($request->adjunto))
         {
-            $upload_path = public_path('archivos');
-            $upload_path ='/var/www/sm-bca.icube.com.mx/archivos';
+            $upload_path = public_path('dwh');
+            $upload_path ='/var/www/sm-bca.icube.com.mx/dwh';
             $file_name = $request->adjunto->getClientOriginalName();
             $generated_new_name = $request->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);
@@ -674,7 +674,7 @@ class TicketController extends Controller
             }
             if($campos->tipo_control=="File")
             {
-                $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/descarga/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
                 if($campos->valor=="")
                 {
                     $archivo_valor_desplegar="<br />".$campos->etiqueta.": SIN ARCHIVO";
@@ -687,7 +687,7 @@ class TicketController extends Controller
         if($ticket->adjunto=='1')
         {
             $desc_inicial=$desc_inicial."<br /><br /><b>Archivo adjunto</b>";
-            $desc_inicial=$desc_inicial."<br />Descargar: <a href='/archivos/".$ticket->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+            $desc_inicial=$desc_inicial."<br />Descargar: <a href='/descarga/".$ticket->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
         }
                                
         $avances[]=[
@@ -706,7 +706,7 @@ class TicketController extends Controller
         foreach($avances_atencion as $avance)
         {
         
-            $desc_inicial=$avance->avance.($avance->adjunto=='1'?"<br>Archivo adjunto: <a href='/archivos/".$avance->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>":"");
+            $desc_inicial=$avance->avance.($avance->adjunto=='1'?"<br>Archivo adjunto: <a href='/descarga/".$avance->archivo_adjunto."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>":"");
             
             if($avance->tipo_avance=='4')
             {
@@ -723,7 +723,7 @@ class TicketController extends Controller
                     }
                     if($campos->tipo=="File")
                     {
-                        $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/archivos/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
+                        $archivo_valor_desplegar="<br />".$campos->etiqueta.": <a href='/descarga/".$campos->valor."' download><i class='text-red-400 text-base fas fa-file-download'></i></a>";
                         if($campos->valor=="")
                         {
                             $archivo_valor_desplegar="<br />".$campos->etiqueta.": SIN ARCHIVO";

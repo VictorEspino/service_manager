@@ -15,6 +15,7 @@ use App\Http\Controllers\GrupoComunicacionController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\BusquedaController;
 use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\DownloadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,3 +65,5 @@ Route::get('/empleados_import',function (){return view ('empleados_import');})->
 Route::post('/empleados_import',[ExcelController::class,'empleados_import'])->name('empleados_import')->middleware('auth');
 
 Route::get('ticket_impresion/{id}',[TicketController::class,'impresion'])->name('impresion')->middleware('auth');
+
+Route::get('/descarga/{archivo}',[DownloadController::class,'descargar'])->name('descargar')->middleware('auth');
