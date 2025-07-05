@@ -18,6 +18,7 @@ class ShowPosts extends Component
 
     public $grupo_nombre;
     public $grupo_id;
+    public $public_resources;
     public $post;
 
     public $file_include=false;
@@ -39,6 +40,7 @@ class ShowPosts extends Component
         $grupo=GrupoComunicacion::find($grupo_id);
         $this->grupo_id=$grupo_id;
         $this->grupo_nombre=$grupo->nombre;
+        $this->public_resources=$grupo->public_resources;
         $managers=MiembroGrupoComunicacion::select('user_id')
                                 ->where('manager',1)
                                 ->where('grupo_id',$grupo_id)

@@ -84,7 +84,9 @@
                                     <div class="w-full text-gray-700 text-xs px-3">{{$post_consulta->created_at}}</div>
                                 </div>
                                 <div class="flex flex-1 justify-end">
+                                @if($public_resources=="0")
                                     @livewire('grupo-comunicacion.nuevo-comentario-post', ['post_id' => $post_consulta->id], key($post_consulta->id))
+                                @endif
                                 </div>
                             </div>
                             
@@ -92,7 +94,16 @@
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 ">{!!nl2br($post_consulta->post)!!}</div>
                                 @if($post_consulta->adjunto=='1')
                                 <div class="w-full text-gray-700 font-normal text-sm px-3 pt-2">Archivo adjunto:</div>
-                                <div class="w-full text-gray-700 font-normal text-sm px-3 text-red-500"><a href="/descarga/{{$post_consulta->archivo_adjunto}}"><i class="fas fa-file-download"></i> Archivo</a></div>
+                                <div class="w-full text-gray-700 font-normal text-sm px-3 text-red-500">
+                                    @if($public_resources=="0")
+                                    <a href="/descarga/{{$post_consulta->archivo_adjunto}}">
+                                    @else
+                                    <a href="/public_resources/{{$post_consulta->archivo_adjunto}}?token=$2y$10$3WETO/uYpSjxNmqa8w2IZexzOlTXpKGWv6MxD9RCyFPUEHalkloGi$2y$10$3WETO/uYpSjxNmqa8w2IZexzOlTXpKGWv6MxD9RCyFPUEHalkloGi$2y$10$3WETO/uYpSjxNmqa8w2IZexzOlTXpKGWv6MxD9RCyFPUEHalkloGi" target="_blank">
+                                    @endif    
+                                        <i class="fas fa-file-download"></i> 
+                                        Archivo
+                                    </a>
+                                </div>
                                 @endif                                
                             </div>
                         </div>

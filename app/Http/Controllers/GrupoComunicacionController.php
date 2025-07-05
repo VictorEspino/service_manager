@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GrupoComunicacionPost;
+use App\Models\GrupoComunicacion;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -39,6 +40,11 @@ class GrupoComunicacionController extends Controller
         {
             $upload_path = public_path('dwh');
             $upload_path ='/var/www/sm-bca.icube.com.mx/dwh';
+            $grupo=GrupoComunicacion::find($request->grupo_id);
+            if($grupo->public_resources=="1")
+            {
+                $upload_path ='/var/www/sm-bca.icube.com.mx/public_resources';
+            }
             $file_name = $request->adjunto->getClientOriginalName();
             $generated_new_name = 'g_'.$post->id.'_'.time().'.'. $request->adjunto->getClientOriginalExtension();
             $request->adjunto->move($upload_path, $generated_new_name);
